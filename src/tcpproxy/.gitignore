@@ -1,4 +1,6 @@
 log/
 ebin/
 *.dump
+*.pyc
+
 
