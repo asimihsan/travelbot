@@ -1,9 +1,9 @@
 -module(tcp_to_amqp_server).
 -behaviour(gen_server).
 
--include("deps/amqp_client/include/amqp_client.hrl").
+-include_lib("deps/erlson/include/erlson.hrl").
 
--export([start_link/4]).
+-export([start_link/4, send_task_result/2]).
 -export([init/1, handle_call/3, handle_cast/2, handle_info/2, terminate/2, code_change/3]).
 
 -record(state, {
@@ -11,17 +11,25 @@
     socket :: inet:socket(),
     transport :: module(),
     inactivity_timeout :: timeout(),
-    max_request_size :: integer()
+    max_request_size :: integer(),
+    task_timeout :: timeout()
 }).
 
 -define(ERROR_REQUEST_IS_TOO_BIG, 1).
 -define(ERROR_REQUEST_IS_MALFORMED, 2).
 
+%% ----------------------------------------------------------------------------
 %% Public API
+%% ----------------------------------------------------------------------------
 -spec start_link(pid(), inet:socket(), module(), any()) -> {ok, pid()}.
 start_link(ListenerPid, Socket, Transport, Opts) ->
     ok = lager:info("tcp_to_amqp_server:start_link/4 entry. pid: ~p\n", [self()]),
     gen_server:start_link(?MODULE, [ListenerPid, Socket, Transport, Opts], []).
+
+send_task_result(Pid, Result) ->
+    ok = lager:info("tcp_to_amqp_server:send_task_result/2 entry. Pid: ~p, Result: ~p\n", [Pid, Result]),
+    gen_server:cast(Pid, {task_result, Result}).
+%% ----------------------------------------------------------------------------
 
 %% gen_server callbacks
 
@@ -31,10 +39,11 @@ init([ListenerPid, Socket, Transport, Opts]) ->
 
     % !!AI uncomment for tracing all messages ('m'), function calls ('c'),
     % and process related events ('p') in this gen_server instance.
-    dbg:p(self(), [p]),
+    % dbg:p(self(), [p, c, m]),
 
     InactivityTimeout = proplists:get_value(inactivity_timeout, Opts, 5000),
     MaxRequestSize = proplists:get_value(max_request_size, Opts, 65536),
+    TaskTimeout = proplists:get_value(task_timeout, Opts, 60000),
     Transport:setopts(Socket, [
         {active, once},
         {packet, 4},
@@ -55,12 +64,20 @@ init([ListenerPid, Socket, Transport, Opts]) ->
                 socket=Socket,
                 transport=Transport,
                 inactivity_timeout=InactivityTimeout,
-                max_request_size=MaxRequestSize}, 0}.
+                max_request_size=MaxRequestSize,
+                task_timeout=TaskTimeout}, 0}.
     % -------------------------------------------------------------------------
 
 handle_call(Msg, _From, State) ->
     {reply, {ok, Msg}, State}.
 
+handle_cast({task_result, Result},
+            State=#state{socket=Socket,
+                         transport=Transport}) ->
+    ok = lager:info("tcp_to_amqp_server:handle_cast/1. Got task_result: ~p\n", [Result]),
+    ok = validate_result(Result),
+    Transport:send(Socket, Result),
+    {noreply, State};
 handle_cast(stop, State) ->
     {stop, normal, State}.
 
@@ -124,36 +141,49 @@ handle_request(RawData, State=#state{socket=_Socket, transport=_Transport}) when
 % -----------------------------------------------------------------------------
 %   handle_request/2 for JSON payloads.
 % -----------------------------------------------------------------------------
-handle_request(RawData, State=#state{socket=Socket, transport=Transport}) ->
+handle_request(RawData, State=#state{socket=Socket,
+                                     transport=Transport,
+                                     task_timeout=_TaskTimeout}) ->
     ok = lager:debug("tcp_to_amqp_server:handle_request/2. RawData: ~p.\n", [RawData]),
     ok = validate_request(RawData),
-    ok = post_request(RawData),
+
+    % -------------------------------------------------------------------------
+    %   Process request.
+    %   -   If it is a 'task' then spawn a amqp_task_server instance.
+    % -------------------------------------------------------------------------
+    Request = dict:from_list(erlson:from_json(RawData)),
+    Type = dict:fetch(type, Request),
+    {ok, _Pid} = if Type =:= <<"task">> ->
+        amqp_task_server:start_link(self(), Request)
+    end,
+    % -------------------------------------------------------------------------
+
     Transport:setopts(Socket, [{active, once}]),
     {noreply, State}.
 
+validate_result(RawData) ->
+    % -------------------------------------------------------------------------
+    %   Parse then validate request.
+    % -------------------------------------------------------------------------
+    _Request = dict:from_list(erlson:from_json(RawData)),
+    % -------------------------------------------------------------------------
+
+    ok.
+
 validate_request(RawData) ->
-    _Request = json:from_json_to_dict(RawData),
-    ok.
-
-post_request(RawData) ->
-    Request = json:from_json_to_dict(RawData),
-    Method = dict:fetch(method, Request),
-    ok = lager:debug("Method: ~p.\n", [Method]),
+    % -------------------------------------------------------------------------
+    %   Constants. !!AI factor out into hrl.
+    % -------------------------------------------------------------------------
+    ValidTypeRe = "^task$",
+    % -------------------------------------------------------------------------
 
     % -------------------------------------------------------------------------
-    %   Post onto AMQP broker.
+    %   Parse then validate request.
     % -------------------------------------------------------------------------
-    {ok, Connection} = amqp_connection:start(#amqp_params_network{host = "localhost"}),
-    {ok, Channel} = amqp_connection:open_channel(Connection),
+    Request = dict:from_list(erlson:from_json(RawData)),
+    Type = dict:fetch(type, Request),
+    {match, _Range} = re:run(Type, ValidTypeRe, []),
+    % -------------------------------------------------------------------------
 
-    %amqp_channel:call(Channel, #'queue.declare'{queue = list_to_binary(Method)}),
-    amqp_channel:cast(Channel,
-        #'basic.publish'{
-            exchange = <<"">>,
-            routing_key = list_to_binary(Method)},
-        #amqp_msg{payload = RawData}),
-    ok = amqp_channel:close(Channel),
-    ok = amqp_connection:close(Connection),
     ok.
-
 

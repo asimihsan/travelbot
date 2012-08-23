@@ -51,6 +51,12 @@ class TestTCPToAMQPProtocol(unittest.TestCase):
         data = struct.pack(format_string, len(string_to_pack), string_to_pack)
         return data
 
+    def _get_string_from_packing(self, string_to_unpack):
+        """ Recall that this is just an unsigned integer of 4 bytes
+        followed by a string of variable bytes. Strip the 4 bytes
+        from the front."""
+        return string_to_unpack[4:]
+
     def _send_string(self, tosend, timeout=-1):
         data = self._get_packed_string(tosend)
         gevent.socket.wait_write(self.sock.fileno(), timeout)
@@ -85,14 +91,19 @@ class TestTCPToAMQPProtocol(unittest.TestCase):
         self.test_ping()
         self.test_ping()
 
-    def test_addition_worker(self):
+    def test_add_task(self):
         payload = {"version": "1.0",
                    "tag": "unique_identifier",
-                   "method": "addition",
+                   "type": "task",
+                   "method": "add",
                    "args": [1, 2],
-                   "kwargs": {}}
+                   "kwargs": {"first": 1, "second": "two"}}
         self._send_string(json.dumps(payload))
-        response = self._recv_string(timeout=1)
-        response_decoded = json.loads(response)
-        self.assertEqual(response_decoded.get("return_value", None), 3)
+        response = self._recv_string(timeout=5)
+        response_decoded = json.loads(self._get_string_from_packing(response))
+        self.assertTrue("result" in response_decoded)
+        self.assertTrue("status" in response_decoded["result"])
+        self.assertTrue(response_decoded["result"]["status"] == 200)
+        self.assertTrue("value" in response_decoded["result"])
+        self.assertTrue(response_decoded["result"]["value"] == 3)
 
