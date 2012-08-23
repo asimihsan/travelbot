@@ -53,8 +53,8 @@ cd src/tcpproxy/test/
 	
 ```
 cd src/tcpproxy/
-make build-plt # this will take ~30 minutes.
 make
+make build_plt # this will take ~30 minutes.
 make start
 ```
 
