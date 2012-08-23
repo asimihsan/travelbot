@@ -36,7 +36,7 @@ celery worker --app=test_celery -l info
 ```
 		
 -	Execute the Celery transducer. This:
-	-	binds to exchange `tcpproxy` with on queue `task`,
+	-	binds to exchange `tcpproxy` with on queue `celery_transducer` with routing key `task`,
 	-	launches the correct Celery task for each JSON request.
 	-	waits for the result for a given task.
 	-	publish task results to exchange `tcpproxy` with routing key `task_result_<<UUID>>`, where UUID is parsed from the initial request.
@@ -48,7 +48,7 @@ cd src/tcpproxy/test/
 			
 -	Execute the tcpproxy itself. This:
 	-	listens on a TCP port and pushes JSON-serialized tasks onto exchange `tcpproxy` with routing key `task`.
-	-	subscribes indefinitely to exchange `tcpproxy` on queue `task_result_<<UUID>>`, where UUID is generated earlier.
+	-	subscribes indefinitely to exchange `tcpproxy` on queue `task_result_<<UUID>>`, where UUID is generated earlier. Routing key is the same as the queue name.
 	-	when a task result comes on push it out on the TCP socket and delete the AMQP queue.
 	
 ```
