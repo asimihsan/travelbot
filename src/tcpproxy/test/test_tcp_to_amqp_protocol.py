@@ -91,19 +91,73 @@ class TestTCPToAMQPProtocol(unittest.TestCase):
         self.test_ping()
         self.test_ping()
 
+    def _verify_add_result(self, response):
+        response_decoded = json.loads(self._get_string_from_packing(response))
+        self.assertEquals(response_decoded.get("tag", None), "unique_identifier_add")
+        self.assertTrue("result" in response_decoded)
+        self.assertTrue("status" in response_decoded["result"])
+        self.assertEquals(response_decoded["result"]["status"], 200)
+        self.assertTrue("value" in response_decoded["result"])
+        self.assertEquals(response_decoded["result"]["value"], 3)
+
     def test_add_task(self):
         payload = {"version": "1.0",
-                   "tag": "unique_identifier",
+                   "tag": "unique_identifier_add",
                    "type": "task",
                    "method": "add",
                    "args": [1, 2],
                    "kwargs": {"first": 1, "second": "two"}}
         self._send_string(json.dumps(payload))
         response = self._recv_string(timeout=5)
+        self._verify_add_result(response)
+
+    def _verify_xsum_result(self, response):
         response_decoded = json.loads(self._get_string_from_packing(response))
+        self.assertEquals(response_decoded.get("tag", None), "unique_identifier_xsum")
         self.assertTrue("result" in response_decoded)
         self.assertTrue("status" in response_decoded["result"])
-        self.assertTrue(response_decoded["result"]["status"] == 200)
+        self.assertEquals(response_decoded["result"]["status"], 200)
         self.assertTrue("value" in response_decoded["result"])
-        self.assertTrue(response_decoded["result"]["value"] == 3)
+        self.assertEquals(response_decoded["result"]["value"], 15)
+
+    def test_xsum_task(self):
+        payload = {"version": "1.0",
+                   "tag": "unique_identifier_xsum",
+                   "type": "task",
+                   "method": "xsum",
+                   "args": [[1, 2, 3, 4, 5]]}
+        self._send_string(json.dumps(payload))
+        response = self._recv_string(timeout=5)
+        self._verify_xsum_result(response)
+
+    def _get_packed_string_then_rest(self, response):
+        header = response[:4]
+        header_int = struct.unpack(">I", header)[0]
+        first = response[:4+header_int]
+        rest = response[4+header_int:]
+        return (first, rest)
+
+    def _verify_xsum_then_add_result(self, response):
+        (xsum_response, rest) = self._get_packed_string_then_rest(response)
+        (add_response, rest) = self._get_packed_string_then_rest(rest)
+        self._verify_xsum_result(xsum_response)
+        self._verify_add_result(add_response)
+
+    def test_add_and_xsum_task(self):
+        # xsum has a sleep of 1, add has a sleep of 3, so xsum comes back first.
+        payload_add = {"version": "1.0",
+                       "tag": "unique_identifier_add",
+                       "type": "task",
+                       "method": "add",
+                       "args": [1, 2]}
+        payload_xsum = {"version": "1.0",
+                        "tag": "unique_identifier_xsum",
+                        "type": "task",
+                        "method": "xsum",
+                        "args": [[1, 2, 3, 4, 5]]}
+        self._send_string(json.dumps(payload_add))
+        self._send_string(json.dumps(payload_xsum))
+        response = self._recv_string(timeout=5)
+        self._verify_xsum_then_add_result(response)
+
 
