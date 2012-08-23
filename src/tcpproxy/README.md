@@ -24,16 +24,16 @@ It is also intended to allow access to:
 
 -	Execute RabbitMQ in the background:
 
-``
+```
 rabbitmq-server -detached
-``
+```
 		
 -	Execute the Celery workers that execute RPC calls via the AMQP broker:
 
-``
+```
 cd src/tcpproxy/test/
 celery worker --app=test_celery -l info
-``
+```
 		
 -	Execute the Celery transducer. This:
 	-	binds to exchange `tcpproxy` with on queue `task`,
@@ -41,26 +41,26 @@ celery worker --app=test_celery -l info
 	-	waits for the result for a given task.
 	-	publish task results to exchange `tcpproxy` with routing key `task_result_<<UUID>>`, where UUID is parsed from the initial request.
 
-``
+```
 cd src/tcpproxy/test/
 ./test_consume_queue.py
-``
+```
 			
 -	Execute the tcpproxy itself. This:
 	-	listens on a TCP port and pushes JSON-serialized tasks onto exchange `tcpproxy` with routing key `task`.
 	-	subscribes indefinitely to exchange `tcpproxy` on queue `task_result_<<UUID>>`, where UUID is generated earlier.
 	-	when a task result comes on push it out on the TCP socket and delete the AMQP queue.
 	
-``
+```
 cd src/tcpproxy/
 make build-plt # this will take ~30 minutes.
 make
 make start
-``
+```
 
 -	Execute the tests
 
-``
+```
 cd src/tcpproxy/test
 nosetests -x -v test_tcp_to_amqp_protocol.py
-``
+```
