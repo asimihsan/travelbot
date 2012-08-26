@@ -2,7 +2,7 @@
 //  TravelBotDetailViewController.h
 //  TravelBot
 //
-//  Created by Asim Ihsan on 25/08/2012.
+//  Created by Asim Ihsan on 26/08/2012.
 //  Copyright (c) 2012 Asim Ihsan. All rights reserved.
 //
 

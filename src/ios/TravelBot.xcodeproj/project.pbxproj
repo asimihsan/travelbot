@@ -7,171 +7,162 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		01472F4915E939F100793C6F /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01472F4815E939F100793C6F /* UIKit.framework */; };
-		01472F4B15E939F100793C6F /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01472F4A15E939F100793C6F /* Foundation.framework */; };
-		01472F4D15E939F100793C6F /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01472F4C15E939F100793C6F /* CoreGraphics.framework */; };
-		01472F4F15E939F100793C6F /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01472F4E15E939F100793C6F /* CoreData.framework */; };
-		01472F5515E939F100793C6F /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 01472F5315E939F100793C6F /* InfoPlist.strings */; };
-		01472F5715E939F100793C6F /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 01472F5615E939F100793C6F /* main.m */; };
-		01472F5B15E939F100793C6F /* TravelBotAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 01472F5A15E939F100793C6F /* TravelBotAppDelegate.m */; };
-		01472F5E15E939F100793C6F /* MainStoryboard.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 01472F5C15E939F100793C6F /* MainStoryboard.storyboard */; };
-		01472F6115E939F100793C6F /* TravelBot.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 01472F5F15E939F100793C6F /* TravelBot.xcdatamodeld */; };
-		01472F6415E939F100793C6F /* TravelBotMasterViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 01472F6315E939F100793C6F /* TravelBotMasterViewController.m */; };
-		01472F6715E939F100793C6F /* TravelBotDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 01472F6615E939F100793C6F /* TravelBotDetailViewController.m */; };
-		01472F6F15E939F100793C6F /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01472F6E15E939F100793C6F /* SenTestingKit.framework */; };
-		01472F7015E939F100793C6F /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01472F4815E939F100793C6F /* UIKit.framework */; };
-		01472F7115E939F100793C6F /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01472F4A15E939F100793C6F /* Foundation.framework */; };
-		01472F7215E939F100793C6F /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01472F4E15E939F100793C6F /* CoreData.framework */; };
-		01472F7A15E939F100793C6F /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 01472F7815E939F100793C6F /* InfoPlist.strings */; };
-		01472F7D15E939F100793C6F /* TravelBotTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 01472F7C15E939F100793C6F /* TravelBotTests.m */; };
-		01962B4115E98422009CAEBA /* AISocketManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 01962B4015E98422009CAEBA /* AISocketManager.m */; };
-		8D988B4A23EA4652925195DD /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B9ECEDC775664CFEB14EC2BC /* libPods.a */; };
+		01962B6215EABA60009CAEBA /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01962B6115EABA60009CAEBA /* UIKit.framework */; };
+		01962B6415EABA60009CAEBA /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01962B6315EABA60009CAEBA /* Foundation.framework */; };
+		01962B6615EABA60009CAEBA /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01962B6515EABA60009CAEBA /* CoreGraphics.framework */; };
+		01962B6C15EABA60009CAEBA /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 01962B6A15EABA60009CAEBA /* InfoPlist.strings */; };
+		01962B6E15EABA60009CAEBA /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 01962B6D15EABA60009CAEBA /* main.m */; };
+		01962B7215EABA60009CAEBA /* TravelBotAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 01962B7115EABA60009CAEBA /* TravelBotAppDelegate.m */; };
+		01962B7515EABA60009CAEBA /* MainStoryboard.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 01962B7315EABA60009CAEBA /* MainStoryboard.storyboard */; };
+		01962B7815EABA60009CAEBA /* TravelBotMasterViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 01962B7715EABA60009CAEBA /* TravelBotMasterViewController.m */; };
+		01962B7B15EABA60009CAEBA /* TravelBotDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 01962B7A15EABA60009CAEBA /* TravelBotDetailViewController.m */; };
+		01962B8315EABA60009CAEBA /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01962B8215EABA60009CAEBA /* SenTestingKit.framework */; };
+		01962B8415EABA60009CAEBA /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01962B6115EABA60009CAEBA /* UIKit.framework */; };
+		01962B8515EABA60009CAEBA /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01962B6315EABA60009CAEBA /* Foundation.framework */; };
+		01962B8D15EABA60009CAEBA /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 01962B8B15EABA60009CAEBA /* InfoPlist.strings */; };
+		01962B9015EABA60009CAEBA /* TravelBotTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 01962B8F15EABA60009CAEBA /* TravelBotTests.m */; };
+		01962BA915EABBC4009CAEBA /* AISocketManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 01962BA815EABBC4009CAEBA /* AISocketManager.m */; };
+		8478498E553A465784C5EDA4 /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A293237B22E44B69AC333154 /* libPods.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		01472F7315E939F100793C6F /* PBXContainerItemProxy */ = {
+		01962B8615EABA60009CAEBA /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 01472F3B15E939F100793C6F /* Project object */;
+			containerPortal = 01962B5415EABA60009CAEBA /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 01472F4315E939F100793C6F;
+			remoteGlobalIDString = 01962B5C15EABA60009CAEBA;
 			remoteInfo = TravelBot;
 		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		01472F4415E939F100793C6F /* TravelBot.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TravelBot.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		01472F4815E939F100793C6F /* UIKit.framework */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
-		01472F4A15E939F100793C6F /* Foundation.framework */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
-		01472F4C15E939F100793C6F /* CoreGraphics.framework */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
-		01472F4E15E939F100793C6F /* CoreData.framework */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
-		01472F5215E939F100793C6F /* TravelBot-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "TravelBot-Info.plist"; sourceTree = "<group>"; };
-		01472F5415E939F100793C6F /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
-		01472F5615E939F100793C6F /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		01472F5815E939F100793C6F /* TravelBot-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "TravelBot-Prefix.pch"; sourceTree = "<group>"; };
-		01472F5915E939F100793C6F /* TravelBotAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TravelBotAppDelegate.h; sourceTree = "<group>"; };
-		01472F5A15E939F100793C6F /* TravelBotAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TravelBotAppDelegate.m; sourceTree = "<group>"; };
-		01472F5D15E939F100793C6F /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = en.lproj/MainStoryboard.storyboard; sourceTree = "<group>"; };
-		01472F6015E939F100793C6F /* TravelBot.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = TravelBot.xcdatamodel; sourceTree = "<group>"; };
-		01472F6215E939F100793C6F /* TravelBotMasterViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TravelBotMasterViewController.h; sourceTree = "<group>"; };
-		01472F6315E939F100793C6F /* TravelBotMasterViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TravelBotMasterViewController.m; sourceTree = "<group>"; };
-		01472F6515E939F100793C6F /* TravelBotDetailViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TravelBotDetailViewController.h; sourceTree = "<group>"; };
-		01472F6615E939F100793C6F /* TravelBotDetailViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TravelBotDetailViewController.m; sourceTree = "<group>"; };
-		01472F6D15E939F100793C6F /* TravelBotTests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TravelBotTests.octest; sourceTree = BUILT_PRODUCTS_DIR; };
-		01472F6E15E939F100793C6F /* SenTestingKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SenTestingKit.framework; path = Library/Frameworks/SenTestingKit.framework; sourceTree = DEVELOPER_DIR; };
-		01472F7715E939F100793C6F /* TravelBotTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "TravelBotTests-Info.plist"; sourceTree = "<group>"; };
-		01472F7915E939F100793C6F /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
-		01472F7B15E939F100793C6F /* TravelBotTests.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TravelBotTests.h; sourceTree = "<group>"; };
-		01472F7C15E939F100793C6F /* TravelBotTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TravelBotTests.m; sourceTree = "<group>"; };
-		01962B3F15E98422009CAEBA /* AISocketManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AISocketManager.h; sourceTree = "<group>"; };
-		01962B4015E98422009CAEBA /* AISocketManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AISocketManager.m; sourceTree = "<group>"; };
-		B9ECEDC775664CFEB14EC2BC /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		DBE4A2D4A984491496A554B4 /* Pods.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.xcconfig; path = Pods/Pods.xcconfig; sourceTree = SOURCE_ROOT; };
+		01962B5D15EABA60009CAEBA /* TravelBot.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TravelBot.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		01962B6115EABA60009CAEBA /* UIKit.framework */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		01962B6315EABA60009CAEBA /* Foundation.framework */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		01962B6515EABA60009CAEBA /* CoreGraphics.framework */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		01962B6915EABA60009CAEBA /* TravelBot-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "TravelBot-Info.plist"; sourceTree = "<group>"; };
+		01962B6B15EABA60009CAEBA /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		01962B6D15EABA60009CAEBA /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		01962B6F15EABA60009CAEBA /* TravelBot-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "TravelBot-Prefix.pch"; sourceTree = "<group>"; };
+		01962B7015EABA60009CAEBA /* TravelBotAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TravelBotAppDelegate.h; sourceTree = "<group>"; };
+		01962B7115EABA60009CAEBA /* TravelBotAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TravelBotAppDelegate.m; sourceTree = "<group>"; };
+		01962B7415EABA60009CAEBA /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = en.lproj/MainStoryboard.storyboard; sourceTree = "<group>"; };
+		01962B7615EABA60009CAEBA /* TravelBotMasterViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TravelBotMasterViewController.h; sourceTree = "<group>"; };
+		01962B7715EABA60009CAEBA /* TravelBotMasterViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TravelBotMasterViewController.m; sourceTree = "<group>"; };
+		01962B7915EABA60009CAEBA /* TravelBotDetailViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TravelBotDetailViewController.h; sourceTree = "<group>"; };
+		01962B7A15EABA60009CAEBA /* TravelBotDetailViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TravelBotDetailViewController.m; sourceTree = "<group>"; };
+		01962B8115EABA60009CAEBA /* TravelBotTests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TravelBotTests.octest; sourceTree = BUILT_PRODUCTS_DIR; };
+		01962B8215EABA60009CAEBA /* SenTestingKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SenTestingKit.framework; path = Library/Frameworks/SenTestingKit.framework; sourceTree = DEVELOPER_DIR; };
+		01962B8A15EABA60009CAEBA /* TravelBotTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "TravelBotTests-Info.plist"; sourceTree = "<group>"; };
+		01962B8C15EABA60009CAEBA /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		01962B8E15EABA60009CAEBA /* TravelBotTests.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TravelBotTests.h; sourceTree = "<group>"; };
+		01962B8F15EABA60009CAEBA /* TravelBotTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TravelBotTests.m; sourceTree = "<group>"; };
+		01962BA715EABBC4009CAEBA /* AISocketManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AISocketManager.h; sourceTree = "<group>"; };
+		01962BA815EABBC4009CAEBA /* AISocketManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AISocketManager.m; sourceTree = "<group>"; };
+		A293237B22E44B69AC333154 /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		EABBC4AF54824A1598C0BA05 /* Pods.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.xcconfig; path = Pods/Pods.xcconfig; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		01472F4115E939F100793C6F /* Frameworks */ = {
+		01962B5A15EABA60009CAEBA /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				01472F4915E939F100793C6F /* UIKit.framework in Frameworks */,
-				01472F4B15E939F100793C6F /* Foundation.framework in Frameworks */,
-				01472F4D15E939F100793C6F /* CoreGraphics.framework in Frameworks */,
-				01472F4F15E939F100793C6F /* CoreData.framework in Frameworks */,
-				8D988B4A23EA4652925195DD /* libPods.a in Frameworks */,
+				01962B6215EABA60009CAEBA /* UIKit.framework in Frameworks */,
+				01962B6415EABA60009CAEBA /* Foundation.framework in Frameworks */,
+				01962B6615EABA60009CAEBA /* CoreGraphics.framework in Frameworks */,
+				8478498E553A465784C5EDA4 /* libPods.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		01472F6915E939F100793C6F /* Frameworks */ = {
+		01962B7D15EABA60009CAEBA /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				01472F6F15E939F100793C6F /* SenTestingKit.framework in Frameworks */,
-				01472F7015E939F100793C6F /* UIKit.framework in Frameworks */,
-				01472F7115E939F100793C6F /* Foundation.framework in Frameworks */,
-				01472F7215E939F100793C6F /* CoreData.framework in Frameworks */,
+				01962B8315EABA60009CAEBA /* SenTestingKit.framework in Frameworks */,
+				01962B8415EABA60009CAEBA /* UIKit.framework in Frameworks */,
+				01962B8515EABA60009CAEBA /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		01472F3915E939F100793C6F = {
+		01962B5215EABA60009CAEBA = {
 			isa = PBXGroup;
 			children = (
-				01472F5015E939F100793C6F /* TravelBot */,
-				01472F7515E939F100793C6F /* TravelBotTests */,
-				01472F4715E939F100793C6F /* Frameworks */,
-				01472F4515E939F100793C6F /* Products */,
-				DBE4A2D4A984491496A554B4 /* Pods.xcconfig */,
+				01962B6715EABA60009CAEBA /* TravelBot */,
+				01962B8815EABA60009CAEBA /* TravelBotTests */,
+				01962B6015EABA60009CAEBA /* Frameworks */,
+				01962B5E15EABA60009CAEBA /* Products */,
+				EABBC4AF54824A1598C0BA05 /* Pods.xcconfig */,
 			);
 			sourceTree = "<group>";
 		};
-		01472F4515E939F100793C6F /* Products */ = {
+		01962B5E15EABA60009CAEBA /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				01472F4415E939F100793C6F /* TravelBot.app */,
-				01472F6D15E939F100793C6F /* TravelBotTests.octest */,
+				01962B5D15EABA60009CAEBA /* TravelBot.app */,
+				01962B8115EABA60009CAEBA /* TravelBotTests.octest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		01472F4715E939F100793C6F /* Frameworks */ = {
+		01962B6015EABA60009CAEBA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				01472F4815E939F100793C6F /* UIKit.framework */,
-				01472F4A15E939F100793C6F /* Foundation.framework */,
-				01472F4C15E939F100793C6F /* CoreGraphics.framework */,
-				01472F4E15E939F100793C6F /* CoreData.framework */,
-				01472F6E15E939F100793C6F /* SenTestingKit.framework */,
-				B9ECEDC775664CFEB14EC2BC /* libPods.a */,
+				01962B6115EABA60009CAEBA /* UIKit.framework */,
+				01962B6315EABA60009CAEBA /* Foundation.framework */,
+				01962B6515EABA60009CAEBA /* CoreGraphics.framework */,
+				01962B8215EABA60009CAEBA /* SenTestingKit.framework */,
+				A293237B22E44B69AC333154 /* libPods.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		01472F5015E939F100793C6F /* TravelBot */ = {
+		01962B6715EABA60009CAEBA /* TravelBot */ = {
 			isa = PBXGroup;
 			children = (
-				01472F5915E939F100793C6F /* TravelBotAppDelegate.h */,
-				01472F5A15E939F100793C6F /* TravelBotAppDelegate.m */,
-				01472F5C15E939F100793C6F /* MainStoryboard.storyboard */,
-				01472F6215E939F100793C6F /* TravelBotMasterViewController.h */,
-				01472F6315E939F100793C6F /* TravelBotMasterViewController.m */,
-				01472F6515E939F100793C6F /* TravelBotDetailViewController.h */,
-				01472F6615E939F100793C6F /* TravelBotDetailViewController.m */,
-				01472F5F15E939F100793C6F /* TravelBot.xcdatamodeld */,
-				01472F5115E939F100793C6F /* Supporting Files */,
-				01962B3F15E98422009CAEBA /* AISocketManager.h */,
-				01962B4015E98422009CAEBA /* AISocketManager.m */,
+				01962BA715EABBC4009CAEBA /* AISocketManager.h */,
+				01962BA815EABBC4009CAEBA /* AISocketManager.m */,
+				01962B7015EABA60009CAEBA /* TravelBotAppDelegate.h */,
+				01962B7115EABA60009CAEBA /* TravelBotAppDelegate.m */,
+				01962B7315EABA60009CAEBA /* MainStoryboard.storyboard */,
+				01962B7615EABA60009CAEBA /* TravelBotMasterViewController.h */,
+				01962B7715EABA60009CAEBA /* TravelBotMasterViewController.m */,
+				01962B7915EABA60009CAEBA /* TravelBotDetailViewController.h */,
+				01962B7A15EABA60009CAEBA /* TravelBotDetailViewController.m */,
+				01962B6815EABA60009CAEBA /* Supporting Files */,
 			);
 			path = TravelBot;
 			sourceTree = "<group>";
 		};
-		01472F5115E939F100793C6F /* Supporting Files */ = {
+		01962B6815EABA60009CAEBA /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
-				01472F5215E939F100793C6F /* TravelBot-Info.plist */,
-				01472F5315E939F100793C6F /* InfoPlist.strings */,
-				01472F5615E939F100793C6F /* main.m */,
-				01472F5815E939F100793C6F /* TravelBot-Prefix.pch */,
+				01962B6915EABA60009CAEBA /* TravelBot-Info.plist */,
+				01962B6A15EABA60009CAEBA /* InfoPlist.strings */,
+				01962B6D15EABA60009CAEBA /* main.m */,
+				01962B6F15EABA60009CAEBA /* TravelBot-Prefix.pch */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
-		01472F7515E939F100793C6F /* TravelBotTests */ = {
+		01962B8815EABA60009CAEBA /* TravelBotTests */ = {
 			isa = PBXGroup;
 			children = (
-				01472F7B15E939F100793C6F /* TravelBotTests.h */,
-				01472F7C15E939F100793C6F /* TravelBotTests.m */,
-				01472F7615E939F100793C6F /* Supporting Files */,
+				01962B8E15EABA60009CAEBA /* TravelBotTests.h */,
+				01962B8F15EABA60009CAEBA /* TravelBotTests.m */,
+				01962B8915EABA60009CAEBA /* Supporting Files */,
 			);
 			path = TravelBotTests;
 			sourceTree = "<group>";
 		};
-		01472F7615E939F100793C6F /* Supporting Files */ = {
+		01962B8915EABA60009CAEBA /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
-				01472F7715E939F100793C6F /* TravelBotTests-Info.plist */,
-				01472F7815E939F100793C6F /* InfoPlist.strings */,
+				01962B8A15EABA60009CAEBA /* TravelBotTests-Info.plist */,
+				01962B8B15EABA60009CAEBA /* InfoPlist.strings */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -179,14 +170,14 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		01472F4315E939F100793C6F /* TravelBot */ = {
+		01962B5C15EABA60009CAEBA /* TravelBot */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 01472F8015E939F100793C6F /* Build configuration list for PBXNativeTarget "TravelBot" */;
+			buildConfigurationList = 01962B9315EABA60009CAEBA /* Build configuration list for PBXNativeTarget "TravelBot" */;
 			buildPhases = (
-				01472F4015E939F100793C6F /* Sources */,
-				01472F4115E939F100793C6F /* Frameworks */,
-				01472F4215E939F100793C6F /* Resources */,
-				FA5CF69BBCF34278A4978358 /* Copy Pods Resources */,
+				01962B5915EABA60009CAEBA /* Sources */,
+				01962B5A15EABA60009CAEBA /* Frameworks */,
+				01962B5B15EABA60009CAEBA /* Resources */,
+				E0FD716312DD4A91B69EC579 /* Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -194,78 +185,78 @@
 			);
 			name = TravelBot;
 			productName = TravelBot;
-			productReference = 01472F4415E939F100793C6F /* TravelBot.app */;
+			productReference = 01962B5D15EABA60009CAEBA /* TravelBot.app */;
 			productType = "com.apple.product-type.application";
 		};
-		01472F6C15E939F100793C6F /* TravelBotTests */ = {
+		01962B8015EABA60009CAEBA /* TravelBotTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 01472F8315E939F100793C6F /* Build configuration list for PBXNativeTarget "TravelBotTests" */;
+			buildConfigurationList = 01962B9615EABA60009CAEBA /* Build configuration list for PBXNativeTarget "TravelBotTests" */;
 			buildPhases = (
-				01472F6815E939F100793C6F /* Sources */,
-				01472F6915E939F100793C6F /* Frameworks */,
-				01472F6A15E939F100793C6F /* Resources */,
-				01472F6B15E939F100793C6F /* ShellScript */,
+				01962B7C15EABA60009CAEBA /* Sources */,
+				01962B7D15EABA60009CAEBA /* Frameworks */,
+				01962B7E15EABA60009CAEBA /* Resources */,
+				01962B7F15EABA60009CAEBA /* ShellScript */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				01472F7415E939F100793C6F /* PBXTargetDependency */,
+				01962B8715EABA60009CAEBA /* PBXTargetDependency */,
 			);
 			name = TravelBotTests;
 			productName = TravelBotTests;
-			productReference = 01472F6D15E939F100793C6F /* TravelBotTests.octest */;
+			productReference = 01962B8115EABA60009CAEBA /* TravelBotTests.octest */;
 			productType = "com.apple.product-type.bundle";
 		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
-		01472F3B15E939F100793C6F /* Project object */ = {
+		01962B5415EABA60009CAEBA /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
 				CLASSPREFIX = TravelBot;
 				LastUpgradeCheck = 0440;
 				ORGANIZATIONNAME = "Asim Ihsan";
 			};
-			buildConfigurationList = 01472F3E15E939F100793C6F /* Build configuration list for PBXProject "TravelBot" */;
+			buildConfigurationList = 01962B5715EABA60009CAEBA /* Build configuration list for PBXProject "TravelBot" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
 			);
-			mainGroup = 01472F3915E939F100793C6F;
-			productRefGroup = 01472F4515E939F100793C6F /* Products */;
+			mainGroup = 01962B5215EABA60009CAEBA;
+			productRefGroup = 01962B5E15EABA60009CAEBA /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				01472F4315E939F100793C6F /* TravelBot */,
-				01472F6C15E939F100793C6F /* TravelBotTests */,
+				01962B5C15EABA60009CAEBA /* TravelBot */,
+				01962B8015EABA60009CAEBA /* TravelBotTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		01472F4215E939F100793C6F /* Resources */ = {
+		01962B5B15EABA60009CAEBA /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				01472F5515E939F100793C6F /* InfoPlist.strings in Resources */,
-				01472F5E15E939F100793C6F /* MainStoryboard.storyboard in Resources */,
+				01962B6C15EABA60009CAEBA /* InfoPlist.strings in Resources */,
+				01962B7515EABA60009CAEBA /* MainStoryboard.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		01472F6A15E939F100793C6F /* Resources */ = {
+		01962B7E15EABA60009CAEBA /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				01472F7A15E939F100793C6F /* InfoPlist.strings in Resources */,
+				01962B8D15EABA60009CAEBA /* InfoPlist.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		01472F6B15E939F100793C6F /* ShellScript */ = {
+		01962B7F15EABA60009CAEBA /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -278,7 +269,7 @@
 			shellPath = /bin/sh;
 			shellScript = "# Run the unit tests in this test bundle.\n\"${SYSTEM_DEVELOPER_DIR}/Tools/RunUnitTests\"\n";
 		};
-		FA5CF69BBCF34278A4978358 /* Copy Pods Resources */ = {
+		E0FD716312DD4A91B69EC579 /* Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -295,58 +286,57 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		01472F4015E939F100793C6F /* Sources */ = {
+		01962B5915EABA60009CAEBA /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				01472F5715E939F100793C6F /* main.m in Sources */,
-				01472F5B15E939F100793C6F /* TravelBotAppDelegate.m in Sources */,
-				01472F6115E939F100793C6F /* TravelBot.xcdatamodeld in Sources */,
-				01472F6415E939F100793C6F /* TravelBotMasterViewController.m in Sources */,
-				01472F6715E939F100793C6F /* TravelBotDetailViewController.m in Sources */,
-				01962B4115E98422009CAEBA /* AISocketManager.m in Sources */,
+				01962B6E15EABA60009CAEBA /* main.m in Sources */,
+				01962B7215EABA60009CAEBA /* TravelBotAppDelegate.m in Sources */,
+				01962B7815EABA60009CAEBA /* TravelBotMasterViewController.m in Sources */,
+				01962B7B15EABA60009CAEBA /* TravelBotDetailViewController.m in Sources */,
+				01962BA915EABBC4009CAEBA /* AISocketManager.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		01472F6815E939F100793C6F /* Sources */ = {
+		01962B7C15EABA60009CAEBA /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				01472F7D15E939F100793C6F /* TravelBotTests.m in Sources */,
+				01962B9015EABA60009CAEBA /* TravelBotTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		01472F7415E939F100793C6F /* PBXTargetDependency */ = {
+		01962B8715EABA60009CAEBA /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 01472F4315E939F100793C6F /* TravelBot */;
-			targetProxy = 01472F7315E939F100793C6F /* PBXContainerItemProxy */;
+			target = 01962B5C15EABA60009CAEBA /* TravelBot */;
+			targetProxy = 01962B8615EABA60009CAEBA /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
-		01472F5315E939F100793C6F /* InfoPlist.strings */ = {
+		01962B6A15EABA60009CAEBA /* InfoPlist.strings */ = {
 			isa = PBXVariantGroup;
 			children = (
-				01472F5415E939F100793C6F /* en */,
+				01962B6B15EABA60009CAEBA /* en */,
 			);
 			name = InfoPlist.strings;
 			sourceTree = "<group>";
 		};
-		01472F5C15E939F100793C6F /* MainStoryboard.storyboard */ = {
+		01962B7315EABA60009CAEBA /* MainStoryboard.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
-				01472F5D15E939F100793C6F /* en */,
+				01962B7415EABA60009CAEBA /* en */,
 			);
 			name = MainStoryboard.storyboard;
 			sourceTree = "<group>";
 		};
-		01472F7815E939F100793C6F /* InfoPlist.strings */ = {
+		01962B8B15EABA60009CAEBA /* InfoPlist.strings */ = {
 			isa = PBXVariantGroup;
 			children = (
-				01472F7915E939F100793C6F /* en */,
+				01962B8C15EABA60009CAEBA /* en */,
 			);
 			name = InfoPlist.strings;
 			sourceTree = "<group>";
@@ -354,7 +344,7 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
-		01472F7E15E939F100793C6F /* Debug */ = {
+		01962B9115EABA60009CAEBA /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -381,7 +371,7 @@
 			};
 			name = Debug;
 		};
-		01472F7F15E939F100793C6F /* Release */ = {
+		01962B9215EABA60009CAEBA /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -403,9 +393,9 @@
 			};
 			name = Release;
 		};
-		01472F8115E939F100793C6F /* Debug */ = {
+		01962B9415EABA60009CAEBA /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = DBE4A2D4A984491496A554B4 /* Pods.xcconfig */;
+			baseConfigurationReference = EABBC4AF54824A1598C0BA05 /* Pods.xcconfig */;
 			buildSettings = {
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "TravelBot/TravelBot-Prefix.pch";
@@ -416,9 +406,9 @@
 			};
 			name = Debug;
 		};
-		01472F8215E939F100793C6F /* Release */ = {
+		01962B9515EABA60009CAEBA /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = DBE4A2D4A984491496A554B4 /* Pods.xcconfig */;
+			baseConfigurationReference = EABBC4AF54824A1598C0BA05 /* Pods.xcconfig */;
 			buildSettings = {
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "TravelBot/TravelBot-Prefix.pch";
@@ -429,7 +419,7 @@
 			};
 			name = Release;
 		};
-		01472F8415E939F100793C6F /* Debug */ = {
+		01962B9715EABA60009CAEBA /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/TravelBot.app/TravelBot";
@@ -446,7 +436,7 @@
 			};
 			name = Debug;
 		};
-		01472F8515E939F100793C6F /* Release */ = {
+		01962B9815EABA60009CAEBA /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/TravelBot.app/TravelBot";
@@ -466,47 +456,34 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		01472F3E15E939F100793C6F /* Build configuration list for PBXProject "TravelBot" */ = {
+		01962B5715EABA60009CAEBA /* Build configuration list for PBXProject "TravelBot" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				01472F7E15E939F100793C6F /* Debug */,
-				01472F7F15E939F100793C6F /* Release */,
+				01962B9115EABA60009CAEBA /* Debug */,
+				01962B9215EABA60009CAEBA /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		01472F8015E939F100793C6F /* Build configuration list for PBXNativeTarget "TravelBot" */ = {
+		01962B9315EABA60009CAEBA /* Build configuration list for PBXNativeTarget "TravelBot" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				01472F8115E939F100793C6F /* Debug */,
-				01472F8215E939F100793C6F /* Release */,
+				01962B9415EABA60009CAEBA /* Debug */,
+				01962B9515EABA60009CAEBA /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		01472F8315E939F100793C6F /* Build configuration list for PBXNativeTarget "TravelBotTests" */ = {
+		01962B9615EABA60009CAEBA /* Build configuration list for PBXNativeTarget "TravelBotTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				01472F8415E939F100793C6F /* Debug */,
-				01472F8515E939F100793C6F /* Release */,
+				01962B9715EABA60009CAEBA /* Debug */,
+				01962B9815EABA60009CAEBA /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
-
-/* Begin XCVersionGroup section */
-		01472F5F15E939F100793C6F /* TravelBot.xcdatamodeld */ = {
-			isa = XCVersionGroup;
-			children = (
-				01472F6015E939F100793C6F /* TravelBot.xcdatamodel */,
-			);
-			currentVersion = 01472F6015E939F100793C6F /* TravelBot.xcdatamodel */;
-			path = TravelBot.xcdatamodeld;
-			sourceTree = "<group>";
-			versionGroupType = wrapper.xcdatamodel;
-		};
-/* End XCVersionGroup section */
 	};
-	rootObject = 01472F3B15E939F100793C6F /* Project object */;
+	rootObject = 01962B5415EABA60009CAEBA /* Project object */;
 }
