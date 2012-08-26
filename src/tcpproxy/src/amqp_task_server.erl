@@ -75,6 +75,7 @@ handle_info(timeout, State=#state{request=Request}) ->
                          uuid=UUID,
                          amqp_connection=AMQPConnection,
                          amqp_channel=AMQPChannel},
+    ok = lager:info("amqp_task_server:handle_info/2 with Pid ~p handling task UUID ~p.", [self(), UUID]),
 
     {ok, State3} = post_request(State2),
     {ok, State4} = subscribe_for_request_result(State3),
@@ -94,7 +95,7 @@ handle_info({#'basic.deliver'{delivery_tag=Tag}, _Content=#amqp_msg{payload=Payl
             State=#state{uuid=UUID,
                          amqp_channel=AMQPChannel,
                          parent_pid=ParentPid}) ->
-    ok = lager:info("amqp_task_server_~p:handle_info/2. basic.deliver. Payload: ~p", [UUID, Payload]),
+    ok = lager:info("amqp_task_server_~p:handle_info/2. basic.deliver", [UUID]),
     tcp_to_amqp_server:send_task_result(ParentPid, Payload),
     amqp_channel:cast(AMQPChannel, #'basic.ack'{delivery_tag = Tag}),
     stop(),

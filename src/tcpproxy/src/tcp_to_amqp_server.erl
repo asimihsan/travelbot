@@ -12,7 +12,9 @@
     transport :: module(),
     inactivity_timeout :: timeout(),
     max_request_size :: integer(),
-    task_timeout :: timeout()
+    task_timeout :: timeout(),
+    source_address :: inet:ip_address(),
+    source_port :: non_neg_integer()
 }).
 
 -define(ERROR_REQUEST_IS_TOO_BIG, 1).
@@ -27,7 +29,7 @@ start_link(ListenerPid, Socket, Transport, Opts) ->
     gen_server:start_link(?MODULE, [ListenerPid, Socket, Transport, Opts], []).
 
 send_task_result(Pid, Result) ->
-    ok = lager:info("tcp_to_amqp_server:send_task_result/2 entry. Pid: ~p, Result: ~p\n", [Pid, Result]),
+    ok = lager:info("tcp_to_amqp_server:send_task_result/2 entry. Pid: ~p\n", [Pid]),
     gen_server:cast(Pid, {task_result, Result}).
 %% ----------------------------------------------------------------------------
 
@@ -39,11 +41,12 @@ init([ListenerPid, Socket, Transport, Opts]) ->
 
     % !!AI uncomment for tracing all messages ('m'), function calls ('c'),
     % and process related events ('p') in this gen_server instance.
-    % dbg:p(self(), [p, c, m]),
+    dbg:p(self(), [p]),
 
     InactivityTimeout = proplists:get_value(inactivity_timeout, Opts, 5000),
     MaxRequestSize = proplists:get_value(max_request_size, Opts, 65536),
     TaskTimeout = proplists:get_value(task_timeout, Opts, 60000),
+    {ok, {SourceAddress, SourcePort}} = inet:peername(Socket),
     Transport:setopts(Socket, [
         {active, once},
         {packet, 4},
@@ -65,7 +68,9 @@ init([ListenerPid, Socket, Transport, Opts]) ->
                 transport=Transport,
                 inactivity_timeout=InactivityTimeout,
                 max_request_size=MaxRequestSize,
-                task_timeout=TaskTimeout}, 0}.
+                task_timeout=TaskTimeout,
+                source_address=SourceAddress,
+                source_port=SourcePort}, 0}.
     % -------------------------------------------------------------------------
 
 handle_call(Msg, _From, State) ->
@@ -74,7 +79,7 @@ handle_call(Msg, _From, State) ->
 handle_cast({task_result, Result},
             State=#state{socket=Socket,
                          transport=Transport}) ->
-    ok = lager:info("tcp_to_amqp_server:handle_cast/1. Got task_result: ~p\n", [Result]),
+    ok = lager:info("tcp_to_amqp_server:handle_cast/1. Got task_result\n"),
     ok = validate_result(Result),
     Transport:send(Socket, Result),
     {noreply, State};
@@ -84,8 +89,11 @@ handle_cast(stop, State) ->
 % -----------------------------------------------------------------------------
 %   handle_info/2 for timeout after init/1 finishes.
 % -----------------------------------------------------------------------------
-handle_info(timeout, State=#state{listener=ListenerPid}) ->
-    ok = lager:info("tcp_to_amqp_server:handle_info/1. Msg is timeout, initialization finished.\n"),
+handle_info(timeout, State=#state{listener=ListenerPid,
+                                  socket=_Socket,
+                                  source_address=SourceAddress,
+                                  source_port=SourcePort}) ->
+    ok = lager:info("tcp_to_amqp_server:handle_info/1. Msg is timeout, initialization finished for ~p:~p.", [SourceAddress, SourcePort]),
     ok = cowboy:accept_ack(ListenerPid),
     {noreply, State};
 % -----------------------------------------------------------------------------
@@ -95,10 +103,11 @@ handle_info(timeout, State=#state{listener=ListenerPid}) ->
 % -----------------------------------------------------------------------------
 handle_info({tcp, _Socket, RawData}, State) ->
     handle_request(RawData, State);
-handle_info({tcp_closed, _Socket}, State) ->
+handle_info({tcp_closed, _Socket}, State=#state{source_address=SourceAddress, source_port=SourcePort}) ->
+    ok = lager:info("tcp_to_amqp_server:handle_info/1. tcp_closed for ~p:~p.", [SourceAddress, SourcePort]),
     {stop, normal, State};
-handle_info({tcp_error, _Socket, Reason}, State) ->
-    ok = lager:info("tcp_to_amqp_server:handle_info/1. tcp_error. reason: ~p.\n", [Reason]),
+handle_info({tcp_error, _Socket, Reason}, State=#state{source_address=SourceAddress, source_port=SourcePort}) ->
+    ok = lager:info("tcp_to_amqp_server:handle_info/1. tcp_error for ~p:~p. reason: ~p.\n", [SourceAddress, SourcePort, Reason]),
     {stop, normal, State};
 % -----------------------------------------------------------------------------
 
@@ -123,8 +132,11 @@ code_change(_OldVsn, State, _Extra) ->
 % -----------------------------------------------------------------------------
 %   handle_request/2 for 'ping'.
 % -----------------------------------------------------------------------------
-handle_request(RawData, State=#state{socket=Socket, transport=Transport}) when RawData =:= <<"ping">> ->
-    ok = lager:debug("tcp_to_amqp_server:handle_request/2. 'ping' received.\n"),
+handle_request(RawData, State=#state{socket=Socket,
+                                     transport=Transport,
+                                     source_address=SourceAddress,
+                                     source_port=SourcePort}) when RawData =:= <<"ping">> ->
+    ok = lager:debug("tcp_to_amqp_server:handle_request/2. 'ping' received from ~p:~p.", [SourceAddress, SourcePort]),
     Transport:send(Socket, <<"pong">>),
     Transport:setopts(Socket, [{active, once}]),
     {noreply, State};
@@ -133,8 +145,11 @@ handle_request(RawData, State=#state{socket=Socket, transport=Transport}) when R
 % -----------------------------------------------------------------------------
 %   handle_request/2 for 'close'.
 % -----------------------------------------------------------------------------
-handle_request(RawData, State=#state{socket=_Socket, transport=_Transport}) when RawData =:= <<"close">> ->
-    ok = lager:debug("tcp_to_amqp_server:handle_request/2. 'close' received.\n"),
+handle_request(RawData, State=#state{socket=_Socket,
+                                     transport=_Transport,
+                                     source_address=SourceAddress,
+                                     source_port=SourcePort}) when RawData =:= <<"close">> ->
+    ok = lager:debug("tcp_to_amqp_server:handle_request/2. 'close' received from ~p:~p.", [SourceAddress, SourcePort]),
     {stop, normal, State};
 % -----------------------------------------------------------------------------
 
@@ -143,8 +158,9 @@ handle_request(RawData, State=#state{socket=_Socket, transport=_Transport}) when
 % -----------------------------------------------------------------------------
 handle_request(RawData, State=#state{socket=Socket,
                                      transport=Transport,
-                                     task_timeout=_TaskTimeout}) ->
-    ok = lager:debug("tcp_to_amqp_server:handle_request/2. RawData: ~p.\n", [RawData]),
+                                     source_address=SourceAddress,
+                                     source_port=SourcePort}) ->
+    ok = lager:debug("tcp_to_amqp_server:handle_request/2. RawData from ~p:~p: ~p.\n", [SourceAddress, SourcePort, RawData]),
     ok = validate_request(RawData),
 
     % -------------------------------------------------------------------------
@@ -153,19 +169,20 @@ handle_request(RawData, State=#state{socket=Socket,
     % -------------------------------------------------------------------------
     Request = dict:from_list(erlson:from_json(RawData)),
     Type = dict:fetch(type, Request),
-    {ok, _Pid} = if Type =:= <<"task">> ->
-        amqp_task_server:start_link(self(), Request)
+    if Type =:= <<"task">> ->
+        {ok, Pid} = amqp_task_server:start_link(self(), Request),
+        ok = lager:info("tcp_to_amqp_server:handle_request/2 launched amqp_task_server with Pid ~p for ~p:~p.", [Pid, SourceAddress, SourcePort])
     end,
     % -------------------------------------------------------------------------
 
     Transport:setopts(Socket, [{active, once}]),
     {noreply, State}.
 
-validate_result(RawData) ->
+validate_result(_RawData) ->
     % -------------------------------------------------------------------------
     %   Parse then validate request.
     % -------------------------------------------------------------------------
-    _Request = dict:from_list(erlson:from_json(RawData)),
+    %_Request = dict:from_list(erlson:from_json(RawData)),
     % -------------------------------------------------------------------------
 
     ok.
