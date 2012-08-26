@@ -22,6 +22,7 @@
 		01962B8D15EABA60009CAEBA /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 01962B8B15EABA60009CAEBA /* InfoPlist.strings */; };
 		01962B9015EABA60009CAEBA /* TravelBotTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 01962B8F15EABA60009CAEBA /* TravelBotTests.m */; };
 		01962BA915EABBC4009CAEBA /* AISocketManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 01962BA815EABBC4009CAEBA /* AISocketManager.m */; };
+		01962C5B15EAC235009CAEBA /* libSQLite.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 01962C5A15EAC235009CAEBA /* libSQLite.a */; };
 		8478498E553A465784C5EDA4 /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A293237B22E44B69AC333154 /* libPods.a */; };
 /* End PBXBuildFile section */
 
@@ -59,6 +60,7 @@
 		01962B8F15EABA60009CAEBA /* TravelBotTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TravelBotTests.m; sourceTree = "<group>"; };
 		01962BA715EABBC4009CAEBA /* AISocketManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AISocketManager.h; sourceTree = "<group>"; };
 		01962BA815EABBC4009CAEBA /* AISocketManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AISocketManager.m; sourceTree = "<group>"; };
+		01962C5A15EAC235009CAEBA /* libSQLite.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libSQLite.a; path = "SQLite/build/Release-iphoneos/libSQLite.a"; sourceTree = "<group>"; };
 		A293237B22E44B69AC333154 /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		EABBC4AF54824A1598C0BA05 /* Pods.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.xcconfig; path = Pods/Pods.xcconfig; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
@@ -68,6 +70,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				01962C5B15EAC235009CAEBA /* libSQLite.a in Frameworks */,
 				01962B6215EABA60009CAEBA /* UIKit.framework in Frameworks */,
 				01962B6415EABA60009CAEBA /* Foundation.framework in Frameworks */,
 				01962B6615EABA60009CAEBA /* CoreGraphics.framework in Frameworks */,
@@ -111,6 +114,7 @@
 		01962B6015EABA60009CAEBA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				01962C5A15EAC235009CAEBA /* libSQLite.a */,
 				01962B6115EABA60009CAEBA /* UIKit.framework */,
 				01962B6315EABA60009CAEBA /* Foundation.framework */,
 				01962B6515EABA60009CAEBA /* CoreGraphics.framework */,
@@ -367,6 +371,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
+				RUN_CLANG_STATIC_ANALYZER = YES;
 				SDKROOT = iphoneos;
 			};
 			name = Debug;
@@ -388,6 +393,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
+				RUN_CLANG_STATIC_ANALYZER = YES;
 				SDKROOT = iphoneos;
 				VALIDATE_PRODUCT = YES;
 			};

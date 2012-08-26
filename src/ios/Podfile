@@ -3,5 +3,5 @@ pod 'CocoaAsyncSocket',      '~> 0.0.1'
 pod 'ConciseKit',            '~> 0.1.2'
 pod 'CocoaLumberjack',       '~> 1.6'
 pod 'JSONKit',               '~> 1.4'
-
+pod 'FMDB',                  '~> 2.0'
 
