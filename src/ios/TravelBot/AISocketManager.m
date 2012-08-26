@@ -19,32 +19,59 @@ static const int ddLogLevel = LOG_LEVEL_VERBOSE;
 
 // Header is fixed size at 4-bytes. It is a big-endian unsigned integer that
 // specifies the size of the payload that immediately follows in bytes.
-static const NSUInteger HEADER_SIZE = 4;
+static const int HEADER_SIZE = 4;
 
 // Tags are used for identifying the asynchronous callbacks of reads and
 // writes.
-static const long TAG_FIXED_LENGTH_HEADER       = 1;
-static const long TAG_RESPONSE_BODY             = 2;
-static const long TAG_PING                      = 3;
-static const long TAG_CLOSE                     = 4;
+
+// General header/body responses for reads.
+static const long TAG_FIXED_LENGTH_HEADER_READ       = 1;
+static const long TAG_RESPONSE_BODY_READ             = 2;
+
+// General header/body tags for write.
+static const long TAG_FIXED_LENGTH_HEADER_WRITE      = 3;
+static const long TAG_RESPONSE_BODY_WRITE            = 4;
+
+// Control messages. There are ASCII strings.
+static const long TAG_PING_HEADER                    = 5;
+static const long TAG_PING_PAYLOAD                   = 6;
+static const long TAG_PONG_HEADER                    = 7;
+static const long TAG_PONG_PAYLOAD                   = 8;
+static const long TAG_CLOSE_HEADER                   = 9;
+static const long TAG_CLOSE_PAYLOAD                  = 10;
+
 // ----------------------------------------------------------------------------
 
 #pragma mark - Private methods and constants.
 @interface AISocketManager ()
 
 @property (nonatomic, assign) dispatch_queue_t socketQueue;
+@property (nonatomic, assign) dispatch_queue_t processingQueue;
 @property (nonatomic, assign) BOOL isConnected;
 @property (nonatomic, assign) BOOL isAttemptingConnection;
+@property (nonatomic, assign) UIBackgroundTaskIdentifier processingTask;
+@property (nonatomic, retain) UIApplication *application;
+
+- (void)startProcessingTask;
+- (void)stopProcessingTask;
 
 - (void)initSocketManager;
 - (void)initSocket;
 - (void)startConnectToHost:(NSString *)host port:(uint16_t)port;
 
-- (void)writeData:(NSData *)data withTimeout:(NSTimeInterval)timeout tag:(long)tag;
+- (void)writeString:(NSString *)string
+            timeout:(NSTimeInterval)timeout
+         header_tag:(long)header_tag
+        payload_tag:(long)payload_tag;
+- (void)writeData:(NSData *)data
+      withTimeout:(NSTimeInterval)timeout
+       header_tag:(long)header_tag
+      payload_tag:(long)payload_tag;
 - (void)readHeader;
 
-- (NSUInteger)parseHeader:(NSData *)data;
+- (int)parseHeader:(NSData *)data;
 - (void)handleResponseBody:(NSData *)data;
+- (BOOL)maybeHandleControlResponse:(NSString *)response;
 
 - (void)doHeartbeat;
 - (void)notification:(NSNotification *)notification;
@@ -55,6 +82,7 @@ static const long TAG_CLOSE                     = 4;
 
 @synthesize socket = _socket,
             socketQueue = _socketQueue,
+            processingQueue = _processingQueue,
             isConnected = _isConnected,
             isAttemptingConnection = _isAttemptingConnection;
 
@@ -93,14 +121,37 @@ static AISocketManager *sharedInstance = nil;
         return;
     }
     static NSString *close = @"close";
-    NSData *close_data = [close dataUsingEncoding:NSASCIIStringEncoding];
-    [self writeData:close_data withTimeout:-1 tag:TAG_CLOSE];
+    [self writeString:close
+              timeout:-1
+           header_tag:TAG_CLOSE_HEADER
+          payload_tag:TAG_CLOSE_PAYLOAD];
     [self.socket disconnectAfterReadingAndWriting];
     self.isConnected = NO;
     DDLogVerbose(@"AISocketManager:disconnect() exit.");
 }
 
+- (void)writeString:(NSString *)string
+{
+    [self writeString:string
+              timeout:-1
+           header_tag:TAG_FIXED_LENGTH_HEADER_WRITE
+          payload_tag:TAG_RESPONSE_BODY_WRITE];
+}
+
 #pragma mark - Private methods.
+
+- (void)startProcessingTask
+{
+    self.processingTask = [self.application beginBackgroundTaskWithExpirationHandler:^{
+        [self stopProcessingTask];
+    }];
+}
+
+- (void)stopProcessingTask
+{
+    [self.application endBackgroundTask:self.processingTask];
+    self.processingTask = UIBackgroundTaskInvalid;
+}
 
 - (void)initSocketManager
 {
@@ -111,6 +162,8 @@ static AISocketManager *sharedInstance = nil;
         DDLogVerbose(@"isConnected, so disconnect.");
         [self disconnect];
     }
+    
+    self.processingQueue = dispatch_queue_create("com.ai.processingQueue", NULL);
     
     // Setup socket's GCD queue and the socket. Send an initial ping.
     [self initSocket];
@@ -155,7 +208,7 @@ static AISocketManager *sharedInstance = nil;
 }
 
 
-# pragma mark - Socket handling methods.
+# pragma mark Socket handling methods.
 - (void)initSocket
 {
     DDLogVerbose(@"AISocketManager:initSocket() entry.");
@@ -178,22 +231,6 @@ static AISocketManager *sharedInstance = nil;
     DDLogVerbose(@"AISocketManager:startConnectToHost() exit.");
 }
 
-- (void)writeData:(NSData *)data withTimeout:(NSTimeInterval)timeout tag:(long)tag
-{
-    DDLogVerbose(@"AISocketManager:writeData entry.");
-    // CFSwapInt32HostToBig converts a 32-bit integer from the host’s native byte order to big-endian format.
-    // CFSwapInt32BigToHost converts a 32-bit integer from big-endian format to the host’s native byte order.
-    int length = data.length;
-    int big_endian_length = CFSwapInt32HostToBig(length);
-    NSData *header = [NSData dataWithBytes:&big_endian_length
-                                    length:sizeof(big_endian_length)];
-    DDLogVerbose(@"header: %@", header);
-    DDLogVerbose(@"data: %@", data);
-    [self.socket writeData:header withTimeout:-1 tag:TAG_FIXED_LENGTH_HEADER];
-    [self.socket writeData:data withTimeout:-1 tag:TAG_RESPONSE_BODY];
-    DDLogVerbose(@"AISocketManager:writeData exit.");    
-}
-
 // ----------------------------------------------------------------------------
 //  socket:didConnectToHost gets called when a connection is successfully made.
 // ----------------------------------------------------------------------------
@@ -202,28 +239,139 @@ static AISocketManager *sharedInstance = nil;
     DDLogVerbose(@"AISocketManager:socket:didConnectToHost entry. host: %@, port: %d", host, port);
     self.isConnected = YES;
     self.isAttemptingConnection = NO;
+    [self readHeader];
+    DDLogVerbose(@"AISocketManager:socket:didConnectToHost exit.");
 }
 // ----------------------------------------------------------------------------
+
+#pragma mark Reading data from socket.
 
 // ----------------------------------------------------------------------------
 //  socket:didReadDataWithTag gets calls when we've successfully read data.
 // ----------------------------------------------------------------------------
 - (void)socket:(GCDAsyncSocket *)sender didReadData:(NSData *)data withTag:(long)tag
 {
-    DDLogVerbose(@"AISocketManager:socket:didReadDataWithTag entry. tag: %ld", tag);
-    if (tag == TAG_FIXED_LENGTH_HEADER)
+    assert(tag == TAG_FIXED_LENGTH_HEADER_READ || tag == TAG_RESPONSE_BODY_READ);
+    
+    [self startProcessingTask];
+    dispatch_async(self.processingQueue,
+    ^{
+        DDLogVerbose(@"AISocketManager:socket:didReadDataWithTag entry. tag: %ld", tag);
+        if (tag == TAG_FIXED_LENGTH_HEADER_READ)
+        {
+            DDLogVerbose(@"TAG_FIXED_LENGTH_HEADER.");
+            int bodyLength = [self parseHeader:data];
+            [self.socket readDataToLength:bodyLength withTimeout:-1 tag:TAG_RESPONSE_BODY_READ];
+        }
+        else if (tag == TAG_RESPONSE_BODY_READ)
+        {
+            // Process the response, and then start reading the next response.
+            DDLogVerbose(@"TAG_RESPONSE_BODY.");
+            [self handleResponseBody:data];
+            [self readHeader];
+        }
+        DDLogVerbose(@"AISocketManager:socket:didReadDataWithTag exit.");
+            
+        [self stopProcessingTask];
+    });
+}
+
+- (void)readHeader
+{
+    [self.socket readDataToLength:HEADER_SIZE withTimeout:-1 tag:TAG_FIXED_LENGTH_HEADER_READ];
+}
+
+// ----------------------------------------------------------------------------
+//  Parse a header, which is a big-endian unsigned integer of 4 bytes. It
+//  indicates the size of the payload to follow.
+// ----------------------------------------------------------------------------
+- (int)parseHeader:(NSData *)data
+{
+    DDLogVerbose(@"AISocketManager:parseHeader entry. data: %@", data);
+    assert(data.length == HEADER_SIZE);
+    int return_value = CFSwapInt32BigToHost(*(int *)data.bytes);
+    DDLogVerbose(@"AISocketManager:parseHeader exit. returning: %d", return_value);
+    return return_value;
+}
+// ----------------------------------------------------------------------------
+
+- (void)handleResponseBody:(NSData *)data
+{
+    DDLogVerbose(@"AISocketManager:handleResponseBody entry.");
+    NSString *response = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+    BOOL isHandledAsControlResponse = [self maybeHandleControlResponse:response];
+    if (!(isHandledAsControlResponse))
     {
-        DDLogVerbose(@"TAG_FIXED_LENGTH_HEADER.");
-        NSUInteger bodyLength = [self parseHeader:data];
-        [self.socket readDataToLength:bodyLength withTimeout:-1 tag:TAG_RESPONSE_BODY];
+        DDLogVerbose(@"AISocketManager:handleResponseBody: Is not a control response. Must be JSON encoded.");
+        DDLogVerbose(@"AISocketManager:handleResponseBody: response.length: %i", response.length);
     }
-    else if (tag == TAG_RESPONSE_BODY)
+    
+    DDLogVerbose(@"AISocketManager:handleResponseBody exit.");
+}
+
+- (BOOL)maybeHandleControlResponse:(NSString *)response
+{
+    DDLogVerbose(@"AISocketManager:maybeHandleControlResponse entry.");
+    BOOL return_value = YES;
+    if ([response isEqualToString:@"ping"])
     {
-        // Process the response, and then start reading the next response.
-        DDLogVerbose(@"TAG_RESPONSE_BODY.");
-        [self handleResponseBody:data];
-        [self.socket readDataToLength:HEADER_SIZE withTimeout:-1 tag:TAG_FIXED_LENGTH_HEADER];
+        DDLogVerbose(@"AISocketManager:maybeHandleControlResponse: server is pinging us, will respond with 'pong'");
+        [self writeString:@"pong"
+                  timeout:-1
+               header_tag:TAG_PONG_HEADER
+              payload_tag:TAG_PONG_PAYLOAD];
+        goto EXIT_LABEL;
     }
+    else if ([response isEqualToString:@"pong"])
+    {
+        DDLogVerbose(@"AISocketManager:maybeHandleControlResponse: server responds 'pong' to our ping.");
+        goto EXIT_LABEL;
+    }
+    else if ([response isEqualToString:@"close"])
+    {
+        DDLogVerbose(@"AISocketManager:maybeHandleControlResponse: server requests we close the connection.");
+        goto EXIT_LABEL;
+    }
+    return_value = NO;
+    
+EXIT_LABEL:
+    DDLogVerbose(@"AISocketManager:maybeHandleControlResponse exit. returning: %@",
+                 (return_value) ? @"YES" : @"NO");
+    return return_value;
+}
+
+#pragma mark Writing data to socket.
+
+- (void)writeString:(NSString *)string
+            timeout:(NSTimeInterval)timeout
+         header_tag:(long)header_tag
+        payload_tag:(long)payload_tag
+{
+    NSData *data_using_encoding = [string dataUsingEncoding:NSUTF8StringEncoding];
+    [self writeData:data_using_encoding
+        withTimeout:timeout
+         header_tag:header_tag
+        payload_tag:payload_tag];
+}
+
+- (void)writeData:(NSData *)data
+      withTimeout:(NSTimeInterval)timeout
+       header_tag:(long)header_tag
+      payload_tag:(long)payload_tag
+{
+    DDLogVerbose(@"AISocketManager:writeData entry. header_tag: %ld, payload_tag: %ld, data: %@", header_tag, payload_tag, data);
+
+    // Write the header. This is a big-endian unsigned integer of 4 bytes that indicates the
+    // size of the payload to follow.
+    int big_endian_data_length = CFSwapInt32HostToBig(data.length);
+    NSData *header = [NSData dataWithBytes:&big_endian_data_length
+                                    length:sizeof(big_endian_data_length)];
+    [self.socket writeData:header withTimeout:timeout tag:header_tag];
+
+    // Write the payload.
+    [self.socket writeData:data withTimeout:-1 tag:payload_tag];
+    
+    DDLogVerbose(@"AISocketManager:writeData exit.");    
 }
 
 // ----------------------------------------------------------------------------
@@ -232,37 +380,18 @@ static AISocketManager *sharedInstance = nil;
 - (void)socket:(GCDAsyncSocket *)sender didWriteDataWithTag:(long)tag
 {
     DDLogVerbose(@"AISocketManager:socket:didWriteDataWithTag entry. tag: %ld", tag);
+    DDLogVerbose(@"AISocketManager:socket:didWriteDataWithTag exit.");
 }
 // ----------------------------------------------------------------------------
-
-- (void)readHeader
-{
-    [self.socket readDataToLength:HEADER_SIZE withTimeout:-1 tag:TAG_FIXED_LENGTH_HEADER];
-}
-
-// ----------------------------------------------------------------------------
-//  Parse a header, which is a big-endian unsigned integer of 4 bytes. It
-//  indicates the size of the payload to follow.
-// ----------------------------------------------------------------------------
-- (NSUInteger)parseHeader:(NSData *)data
-{
-    DDLogVerbose(@"AISocketManager:parseHeader entry. data: %@", data);
-    return 4;
-}
-// ----------------------------------------------------------------------------
-
-- (void)handleResponseBody:(NSData *)data
-{
-    DDLogVerbose(@"AISocketManager:handleResponseBody entry. data: %@", data);
-}
 
 - (void)doHeartbeat
 {
     DDLogVerbose(@"AISocketManager:doHeartbeat entry.");
     static NSString *ping = @"ping";
-    NSData *ping_data = [ping dataUsingEncoding:NSASCIIStringEncoding];
-    [self writeData:ping_data withTimeout:-1 tag:TAG_PING];
-    [self readHeader];
+    [self writeString:ping
+              timeout:-1
+           header_tag:TAG_PING_HEADER
+          payload_tag:TAG_PING_PAYLOAD];
     DDLogVerbose(@"AISocketManager:doHeartbeat exit.");
 }
 
@@ -293,6 +422,7 @@ static AISocketManager *sharedInstance = nil;
     // ------------------------------------------------------------------------
     _isAttemptingConnection = NO;
     _isConnected = NO;
+    self.application = [UIApplication sharedApplication];
     // ------------------------------------------------------------------------
     
     [self initSocketManager];
@@ -300,6 +430,10 @@ static AISocketManager *sharedInstance = nil;
     return self;
 }
 
-
+- (void)dealloc
+{
+    self.socketQueue = nil;
+    self.processingQueue = nil;
+}
 
 @end

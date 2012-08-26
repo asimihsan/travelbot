@@ -18,4 +18,6 @@
 - (void)connect;
 - (void)disconnect;
 
+- (void)writeString:(NSString *)string;
+
 @end

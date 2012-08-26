@@ -9,6 +9,9 @@
 #import "TravelBotAppDelegate.h"
 #import "AISocketManager.h"
 #import "CocoaLumberJack/DDTTYLogger.h"
+#import "JSONKit/JSONKit.h"
+#import "ConciseKit/ConciseKit.h"
+
 #import "TravelBotMasterViewController.h"
 
 static const int ddLogLevel = LOG_LEVEL_VERBOSE;
@@ -33,7 +36,26 @@ static const int ddLogLevel = LOG_LEVEL_VERBOSE;
     //  Access the socket manager singleton. If it hasn't been initalized this
     //  will initialize it.
     // ------------------------------------------------------------------------
-    [AISocketManager sharedInstance];
+    AISocketManager *socketManager = [AISocketManager sharedInstance];
+    
+    //!!AI hard coded JSON request.
+    /*
+    NSDictionary *kwargs = $dict(@"Ljubljana", @"from_location",
+                                 @"Bled", @"to_location");
+
+    NSDictionary *request = $dict(@"1.0", @"version",
+                                  @"request_tag", @"tag",
+                                  @"task", @"type",
+                                  @"slovenia.bus_ap.get_journeys", @"method",
+                                  kwargs, @"kwargs");
+    */
+    NSDictionary *request = $dict(@"1.0", @"version",
+                                  @"request_tag", @"1",
+                                  @"task", @"type",
+                                  @"slovenia.bus_ap.get_locations", @"method");
+    NSString *request_string = [request JSONString];
+    DDLogVerbose(@"request_string: %@", request_string);
+    [socketManager writeString:request_string];
     // ------------------------------------------------------------------------
     
     UINavigationController *navigationController = (UINavigationController *)self.window.rootViewController;
