@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		011B689A15EB8A5C00057B6F /* libarc.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 011B689915EB8A5C00057B6F /* libarc.a */; };
+		011B68FD15EB8D0200057B6F /* libarc.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 011B68FC15EB8D0200057B6F /* libarc.a */; };
 		01962B6215EABA60009CAEBA /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01962B6115EABA60009CAEBA /* UIKit.framework */; };
 		01962B6415EABA60009CAEBA /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01962B6315EABA60009CAEBA /* Foundation.framework */; };
 		01962B6615EABA60009CAEBA /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01962B6515EABA60009CAEBA /* CoreGraphics.framework */; };
@@ -23,6 +25,8 @@
 		01962B9015EABA60009CAEBA /* TravelBotTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 01962B8F15EABA60009CAEBA /* TravelBotTests.m */; };
 		01962BA915EABBC4009CAEBA /* AISocketManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 01962BA815EABBC4009CAEBA /* AISocketManager.m */; };
 		01962C5B15EAC235009CAEBA /* libSQLite.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 01962C5A15EAC235009CAEBA /* libSQLite.a */; };
+		01962C7E15EB83B7009CAEBA /* AIUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 01962C7D15EB83B7009CAEBA /* AIUtilities.m */; };
+		01962D1C15EB8A03009CAEBA /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 01962D1B15EB8A03009CAEBA /* libz.dylib */; };
 		8478498E553A465784C5EDA4 /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A293237B22E44B69AC333154 /* libPods.a */; };
 /* End PBXBuildFile section */
 
@@ -37,6 +41,12 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		011B689915EB8A5C00057B6F /* libarc.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libarc.a; path = "libarchive/libarchive/arc/build/Release-iphoneos/libarc.a"; sourceTree = "<group>"; };
+		011B689C15EB8A5F00057B6F /* liblibarchive.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = liblibarchive.a; path = "libarchive/build/Release-iphoneos/liblibarchive.a"; sourceTree = "<group>"; };
+		011B68F915EB8D0200057B6F /* archive.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = archive.h; sourceTree = "<group>"; };
+		011B68FA15EB8D0200057B6F /* archive_entry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = archive_entry.h; sourceTree = "<group>"; };
+		011B68FB15EB8D0200057B6F /* bzlib.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bzlib.h; sourceTree = "<group>"; };
+		011B68FC15EB8D0200057B6F /* libarc.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libarc.a; sourceTree = "<group>"; };
 		01962B5D15EABA60009CAEBA /* TravelBot.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TravelBot.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		01962B6115EABA60009CAEBA /* UIKit.framework */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		01962B6315EABA60009CAEBA /* Foundation.framework */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -61,6 +71,9 @@
 		01962BA715EABBC4009CAEBA /* AISocketManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AISocketManager.h; sourceTree = "<group>"; };
 		01962BA815EABBC4009CAEBA /* AISocketManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AISocketManager.m; sourceTree = "<group>"; };
 		01962C5A15EAC235009CAEBA /* libSQLite.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libSQLite.a; path = "SQLite/build/Release-iphoneos/libSQLite.a"; sourceTree = "<group>"; };
+		01962C7C15EB83B7009CAEBA /* AIUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AIUtilities.h; sourceTree = "<group>"; };
+		01962C7D15EB83B7009CAEBA /* AIUtilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AIUtilities.m; sourceTree = "<group>"; };
+		01962D1B15EB8A03009CAEBA /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
 		A293237B22E44B69AC333154 /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		EABBC4AF54824A1598C0BA05 /* Pods.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.xcconfig; path = Pods/Pods.xcconfig; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
@@ -70,11 +83,14 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				011B689A15EB8A5C00057B6F /* libarc.a in Frameworks */,
+				01962D1C15EB8A03009CAEBA /* libz.dylib in Frameworks */,
 				01962C5B15EAC235009CAEBA /* libSQLite.a in Frameworks */,
 				01962B6215EABA60009CAEBA /* UIKit.framework in Frameworks */,
 				01962B6415EABA60009CAEBA /* Foundation.framework in Frameworks */,
 				01962B6615EABA60009CAEBA /* CoreGraphics.framework in Frameworks */,
 				8478498E553A465784C5EDA4 /* libPods.a in Frameworks */,
+				011B68FD15EB8D0200057B6F /* libarc.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -91,6 +107,17 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		011B68F815EB8D0200057B6F /* libarchive */ = {
+			isa = PBXGroup;
+			children = (
+				011B68F915EB8D0200057B6F /* archive.h */,
+				011B68FA15EB8D0200057B6F /* archive_entry.h */,
+				011B68FB15EB8D0200057B6F /* bzlib.h */,
+				011B68FC15EB8D0200057B6F /* libarc.a */,
+			);
+			path = libarchive;
+			sourceTree = SOURCE_ROOT;
+		};
 		01962B5215EABA60009CAEBA = {
 			isa = PBXGroup;
 			children = (
@@ -114,6 +141,9 @@
 		01962B6015EABA60009CAEBA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				01962D1B15EB8A03009CAEBA /* libz.dylib */,
+				011B689C15EB8A5F00057B6F /* liblibarchive.a */,
+				011B689915EB8A5C00057B6F /* libarc.a */,
 				01962C5A15EAC235009CAEBA /* libSQLite.a */,
 				01962B6115EABA60009CAEBA /* UIKit.framework */,
 				01962B6315EABA60009CAEBA /* Foundation.framework */,
@@ -127,8 +157,7 @@
 		01962B6715EABA60009CAEBA /* TravelBot */ = {
 			isa = PBXGroup;
 			children = (
-				01962BA715EABBC4009CAEBA /* AISocketManager.h */,
-				01962BA815EABBC4009CAEBA /* AISocketManager.m */,
+				01962C8015EB83CE009CAEBA /* Libs */,
 				01962B7015EABA60009CAEBA /* TravelBotAppDelegate.h */,
 				01962B7115EABA60009CAEBA /* TravelBotAppDelegate.m */,
 				01962B7315EABA60009CAEBA /* MainStoryboard.storyboard */,
@@ -169,6 +198,18 @@
 				01962B8B15EABA60009CAEBA /* InfoPlist.strings */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		01962C8015EB83CE009CAEBA /* Libs */ = {
+			isa = PBXGroup;
+			children = (
+				011B68F815EB8D0200057B6F /* libarchive */,
+				01962C7C15EB83B7009CAEBA /* AIUtilities.h */,
+				01962C7D15EB83B7009CAEBA /* AIUtilities.m */,
+				01962BA715EABBC4009CAEBA /* AISocketManager.h */,
+				01962BA815EABBC4009CAEBA /* AISocketManager.m */,
+			);
+			name = Libs;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -299,6 +340,7 @@
 				01962B7815EABA60009CAEBA /* TravelBotMasterViewController.m in Sources */,
 				01962B7B15EABA60009CAEBA /* TravelBotDetailViewController.m in Sources */,
 				01962BA915EABBC4009CAEBA /* AISocketManager.m in Sources */,
+				01962C7E15EB83B7009CAEBA /* AIUtilities.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -406,6 +448,10 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "TravelBot/TravelBot-Prefix.pch";
 				INFOPLIST_FILE = "TravelBot/TravelBot-Info.plist";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/libarchive\"",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				RUN_CLANG_STATIC_ANALYZER = YES;
 				WRAPPER_EXTENSION = app;
@@ -419,6 +465,10 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "TravelBot/TravelBot-Prefix.pch";
 				INFOPLIST_FILE = "TravelBot/TravelBot-Info.plist";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/libarchive\"",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				RUN_CLANG_STATIC_ANALYZER = YES;
 				WRAPPER_EXTENSION = app;

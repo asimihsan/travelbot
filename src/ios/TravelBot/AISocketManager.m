@@ -9,6 +9,9 @@
 //  - https://github.com/robbiehanson/CocoaAsyncSocket/wiki/Intro_GCDAsyncSocket
 
 #import "AISocketManager.h"
+#import "AIUtilities.h"
+#import "JSONKit/JSONKit.h"
+#import "ConciseKit/ConciseKit.h"
 #import "CocoaAsyncSocket/GCDAsyncSocket.h"
 #import "CocoaLumberJack/DDLog.h"
 
@@ -168,7 +171,7 @@ static AISocketManager *sharedInstance = nil;
     // Setup socket's GCD queue and the socket. Send an initial ping.
     [self initSocket];
     [self connect];
-    [self doHeartbeat];
+    //[self doHeartbeat];
 }
 
 - (void)initListener
@@ -302,8 +305,29 @@ static AISocketManager *sharedInstance = nil;
     BOOL isHandledAsControlResponse = [self maybeHandleControlResponse:response];
     if (!(isHandledAsControlResponse))
     {
+        // !!AI move this out to a caller-specified block callback
         DDLogVerbose(@"AISocketManager:handleResponseBody: Is not a control response. Must be JSON encoded.");
         DDLogVerbose(@"AISocketManager:handleResponseBody: response.length: %i", response.length);
+        
+        NSDictionary *json_decoded_1 = [response objectFromJSONString];
+        NSDictionary *result = [json_decoded_1 $for:@"result"];
+        NSNumber *status = [result $for:@"status"];
+        DDLogVerbose(@"status: %@", status);
+        
+        NSString *value = [result $for:@"value"];
+        
+        DDLogVerbose(@"base64 decoding response...");
+        NSData *response_base64_decoded = [AIUtilities decodeBase64WithString:value];
+        
+        DDLogVerbose(@"BZIP2 decompressing response...");
+        NSData *response_decompressed = [AIUtilities bunzip2:response_base64_decoded];
+        
+        DDLogVerbose(@"JSON decoding response - encode to UTF-8...");
+        NSString *response_decompressed_string = [[NSString alloc] initWithData:response_decompressed
+                                                                       encoding:NSUTF8StringEncoding];
+        DDLogVerbose(@"JSON decoding response - decode as JSON...");
+        NSDictionary *response_json_decoded = [response_decompressed_string objectFromJSONString];
+        DDLogVerbose(@"response_json_decode: %@", response_json_decoded);
     }
     
     DDLogVerbose(@"AISocketManager:handleResponseBody exit.");
