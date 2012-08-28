@@ -18,7 +18,7 @@
 // ----------------------------------------------------------------------------
 //  Static variables or preprocessor defines.
 // ----------------------------------------------------------------------------
-static const int ddLogLevel = LOG_LEVEL_VERBOSE;
+static int ddLogLevel = LOG_LEVEL_VERBOSE;
 
 // Header is fixed size at 4-bytes. It is a big-endian unsigned integer that
 // specifies the size of the payload that immediately follows in bytes.
@@ -166,7 +166,7 @@ static AISocketManager *sharedInstance = nil;
         [self disconnect];
     }
     
-    self.processingQueue = dispatch_queue_create("com.ai.processingQueue", NULL);
+    self.processingQueue = dispatch_queue_create("com.ai.AISocketManager.processingQueue", NULL);
     
     // Setup socket's GCD queue and the socket. Send an initial ping.
     [self initSocket];
@@ -326,7 +326,7 @@ static AISocketManager *sharedInstance = nil;
         NSString *response_decompressed_string = [[NSString alloc] initWithData:response_decompressed
                                                                        encoding:NSUTF8StringEncoding];
         DDLogVerbose(@"JSON decoding response - decode as JSON...");
-        NSDictionary *response_json_decoded = [response_decompressed_string objectFromJSONString];
+        NSArray *response_json_decoded = [response_decompressed_string objectFromJSONString];
         DDLogVerbose(@"response_json_decode: %@", response_json_decoded);
     }
     

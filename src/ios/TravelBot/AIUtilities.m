@@ -10,7 +10,7 @@
 #import "bzlib.h"
 #import "CocoaLumberJack/DDLog.h"
 
-static const int ddLogLevel = LOG_LEVEL_VERBOSE;
+static int ddLogLevel = LOG_LEVEL_INFO;
 
 /**
  * Original location of this base64 code: https://github.com/mikeho/QSUtilities/blob/master/QSStrings.m
