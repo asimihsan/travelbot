@@ -7,12 +7,29 @@
 //
 
 #import "TravelBotPlacesViewController.h"
+#import "TravelBotCountry.h"
+#import "TravelBotPlace.h"
+#import "AISocketManager.h"
+#import "ConciseKit/ConciseKit.h"
+#import "CocoaLumberJack/DDLog.h"
+
+// ----------------------------------------------------------------------------
+//  Static variables or preprocessor defines.
+// ----------------------------------------------------------------------------
+static int ddLogLevel = LOG_LEVEL_VERBOSE;
 
 @interface TravelBotPlacesViewController ()
+
+@property (assign, nonatomic) NSInteger numberOfRows;
 
 @end
 
 @implementation TravelBotPlacesViewController
+
+@synthesize numberOfRows = _numberOfRows;
+@synthesize placeType = _placeType;
+@synthesize country = _country;
+@synthesize delegate = _delegate;
 
 - (id)initWithStyle:(UITableViewStyle)style
 {
@@ -25,20 +42,47 @@
 
 - (void)viewDidLoad
 {
+    DDLogVerbose(@"TravelBotPlacesViewController:viewDidLoad entry.");
+    self.numberOfRows = 0;
+    if ($eql(self.country.name, @"Slovenia"))
+    {
+        DDLogVerbose(@"update places for Slovenia.");
+        AISocketManager *socketManager = [AISocketManager sharedInstance];
+        NSDictionary *request = $dict(@"1.0", @"version",
+                                      @"task", @"type",
+                                      @"slovenia.bus_ap.get_locations", @"method");
+        NSString *request_uuid = [socketManager writeDictionary:request];
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(onRequestCompletion:)
+                                                     name:request_uuid
+                                                   object:nil];
+    }
     [super viewDidLoad];
+    DDLogVerbose(@"TravelBotPlacesViewController:viewDidLoad exit.");
+}
 
-    // Uncomment the following line to preserve selection between presentations.
-    // self.clearsSelectionOnViewWillAppear = NO;
- 
-    // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-    // self.navigationItem.rightBarButtonItem = self.editButtonItem;
+- (void)onRequestCompletion:(NSNotification *)notification
+{
+    DDLogVerbose(@"TravelBotPlacesViewController:onRequestCompletion entry.");
+    [[NSNotificationCenter defaultCenter] removeObserver:self
+                                                    name:notification.name
+                                                  object:nil];
+    NSArray *result = notification.object;
+    DDLogVerbose(@"result.count: %d", result.count);
+    DDLogVerbose(@"result[0]: %@", [result $at:0]);
+    DDLogVerbose(@"result[1]: %@", [result $at:1]);
+    DDLogVerbose(@"TravelBotPlacesViewController:onRequestCompletion exit.");
+}
+
+- (void)viewWillAppear:(BOOL)animated
+{
+    DDLogVerbose(@"TravelBotPlacesViewController:viewWillAppear entry.");
+    self.navigationItem.title = [self.placeType capitalizedString];
 }
 
 - (void)viewDidUnload
 {
     [super viewDidUnload];
-    // Release any retained subviews of the main view.
-    // e.g. self.myOutlet = nil;
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
@@ -51,18 +95,18 @@
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
     // Return the number of sections.
-    return 0;
+    return 1;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     // Return the number of rows in the section.
-    return 0;
+    return self.numberOfRows;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    static NSString *CellIdentifier = @"Cell";
+    static NSString *CellIdentifier = @"PlaceCell";
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     
     // Configure the cell...
@@ -70,56 +114,25 @@
     return cell;
 }
 
-/*
-// Override to support conditional editing of the table view.
-- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    // Return NO if you do not want the specified item to be editable.
-    return YES;
-}
-*/
-
-/*
-// Override to support editing the table view.
-- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    if (editingStyle == UITableViewCellEditingStyleDelete) {
-        // Delete the row from the data source
-        [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
-    }   
-    else if (editingStyle == UITableViewCellEditingStyleInsert) {
-        // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-    }   
-}
-*/
-
-/*
-// Override to support rearranging the table view.
-- (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)fromIndexPath toIndexPath:(NSIndexPath *)toIndexPath
-{
-}
-*/
-
-/*
-// Override to support conditional rearranging of the table view.
-- (BOOL)tableView:(UITableView *)tableView canMoveRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    // Return NO if you do not want the item to be re-orderable.
-    return YES;
-}
-*/
-
 #pragma mark - Table view delegate
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    // Navigation logic may go here. Create and push another view controller.
+    DDLogVerbose(@"TravelBotCountriesViewController:didSelectRowAtIndexPath entry. indexPath: %@", indexPath);
     /*
-     <#DetailViewController#> *detailViewController = [[<#DetailViewController#> alloc] initWithNibName:@"<#Nib name#>" bundle:nil];
-     // ...
-     // Pass the selected object to the new view controller.
-     [self.navigationController pushViewController:detailViewController animated:YES];
-     */
+    TravelBotPlace *selectedPlace =
+    DDLogVerbose(@"selectedPlace: %@", selectedPlace);
+    [self.delegate travelBotCountriesViewControllerDidFinish:self
+                                                     place:selectedPlace];
+    */
+    
+    // In tutorials this will read [self dismissViewControllerAnimated]. This
+    // doesn't work here because, I think, I haven't embedded this in a navigation
+    // hierarchy, because I want to use push segues.
+    //
+    // Instead, we reach into the navigation controller and ask it to pop.
+    [self.navigationController popViewControllerAnimated:YES];
+    
 }
 
 @end

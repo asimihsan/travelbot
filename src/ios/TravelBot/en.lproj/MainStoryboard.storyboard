@@ -52,6 +52,45 @@
             </objects>
             <point key="canvasLocation" x="451" y="-538"/>
         </scene>
+        <!--Travel Bot Places View Controller-->
+        <scene sceneID="ijw-EC-sRA">
+            <objects>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="3ou-6e-IPt" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <tableViewController id="kcB-js-UXW" customClass="TravelBotPlacesViewController" sceneMemberID="viewController">
+                    <tableView key="view" opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="D3e-qz-hZ3">
+                        <rect key="frame" x="0.0" y="64" width="320" height="372"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <prototypes>
+                            <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="PlaceCell" textLabel="rqo-D9-gQD" style="IBUITableViewCellStyleDefault" id="nBT-Xk-9MV">
+                                <rect key="frame" x="0.0" y="22" width="320" height="44"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
+                                    <rect key="frame" x="0.0" y="0.0" width="320" height="43"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                    <subviews>
+                                        <label opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="left" text="Title" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="rqo-D9-gQD">
+                                            <rect key="frame" x="10" y="0.0" width="300" height="43"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <fontDescription key="fontDescription" type="boldSystem" pointSize="20"/>
+                                            <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                            <color key="highlightedColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                        </label>
+                                    </subviews>
+                                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                </view>
+                            </tableViewCell>
+                        </prototypes>
+                        <connections>
+                            <outlet property="dataSource" destination="kcB-js-UXW" id="Cs4-Y6-Ypa"/>
+                            <outlet property="delegate" destination="kcB-js-UXW" id="EPH-Yy-nyb"/>
+                        </connections>
+                    </tableView>
+                    <navigationItem key="navigationItem" id="8G0-JO-CJG"/>
+                </tableViewController>
+            </objects>
+            <point key="canvasLocation" x="977" y="-538"/>
+        </scene>
         <!--Travel Bot Main Menu View Controller - Search-->
         <scene sceneID="nGO-RK-OXe">
             <objects>
@@ -107,7 +146,7 @@
                                             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                         </view>
                                         <connections>
-                                            <segue destination="1Op-6e-hNR" kind="push" identifier="from" id="NhE-op-mvo"/>
+                                            <segue destination="kcB-js-UXW" kind="push" identifier="from" id="zYt-Xn-k92"/>
                                         </connections>
                                     </tableViewCell>
                                     <tableViewCell userInteractionEnabled="NO" tag="201" contentMode="scaleToFill" selectionStyle="blue" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" textLabel="nYM-TY-rRy" style="IBUITableViewCellStyleDefault" id="k8w-8D-PmN">
@@ -128,7 +167,7 @@
                                             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                         </view>
                                         <connections>
-                                            <segue destination="1Op-6e-hNR" kind="push" identifier="to" id="UcC-KC-ycf"/>
+                                            <segue destination="kcB-js-UXW" kind="push" identifier="to" id="sRR-uD-NsV"/>
                                         </connections>
                                     </tableViewCell>
                                 </cells>
@@ -154,7 +193,7 @@
                                                         <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                     </state>
                                                     <connections>
-                                                        <segue destination="yRb-Hv-L4p" kind="push" id="Czy-3M-TFz"/>
+                                                        <segue destination="yRb-Hv-L4p" kind="push" identifier="search" id="Czy-3M-TFz"/>
                                                     </connections>
                                                 </button>
                                             </subviews>
@@ -239,21 +278,6 @@
             </objects>
             <point key="canvasLocation" x="1422" y="64"/>
         </scene>
-        <!--View Controller - Where-->
-        <scene sceneID="Vyk-bH-RP8">
-            <objects>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="2Rj-0V-18f" userLabel="First Responder" sceneMemberID="firstResponder"/>
-                <viewController id="1Op-6e-hNR" sceneMemberID="viewController">
-                    <view key="view" contentMode="scaleToFill" id="jDX-Jo-4D4">
-                        <rect key="frame" x="0.0" y="64" width="320" height="372"/>
-                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
-                    </view>
-                    <navigationItem key="navigationItem" title="Where" id="l1S-La-r0b"/>
-                </viewController>
-            </objects>
-            <point key="canvasLocation" x="977" y="-538"/>
-        </scene>
         <!--Navigation Controller-->
         <scene sceneID="1XE-EJ-zaW">
             <objects>
@@ -276,36 +300,12 @@
     <resources>
         <image name="search_button_highlight.png" width="300" height="44"/>
     </resources>
-    <classes>
-        <class className="TravelBotCountriesViewController" superclassName="UITableViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/TravelBotCountriesViewController.h"/>
-        </class>
-        <class className="TravelBotCountryCell" superclassName="UITableViewCell">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/TravelBotCountryCell.h"/>
-            <relationships>
-                <relationship kind="outlet" name="image" candidateClass="UIImageView"/>
-                <relationship kind="outlet" name="label" candidateClass="UILabel"/>
-            </relationships>
-        </class>
-        <class className="TravelBotMainMenuViewController" superclassName="UITableViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/TravelBotMainMenuViewController.h"/>
-            <relationships>
-                <relationship kind="outlet" name="countryLabel" candidateClass="UILabel"/>
-                <relationship kind="outlet" name="fromLabel" candidateClass="UILabel"/>
-                <relationship kind="outlet" name="searchButton" candidateClass="UIButton"/>
-                <relationship kind="outlet" name="toLabel" candidateClass="UILabel"/>
-            </relationships>
-        </class>
-        <class className="TravelBotSearchViewController" superclassName="UITableViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/TravelBotSearchViewController.h"/>
-        </class>
-    </classes>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
         <simulatedStatusBarMetrics key="statusBar"/>
         <simulatedOrientationMetrics key="orientation"/>
         <simulatedScreenMetrics key="destination"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
-        <segue reference="UcC-KC-ycf"/>
+        <segue reference="sRR-uD-NsV"/>
     </inferredMetricsTieBreakers>
 </document>

@@ -8,7 +8,10 @@
 
 #import "TravelBotMainMenuViewController.h"
 #import "TravelBotCountriesViewController.h"
+#import "TravelBotPlacesViewController.h"
+#import "TravelBotSearchViewController.h"
 #import "TravelBotCountry.h"
+#import "TravelBotPlace.h"
 #import "ConciseKit/ConciseKit.h"
 #import "CocoaLumberJack/DDLog.h"
 
@@ -30,7 +33,8 @@ const int TAG_SEARCH_BUTTON_CELL = 300;
 // ----------------------------------------------------------------------------
 
 @interface TravelBotMainMenuViewController ()
-<TravelBotCountriesViewControllerDelegate>
+<TravelBotCountriesViewControllerDelegate,
+ TravelBotPlacesViewControllerDelegate>
 
 - (BOOL)isCountrySelected;
 
@@ -105,6 +109,7 @@ const int TAG_SEARCH_BUTTON_CELL = 300;
     return (interfaceOrientation == UIInterfaceOrientationPortrait);
 }
 
+#pragma mark - Segues, transitions, delegate callbacks.
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
     DDLogVerbose(@"TravelBotMainMenuViewController:prepareForSegue entry. segue: %@, sender: %@", segue, sender);
@@ -113,6 +118,29 @@ const int TAG_SEARCH_BUTTON_CELL = 300;
         DDLogVerbose(@"segue to 'country'");
         TravelBotCountriesViewController *controller = segue.destinationViewController;
         controller.delegate = self;
+    }
+    else if ($eql(segue.identifier, @"from"))
+    {
+        DDLogVerbose(@"segue to 'from'");
+        TravelBotPlacesViewController *controller = segue.destinationViewController;
+        controller.delegate = self;
+        controller.placeType = @"from";
+        assert(self.selectedCountry != nil);
+        controller.country = self.selectedCountry;
+
+    }
+    else if ($eql(segue.identifier, @"to"))
+    {
+        DDLogVerbose(@"segue to 'to'");
+        TravelBotPlacesViewController *controller = segue.destinationViewController;
+        controller.delegate = self;
+        controller.placeType = @"to";
+        assert(self.selectedCountry != nil);
+        controller.country = self.selectedCountry;
+    }
+    else if ($eql(segue.identifier, @"search"))
+    {
+        DDLogVerbose(@"segue to 'search'");
     }
 }
 - (void)travelBotCountriesViewControllerDidFinish:(TravelBotCountriesViewController *)controller
@@ -124,6 +152,13 @@ const int TAG_SEARCH_BUTTON_CELL = 300;
         DDLogVerbose(@"setting country.");
         self.selectedCountry = country;
     }
+}
+
+- (void)travelBotPlacesViewControllerDidFinish:(TravelBotPlacesViewController *)controller
+                                     placeType:(NSString *)placeType
+                                         place:(TravelBotPlace *)place
+{
+    DDLogVerbose(@"TravelBotMainMenuViewController:travelBotPlacesViewControllerDidFinish entry. controller: %@, place: %@", controller, place);
 }
 
 #pragma mark - Private API.

@@ -10,7 +10,6 @@
 
 static NSString *NOTIFICATION_SOCKET_OPENED = @"AISocketManager:notificationSocketOpened";
 static NSString *NOTIFICATION_SOCKET_CLOSED = @"AISocketManager:notificationSocketClosed";
-static NSString *NOTIFICATION_SOCKET_TASK_FINISHED = @"AISocketManager:notificationSocketTaskFinished";
 
 @class GCDAsyncSocket;
 
@@ -23,6 +22,6 @@ static NSString *NOTIFICATION_SOCKET_TASK_FINISHED = @"AISocketManager:notificat
 - (void)connect;
 - (void)disconnect;
 
-- (void)writeString:(NSString *)string;
+- (NSString *)writeDictionary:(NSDictionary *)dictionary;
 
 @end

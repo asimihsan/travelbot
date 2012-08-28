@@ -61,6 +61,7 @@ static const long TAG_CLOSE_PAYLOAD                  = 10;
 - (void)initSocket;
 - (void)startConnectToHost:(NSString *)host port:(uint16_t)port;
 
+- (void)writeString:(NSString *)string;
 - (void)writeString:(NSString *)string
             timeout:(NSTimeInterval)timeout
          header_tag:(long)header_tag
@@ -105,7 +106,7 @@ static AISocketManager *sharedInstance = nil;
         DDLogVerbose(@"Already attempting connection.");
         return;
     }
-    [self startConnectToHost:@"127.0.0.1" port:8080];
+    [self startConnectToHost:@"192.168.1.80" port:8080];
     DDLogVerbose(@"AISocketManager:connect() exit.");
 }
 
@@ -132,6 +133,19 @@ static AISocketManager *sharedInstance = nil;
     DDLogVerbose(@"AISocketManager:disconnect() exit.");
 }
 
+- (NSString *)writeDictionary:(NSDictionary *)dictionary
+{
+    NSMutableDictionary *request = [[NSMutableDictionary alloc] initWithDictionary:dictionary];
+    NSString *uuid = [[NSProcessInfo processInfo] globallyUniqueString];
+    [request $obj:uuid for:@"tag"];
+    DDLogVerbose(@"AISocketManager:writeDictionary entry. request: %@", request);
+    NSString *request_string = [request JSONString];
+    [self writeString:request_string];
+    
+    return uuid;
+}
+
+#pragma mark - Private methods.
 - (void)writeString:(NSString *)string
 {
     [self writeString:string
@@ -139,8 +153,6 @@ static AISocketManager *sharedInstance = nil;
            header_tag:TAG_FIXED_LENGTH_HEADER_WRITE
           payload_tag:TAG_RESPONSE_BODY_WRITE];
 }
-
-#pragma mark - Private methods.
 
 - (void)startProcessingTask
 {
@@ -326,7 +338,13 @@ static AISocketManager *sharedInstance = nil;
                                                                        encoding:NSUTF8StringEncoding];
         DDLogVerbose(@"JSON decoding response - decode as JSON...");
         NSArray *response_json_decoded = [response_decompressed_string objectFromJSONString];
-        DDLogVerbose(@"response_json_decode: %@", response_json_decoded);
+        DDLogVerbose(@"response_json_decoded.count: %d", response_json_decoded.count);
+        
+        NSString *uuid = [json_decoded_1 $for:@"tag"];
+        DDLogVerbose(@"posting notification under name: %@", uuid);
+        [[NSNotificationCenter defaultCenter] postNotificationName:uuid
+                                                            object:response_json_decoded];
+        
     }
     
     DDLogVerbose(@"AISocketManager:handleResponseBody exit.");
