@@ -50,7 +50,6 @@ static const long TAG_CLOSE_PAYLOAD                  = 10;
 
 @property (nonatomic, assign) dispatch_queue_t socketQueue;
 @property (nonatomic, assign) dispatch_queue_t processingQueue;
-@property (nonatomic, assign) BOOL isConnected;
 @property (nonatomic, assign) BOOL isAttemptingConnection;
 @property (nonatomic, assign) UIBackgroundTaskIdentifier processingTask;
 @property (nonatomic, retain) UIApplication *application;
@@ -170,8 +169,6 @@ static AISocketManager *sharedInstance = nil;
     
     // Setup socket's GCD queue and the socket. Send an initial ping.
     [self initSocket];
-    [self connect];
-    //[self doHeartbeat];
 }
 
 - (void)initListener
@@ -242,6 +239,8 @@ static AISocketManager *sharedInstance = nil;
     DDLogVerbose(@"AISocketManager:socket:didConnectToHost entry. host: %@, port: %d", host, port);
     self.isConnected = YES;
     self.isAttemptingConnection = NO;
+    [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_SOCKET_OPENED
+                                                        object:self];
     [self readHeader];
     DDLogVerbose(@"AISocketManager:socket:didConnectToHost exit.");
 }
@@ -422,6 +421,7 @@ EXIT_LABEL:
 #pragma mark - Singleton methods, lifecycle.
 + (void)initialize
 {
+    DDLogVerbose(@"AISocketManager:initialize entry.");
     if (self == [AISocketManager class])
     {
         sharedInstance = [[self alloc] init];
@@ -435,6 +435,7 @@ EXIT_LABEL:
 
 - (AISocketManager *)init
 {
+    DDLogVerbose(@"AISocketManager:init entry.");
     self = [super init];
     if (!self)
     {

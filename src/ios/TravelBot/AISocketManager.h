@@ -8,11 +8,16 @@
 
 #import <Foundation/Foundation.h>
 
+static NSString *NOTIFICATION_SOCKET_OPENED = @"AISocketManager:notificationSocketOpened";
+static NSString *NOTIFICATION_SOCKET_CLOSED = @"AISocketManager:notificationSocketClosed";
+static NSString *NOTIFICATION_SOCKET_TASK_FINISHED = @"AISocketManager:notificationSocketTaskFinished";
+
 @class GCDAsyncSocket;
 
 @interface AISocketManager : NSObject
 
 @property (strong, nonatomic) GCDAsyncSocket *socket;
+@property (nonatomic, assign) BOOL isConnected;
 
 + (AISocketManager *)sharedInstance;
 - (void)connect;

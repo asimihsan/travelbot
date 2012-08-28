@@ -16,6 +16,12 @@
 
 static int ddLogLevel = LOG_LEVEL_VERBOSE;
 
+@interface TravelBotAppDelegate ()
+
+- (void)notification:(NSNotification *)notification;
+
+@end
+
 @implementation TravelBotAppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
@@ -39,6 +45,23 @@ static int ddLogLevel = LOG_LEVEL_VERBOSE;
     //  this will initialize it.
     // ------------------------------------------------------------------------
     [AIDatabaseManager sharedInstance];
+    
+    // ------------------------------------------------------------------------
+    //  Subscribe to notifications about when the database and socket are
+    //  opened. When both are open then perform some expensive background
+    //  operations.
+    // ------------------------------------------------------------------------
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(notification:)
+                                                 name:NOTIFICATION_DATABASE_OPENED
+                                               object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(notification:)
+                                                 name:NOTIFICATION_SOCKET_OPENED
+                                               object:nil];
+    // ------------------------------------------------------------------------
+    
+    
     
     //!!AI hard coded JSON request.
     /*
@@ -92,6 +115,26 @@ static int ddLogLevel = LOG_LEVEL_VERBOSE;
 - (void)applicationWillTerminate:(UIApplication *)application
 {
     // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
+}
+
+- (void)notification:(NSNotification *)notification
+{
+    DDLogVerbose(@"TravelBotAppDelegate received notification: %@", notification);
+    if ($eql(notification.name, NOTIFICATION_DATABASE_OPENED))
+    {
+        DDLogVerbose(@"TravelBotAppDelegate: database is open.");
+    }
+    else if ($eql(notification.name, NOTIFICATION_SOCKET_OPENED))
+    {
+        DDLogVerbose(@"TravelBotAppDelegate: socket is open.");
+    }
+    
+    AIDatabaseManager *databaseManager = [AIDatabaseManager sharedInstance];
+    AISocketManager *socketManager = [AISocketManager sharedInstance];
+    if (([databaseManager isOpened] && socketManager.isConnected))
+    {
+        DDLogVerbose(@"Both database and socket are up.");
+    }
 }
 
 @end

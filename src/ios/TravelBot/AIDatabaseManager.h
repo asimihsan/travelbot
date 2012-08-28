@@ -8,13 +8,19 @@
 
 #import <Foundation/Foundation.h>
 
+static NSString *NOTIFICATION_DATABASE_OPENED = @"AIDatabaseManager:notificationDatabaseOpened";
+
+@class FMResultSet;
+
 @interface AIDatabaseManager : NSObject
 
 + (AIDatabaseManager *)sharedInstance;
 
 - (BOOL)isOpened;
-
 - (void)open;
 - (void)close;
+
+- (FMResultSet *)executeQuery:(NSString *)query withParameterDictionary:(NSDictionary *)arguments;
+- (void)executeUpdate:(NSString *)update withParameterDictionary:(NSDictionary *)arguments;
 
 @end
