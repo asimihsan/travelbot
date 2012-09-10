@@ -60,6 +60,7 @@ static const long TAG_CLOSE_PAYLOAD                  = 10;
 - (void)initSocketManager;
 - (void)initSocket;
 - (void)startConnectToHost:(NSString *)host port:(uint16_t)port;
+- (void)startSecure;
 
 - (void)writeString:(NSString *)string;
 - (void)writeString:(NSString *)string
@@ -106,7 +107,7 @@ static AISocketManager *sharedInstance = nil;
         DDLogVerbose(@"Already attempting connection.");
         return;
     }
-    [self startConnectToHost:@"192.168.1.80" port:8080];
+    [self startConnectToHost:@"127.0.0.1" port:8080];
     DDLogVerbose(@"AISocketManager:connect() exit.");
 }
 
@@ -208,7 +209,7 @@ static AISocketManager *sharedInstance = nil;
         {
             DDLogError(@"Not connecting or attempting connection.");
             [self connect];
-            [self doHeartbeat];
+            //[self doHeartbeat];
         }
     }
     else if ([notification.name isEqualToString:UIApplicationDidEnterBackgroundNotification])
@@ -249,14 +250,73 @@ static AISocketManager *sharedInstance = nil;
 - (void)socket:(GCDAsyncSocket *)sender didConnectToHost:(NSString *)host port:(uint16_t)port
 {
     DDLogVerbose(@"AISocketManager:socket:didConnectToHost entry. host: %@, port: %d", host, port);
+    [self startSecure];
+    DDLogVerbose(@"AISocketManager:socket:didConnectToHost exit.");
+}
+// ----------------------------------------------------------------------------
+
+#pragma mark SSL socket methods.
+- (void)startSecure
+{
+    DDLogVerbose(@"AISocketManager:startSecure entry.");
+    
+    // Do not validate the certificate peer name or the certificate chain. We're
+    // just going to do a byte comparison with the public key we expect, and on
+    // failure just fail the connection.
+    NSMutableDictionary *settings = $mdictnew;
+    
+    // Set the peer name
+    //[settings $obj:@"app.theclic.co.uk"
+    //           for:(NSString *)kCFStreamSSLPeerName];
+    
+    // Do not validate the peer name
+    [settings $obj:(id)kCFNull
+               for:(NSString *)kCFStreamSSLPeerName];
+    
+    // Allow expired certificates
+    [settings $obj:[NSNumber numberWithBool:YES]
+               for:(NSString *)kCFStreamSSLAllowsExpiredCertificates];
+    
+    // Allow self-signed certificates
+    [settings $obj:[NSNumber numberWithBool:YES]
+               for:(NSString *)kCFStreamSSLAllowsAnyRoot];
+    
+    // Don't validate the certificate chain.
+    [settings $obj:[NSNumber numberWithBool:NO]
+               for:(NSString *)kCFStreamSSLValidatesCertificateChain];
+    
+    [self.socket startTLS:settings];
+    
+    DDLogVerbose(@"AISocketManager:startSecure exit.");
+}
+
+// ----------------------------------------------------------------------------
+//  socketDidSecure gets called when a SSL socket is successfully set up.
+// ----------------------------------------------------------------------------
+- (void)socketDidSecure:(GCDAsyncSocket *)socket
+{
+    DDLogVerbose(@"AISocketManager:socketDidSecure entry.");
     self.isConnected = YES;
     self.isAttemptingConnection = NO;
     [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_SOCKET_OPENED
                                                         object:self];
     [self readHeader];
-    DDLogVerbose(@"AISocketManager:socket:didConnectToHost exit.");
+    DDLogVerbose(@"AISocketManager:socketDidSecure exit.");
 }
+
 // ----------------------------------------------------------------------------
+//  socketDidDisconnect gets called when socket closes. If there's an SSL
+//  error then 'error' input variable will have SSL error code.
+//
+//  Error codes are described in Apple's SecureTransport.h.
+// ----------------------------------------------------------------------------
+- (void)socketDidDisconnect:(GCDAsyncSocket *)socket withError:(NSError *)error
+{
+    DDLogVerbose(@"AISocketManager:socketDidDisconnect entry.");
+    DDLogWarn(@"Socket failed with error: %@", error);
+    DDLogVerbose(@"AISocketManager:socketDidDisconnect exit.");
+}
+
 
 #pragma mark Reading data from socket.
 

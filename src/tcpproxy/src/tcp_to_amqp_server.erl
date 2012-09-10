@@ -8,7 +8,12 @@
 
 -record(state, {
     listener :: pid(),
-    socket :: inet:socket(),
+
+    % For SSL sockets must be ssl:sslsocket().
+    % For non-SSL sockets must be inet:socket(),
+    socket :: ssl:sslsocket(),
+    %socket :: inet:socket(),
+
     transport :: module(),
     inactivity_timeout :: timeout(),
     max_request_size :: integer(),
@@ -46,7 +51,11 @@ init([ListenerPid, Socket, Transport, Opts]) ->
     InactivityTimeout = proplists:get_value(inactivity_timeout, Opts, 5000),
     MaxRequestSize = proplists:get_value(max_request_size, Opts, 65536),
     TaskTimeout = proplists:get_value(task_timeout, Opts, 60000),
-    {ok, {SourceAddress, SourcePort}} = inet:peername(Socket),
+
+    % To get peername for non-SSL socket is inet:peername(Socket).
+    % To get peername for SSL socket is ssl:peername(Socket).
+    {ok, {SourceAddress, SourcePort}} = ssl:peername(Socket),
+
     Transport:setopts(Socket, [
         {active, once},
         {packet, 4},
@@ -100,15 +109,25 @@ handle_info(timeout, State=#state{listener=ListenerPid,
 
 % -----------------------------------------------------------------------------
 %   handle_info/2 for TCP socket data.
+%
+%   The first atom is different for SSL connections. We explicitly support
+%   messages from both SSL and non-SSL connections.
 % -----------------------------------------------------------------------------
+% SSL
+handle_info({ssl, _Socket, RawData}, State) ->
+    handle_request(RawData, State);
+handle_info({ssl_closed, _Socket}, State) ->
+    handle_connection_closed(State);
+handle_info({ssl_error, _Socket, Reason}, State) ->
+    handle_connection_error(Reason, State);
+
+% non-SSL
 handle_info({tcp, _Socket, RawData}, State) ->
     handle_request(RawData, State);
-handle_info({tcp_closed, _Socket}, State=#state{source_address=SourceAddress, source_port=SourcePort}) ->
-    ok = lager:info("tcp_to_amqp_server:handle_info/1. tcp_closed for ~p:~p.", [SourceAddress, SourcePort]),
-    {stop, normal, State};
-handle_info({tcp_error, _Socket, Reason}, State=#state{source_address=SourceAddress, source_port=SourcePort}) ->
-    ok = lager:info("tcp_to_amqp_server:handle_info/1. tcp_error for ~p:~p. reason: ~p.\n", [SourceAddress, SourcePort, Reason]),
-    {stop, normal, State};
+handle_info({tcp_closed, _Socket}, State) ->
+    handle_connection_closed(State);
+handle_info({tcp_error, _Socket, Reason}, State) ->
+    handle_connection_error(Reason, State);
 % -----------------------------------------------------------------------------
 
 % -----------------------------------------------------------------------------
@@ -128,6 +147,14 @@ code_change(_OldVsn, State, _Extra) ->
     {ok, State}.
 
 %% Private functions.
+
+% Handle connection closes and failures.
+handle_connection_closed(State=#state{source_address=SourceAddress, source_port=SourcePort}) ->
+    ok = lager:info("tcp_to_amqp_server:handle_connection_closed/1. For ~p:~p.", [SourceAddress, SourcePort]),
+    {stop, normal, State}.
+handle_connection_error(Reason, State=#state{source_address=SourceAddress, source_port=SourcePort}) ->
+    ok = lager:info("tcp_to_amqp_server:handle_connection_error/1. For ~p:~p. reason: ~p.\n", [SourceAddress, SourcePort, Reason]),
+    {stop, normal, State}.
 
 % -----------------------------------------------------------------------------
 %   handle_request/2 for 'ping'.

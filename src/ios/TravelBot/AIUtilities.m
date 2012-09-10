@@ -37,6 +37,10 @@ static int ddLogLevel = LOG_LEVEL_INFO;
  * THE SOFTWARE.
  */
 
+/*
+ * bzip2 reference: http://www.bzip.org/1.0.3/html/low-level.html
+ */
+
 static const char _base64EncodingTable[64] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 static const short _base64DecodingTable[256] = {
 	-2, -2, -2, -2, -2, -2, -2, -2, -2, -1, -1, -2, -1, -1, -2, -2,
@@ -76,7 +80,12 @@ static const short _base64DecodingTable[256] = {
     stream.avail_out = buffer_size;
     NSMutableData *compressed = [NSMutableData data];
     
-    BZ2_bzCompressInit(&stream, compression, 0, 0);
+    // Reference: http://www.bzip.org/1.0.3/html/low-level.html
+    BZ2_bzCompressInit(&stream,         // bz_stream *strm
+                       compression,     // int blockSize100k, 0->9
+                       0,               // int verbosity, 0->4
+                       0);              // int workFactor, 0->250
+    
     @try
     {
         do
@@ -114,7 +123,10 @@ static const short _base64DecodingTable[256] = {
     stream.avail_out = buffer_size;
     NSMutableData *decompressed = [NSMutableData data];
     
-    BZ2_bzDecompressInit(&stream, 0, NO);
+    // Reference: http://www.bzip.org/1.0.3/html/low-level.html
+    BZ2_bzDecompressInit(&stream,           // bz_stream *strm
+                         0,                 // int verbosity
+                         YES);              // int small
     @try
     {
         do

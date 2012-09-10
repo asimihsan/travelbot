@@ -12,7 +12,10 @@
 
 @property (copy, nonatomic) NSString *name;
 @property (copy, nonatomic) NSString *image;
+@property (copy, nonatomic) NSString *code;
 
-- (id)initWithName:(NSString *)name image:(NSString *)image;
+- (id)initWithName:(NSString *)name
+             image:(NSString *)image
+              code:(NSString *)code;
 
 @end

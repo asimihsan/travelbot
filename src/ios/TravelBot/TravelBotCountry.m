@@ -17,20 +17,23 @@
 
 @synthesize name = _name;
 @synthesize image = _image;
+@synthesize code = _code;
 
 - (id)init
 {
-    return [self initWithName:nil image:nil];
+    return [self initWithName:nil image:nil code:nil];
 }
 
 // Designated initializer.
 - (id)initWithName:(NSString *)name
              image:(NSString *)image
+              code:(NSString *)code
 {
     if (!(self = [super init]))
         return nil;
     self.name = name;
     self.image = image;
+    self.code = code;
     return self;
 }
 
@@ -46,6 +49,8 @@
         return NO;
     if (!$eql(self.image, other.image))
         return NO;
+    if (!$eql(self.code, other.code))
+        return NO;
     
     return YES;
 }
@@ -57,12 +62,13 @@
     NSUInteger result = 17;
     result = prime * result + self.name.hash;
     result = prime * result + self.image.hash;
+    result = prime * result + self.code.hash;
     return result;
 }
 
 - (NSString *)description
 {
-    return $str(@"{TravelBotCountry. name=%@, image=%@}", self.name, self.image);
+    return $str(@"{TravelBotCountry. name=%@, image=%@, code=%@}", self.name, self.image, self.code);
 }
 
 @end

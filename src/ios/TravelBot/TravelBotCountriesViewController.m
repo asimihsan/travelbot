@@ -52,7 +52,9 @@ static int ddLogLevel = LOG_LEVEL_VERBOSE;
     // Note that [NSMutableArray copy] returns an immutable version of the array.
     DDLogVerbose(@"TravelBotCountriesViewController:updateCountries entry.");
     NSMutableArray *countries = $marrnew;
-    [countries $push:[[TravelBotCountry alloc] initWithName:@"Slovenia" image:@"si.png"]];
+    [countries $push:[[TravelBotCountry alloc] initWithName:@"Slovenia"
+                                                      image:@"si.png"
+                                                       code:@"si"]];
     self.countries = [countries copy];
 }
 

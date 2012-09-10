@@ -19,7 +19,13 @@ start(_StartType, _StartArgs) ->
         tcpproxy_daytime_protocol, []
     ),
     {ok, _Pid2} = cowboy:start_listener(tcp_to_amqp_listener, 5,
-        cowboy_tcp_transport, [{port, 8080}],
+        cowboy_ssl_transport, [
+            {port, 8080},
+            %{certfile, "priv/ssl/cowboy_certs/cert.pem"},
+            %{keyfile, "priv/ssl/cowboy_certs/key.pem"},
+            %{password, "cowboy"}],
+            {certfile, "priv/ssl/server_crt.pem"},
+            {keyfile, "priv/ssl/server_key.pem"}],
         tcpproxy_tcp_to_amqp_protocol, []
     ),
 
@@ -33,3 +39,6 @@ start(_StartType, _StartArgs) ->
 
 stop(_State) ->
     ok.
+
+%priv() ->
+%    code:priv_dir(tcpproxy).

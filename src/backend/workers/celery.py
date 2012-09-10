@@ -2,7 +2,8 @@ from __future__ import absolute_import
 
 from celery import Celery
 
-include = ['backend.workers.slovenia.bus_ap']
+include = ['backend.workers.slovenia.bus_ap',
+           'backend.workers.slovenia.locations']
 celery = Celery('backend.workers.celery',
                 broker = r"amqp://guest:guest@localhost:5672/",
                 backend = 'amqp',

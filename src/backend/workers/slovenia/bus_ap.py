@@ -58,7 +58,9 @@ logger.addHandler(ch)
 #logger.addHandler(fh)
 # -----------------------------------------------------------------------------
 
-@celery.task
+# This task is depreceated, do not use. We now prefer to get a list of canonical
+# locations rather than journey-type-specific locations.
+# @celery.task
 def get_locations():
     logger = logging.getLogger("%s.get_locations" % APP_NAME)
     logger.debug("entry.")
@@ -88,7 +90,7 @@ def get_locations():
         # -----------------------------------------------------------------
 
     logger.debug("returning.")
-    return [Location(location_name) for location_name in location_names]
+    return [Location(name = location_name) for location_name in location_names]
 
 @celery.task
 def get_journeys(from_location, to_location, journey_date=None, journey_time=None):
