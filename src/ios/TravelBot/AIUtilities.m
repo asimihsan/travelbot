@@ -10,7 +10,7 @@
 #import "bzlib.h"
 #import "CocoaLumberJack/DDLog.h"
 
-static int ddLogLevel = LOG_LEVEL_INFO;
+static int ddLogLevel = LOG_LEVEL_VERBOSE;
 
 /**
  * Original location of this base64 code: https://github.com/mikeho/QSUtilities/blob/master/QSStrings.m
@@ -146,6 +146,87 @@ static const short _base64DecodingTable[256] = {
         BZ2_bzDecompressEnd(&stream);
     }
     return decompressed;
+}
+
++ (void)bunzip2:(NSString *)inputFilepath
+ outputFilepath:(NSString *)outputFilepath
+{
+    DDLogVerbose(@"AIUtilities:bunzip2 entry. inputFilepath: %@, outputFilepath: %@",
+                 inputFilepath, outputFilepath);
+    
+    // -------------------------------------------------------------------------
+    //  Initialize local variables.
+    // -------------------------------------------------------------------------
+    int bzret;
+    const int buffer_size = 100000;
+    bz_stream stream = { 0 };
+    NSError *error;
+    // -------------------------------------------------------------------------
+
+    // -------------------------------------------------------------------------
+    //  Open input file for reading.
+    // -------------------------------------------------------------------------
+    NSData *input = [NSData dataWithContentsOfFile:inputFilepath
+                                           options:NSDataReadingUncached
+                                             error:&error];
+    if (error)
+    {
+        DDLogError(@"bunzip2 failed to open inputFilepath %@ with error: %@",
+                   inputFilepath, [error localizedDescription]);
+        return;
+    }
+    stream.next_in = (char *)input.bytes;
+    stream.avail_in = input.length;
+    // -------------------------------------------------------------------------
+
+    // -------------------------------------------------------------------------
+    //  Set up the output file and buffer.
+    // -------------------------------------------------------------------------
+    [[NSFileManager defaultManager] createFileAtPath:outputFilepath contents:nil attributes:nil];
+    NSFileHandle *outputFileHandle = [NSFileHandle fileHandleForWritingAtPath:outputFilepath];
+    
+    NSMutableData *buffer = [NSMutableData dataWithLength:buffer_size];
+    stream.next_out = [buffer mutableBytes];
+    stream.avail_out = buffer_size;
+    NSMutableData *decompressed = [NSMutableData data];
+    // -------------------------------------------------------------------------
+    
+    // Reference: http://www.bzip.org/1.0.3/html/low-level.html
+    BZ2_bzDecompressInit(&stream,           // bz_stream *strm
+                         0,                 // int verbosity
+                         YES);              // int small
+    @try
+    {
+        do
+        {
+            bzret = BZ2_bzDecompress(&stream);
+            if (bzret != BZ_OK && bzret != BZ_STREAM_END)
+            {
+                DDLogError(@"AIUtilities:bunzip2 BZ2_bzDecompress failed.");
+                [outputFileHandle closeFile];
+                @throw [NSException exceptionWithName:@"bzip2"
+                                               reason:@"BZ2_bzDecompress failed"
+                                             userInfo:nil];
+
+            }
+            
+            // Put currently decompressed bytes into a NSData buffer, flush it
+            // to the output file, and then clear the buffer.
+            [decompressed appendBytes:[buffer bytes] length:(buffer_size - stream.avail_out)];
+            [outputFileHandle writeData:decompressed];
+            [decompressed setLength:0];
+
+            stream.next_out = [buffer mutableBytes];
+            stream.avail_out = buffer_size;
+            // -----------------------------------------------------------------
+        } while(bzret != BZ_STREAM_END);
+    }
+    @finally
+    {
+        BZ2_bzDecompressEnd(&stream);
+    }
+    [outputFileHandle closeFile];
+    DDLogVerbose(@"AIUtilities:bunzip2 with file, returning.");
 }
 
 + (NSString *)encodeBase64WithString:(NSString *)strData {

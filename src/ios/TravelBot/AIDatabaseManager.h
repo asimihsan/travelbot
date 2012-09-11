@@ -20,7 +20,9 @@ static NSString *NOTIFICATION_DATABASE_OPENED = @"AIDatabaseManager:notification
 - (void)open;
 - (void)close;
 
-- (FMResultSet *)executeQuery:(NSString *)query withParameterDictionary:(NSDictionary *)arguments;
-- (void)executeUpdate:(NSString *)update withParameterDictionary:(NSDictionary *)arguments;
+- (NSNumber *)getNumberOfPlaces:(NSString *)countryCode;
+- (NSString *)getPlaceWithCountryCode:(NSString *)countryCode
+                               filter:(NSString *)filter
+                                index:(NSNumber *)index;
 
 @end

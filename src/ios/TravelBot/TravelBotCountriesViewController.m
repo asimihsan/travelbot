@@ -54,7 +54,7 @@ static int ddLogLevel = LOG_LEVEL_VERBOSE;
     NSMutableArray *countries = $marrnew;
     [countries $push:[[TravelBotCountry alloc] initWithName:@"Slovenia"
                                                       image:@"si.png"
-                                                       code:@"si"]];
+                                                       code:@"SI"]];
     self.countries = [countries copy];
 }
 

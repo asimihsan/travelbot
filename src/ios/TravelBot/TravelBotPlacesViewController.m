@@ -10,6 +10,7 @@
 #import "TravelBotCountry.h"
 #import "TravelBotPlace.h"
 #import "AISocketManager.h"
+#import "AIDatabaseManager.h"
 #import "ConciseKit/ConciseKit.h"
 #import "CocoaLumberJack/DDLog.h"
 
@@ -43,9 +44,17 @@ static int ddLogLevel = LOG_LEVEL_VERBOSE;
 - (void)viewDidLoad
 {
     DDLogVerbose(@"TravelBotPlacesViewController:viewDidLoad entry.");
-    self.numberOfRows = 0;
-    if ($eql(self.country.name, @"Slovenia"))
-    {
+    
+    AIDatabaseManager *databaseManager = [AIDatabaseManager sharedInstance];
+    NSNumber *return_value = [databaseManager getNumberOfPlaces:self.country.code];
+    self.numberOfRows = return_value.integerValue;
+
+        /*
+        !!AI
+         
+        This is how to make requests over the socket, so very important. Howver,
+        we don't request locations any more.
+         
         DDLogVerbose(@"update places for Slovenia.");
         AISocketManager *socketManager = [AISocketManager sharedInstance];
         NSDictionary *request = $dict(@"1.0", @"version",
@@ -56,22 +65,28 @@ static int ddLogLevel = LOG_LEVEL_VERBOSE;
                                                  selector:@selector(onRequestCompletion:)
                                                      name:request_uuid
                                                    object:nil];
-    }
+         */
+        
+        /*
+         
+         also need:
+         
+         - (void)onRequestCompletion:(NSNotification *)notification
+         {
+         DDLogVerbose(@"TravelBotPlacesViewController:onRequestCompletion entry.");
+         [[NSNotificationCenter defaultCenter] removeObserver:self
+         name:notification.name
+         object:nil];
+         NSArray *result = notification.object;
+         DDLogVerbose(@"result.count: %d", result.count);
+         DDLogVerbose(@"result[0]: %@", [result $at:0]);
+         DDLogVerbose(@"result[1]: %@", [result $at:1]);
+         DDLogVerbose(@"TravelBotPlacesViewController:onRequestCompletion exit.");
+         }
+         
+        */
     [super viewDidLoad];
     DDLogVerbose(@"TravelBotPlacesViewController:viewDidLoad exit.");
-}
-
-- (void)onRequestCompletion:(NSNotification *)notification
-{
-    DDLogVerbose(@"TravelBotPlacesViewController:onRequestCompletion entry.");
-    [[NSNotificationCenter defaultCenter] removeObserver:self
-                                                    name:notification.name
-                                                  object:nil];
-    NSArray *result = notification.object;
-    DDLogVerbose(@"result.count: %d", result.count);
-    DDLogVerbose(@"result[0]: %@", [result $at:0]);
-    DDLogVerbose(@"result[1]: %@", [result $at:1]);
-    DDLogVerbose(@"TravelBotPlacesViewController:onRequestCompletion exit.");
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -109,7 +124,15 @@ static int ddLogLevel = LOG_LEVEL_VERBOSE;
     static NSString *CellIdentifier = @"PlaceCell";
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     
+    // Get the place name.
+    NSNumber *row = [[NSNumber alloc] initWithInteger:indexPath.row];
+    AIDatabaseManager *databaseManager = [AIDatabaseManager sharedInstance];
+    NSString *place = [databaseManager getPlaceWithCountryCode:self.country.code
+                                                        filter:nil
+                                                         index:row];
+    
     // Configure the cell...
+    cell.textLabel.text = place;
     
     return cell;
 }

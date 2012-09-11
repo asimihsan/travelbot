@@ -38,5 +38,6 @@
 
 + (NSData *)bzip2:(NSData *)input;
 + (NSData *)bunzip2:(NSData *)input;
++ (void)bunzip2:(NSString *)inputFilepath outputFilepath:(NSString *)outputFilepath;
 
 @end
