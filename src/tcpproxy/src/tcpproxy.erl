@@ -21,9 +21,6 @@ start(_StartType, _StartArgs) ->
     {ok, _Pid2} = cowboy:start_listener(tcp_to_amqp_listener, 5,
         cowboy_ssl_transport, [
             {port, 8080},
-            %{certfile, "priv/ssl/cowboy_certs/cert.pem"},
-            %{keyfile, "priv/ssl/cowboy_certs/key.pem"},
-            %{password, "cowboy"}],
             {certfile, "priv/ssl/server_crt.pem"},
             {keyfile, "priv/ssl/server_key.pem"}],
         tcpproxy_tcp_to_amqp_protocol, []

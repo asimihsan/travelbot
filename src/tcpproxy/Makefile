@@ -5,14 +5,14 @@ APP = tcpproxy
 
 all: deps
 		@./rebar compile
-		@dialyzer ./ebin --plt .dialyzer.plt -Wunmatched_returns -Werror_handling -Wrace_conditions -Wunderspecs
+		@dialyzer ./ebin --plt .dialyzer.plt -Wunmatched_returns -Werror_handling -Wunderspecs
 
 app:
 		@./rebar compile skip_deps=true
-		@dialyzer ./ebin --plt .dialyzer.plt -Wunmatched_returns -Werror_handling -Wrace_conditions -Wunderspecs
+		@dialyzer ./ebin --plt .dialyzer.plt -Wunmatched_returns -Werror_handling -Wunderspecs
 
 build_plt:
-		@dialyzer --build_plt --output_plt .dialyzer.plt --apps kernel stdlib sasl erts ssl tools os_mon runtime_tools crypto inets xmerl webtool snmp public_key mnesia eunit syntax_tools compiler ./deps/*/ebin
+	@dialyzer --build_plt --output_plt .dialyzer.plt --apps kernel stdlib sasl erts ssl tools os_mon runtime_tools crypto inets xmerl webtool snmp public_key mnesia edoc syntax_tools compiler ./deps/*/ebin
 
 deps:
 		@./rebar get-deps

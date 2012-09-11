@@ -111,7 +111,8 @@ handle_info(timeout, State=#state{listener=ListenerPid,
 %   handle_info/2 for TCP socket data.
 %
 %   The first atom is different for SSL connections. We explicitly support
-%   messages from both SSL and non-SSL connections.
+%   messages from only SSL connections, but leave TCP connection messages
+%   commented as reference.
 % -----------------------------------------------------------------------------
 % SSL
 handle_info({ssl, _Socket, RawData}, State) ->
@@ -122,12 +123,12 @@ handle_info({ssl_error, _Socket, Reason}, State) ->
     handle_connection_error(Reason, State);
 
 % non-SSL
-handle_info({tcp, _Socket, RawData}, State) ->
-    handle_request(RawData, State);
-handle_info({tcp_closed, _Socket}, State) ->
-    handle_connection_closed(State);
-handle_info({tcp_error, _Socket, Reason}, State) ->
-    handle_connection_error(Reason, State);
+%handle_info({tcp, _Socket, RawData}, State) ->
+%    handle_request(RawData, State);
+%handle_info({tcp_closed, _Socket}, State) ->
+%    handle_connection_closed(State);
+%handle_info({tcp_error, _Socket, Reason}, State) ->
+%    handle_connection_error(Reason, State);
 % -----------------------------------------------------------------------------
 
 % -----------------------------------------------------------------------------
