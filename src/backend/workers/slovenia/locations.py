@@ -193,9 +193,9 @@ class LocationsDatabase(object):
         logger.debug("optimizing...")
         self.cursor.execute("INSERT INTO locations_by_name(locations_by_name) VALUES('rebuild');")
         self.cursor.execute("INSERT INTO locations_by_name(locations_by_name) VALUES('optimize');")
-        self.cursor.execute("CREATE INDEX locations_country_code_idx ON locations(country_code);")
-        self.cursor.execute("CREATE INDEX locations_name_idx ON locations(name);")
+        self.cursor.execute("CREATE INDEX locations_idx ON locations(country_code, name);")
         self.cursor.execute("VACUUM")
+        self.cursor.execute("ANALYZE")
         # ---------------------------------------------------------------------
 
         self.cursor.close()
