@@ -76,14 +76,9 @@ static AIDatabaseManager *sharedInstance = nil;
     // -------------------------------------------------------------------------
     //  Initialize variables.
     // -------------------------------------------------------------------------
-    NSString *selectQuery = @"SELECT name FROM locations ORDER BY name ASC LIMIT 1 OFFSET :offset;";
-    NSDictionary *arguments = $dict(index, @"offset");
-    
-    /*
     NSString *selectQuery = @"SELECT name FROM locations WHERE country_code = :country_code ORDER BY name ASC LIMIT 1 OFFSET :offset";
     NSDictionary *arguments = $dict(index, @"offset",
                                     countryCode, @"country_code");
-    */
     // -------------------------------------------------------------------------
     
     FMResultSet *resultSet = [self executeQuery:self.locations_db
