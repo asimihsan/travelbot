@@ -6,3 +6,5 @@ priv
 *.plt
 
 *.pyc
+src/backend/workers/slovenia/locations.sqlite
+src/backend/workers/slovenia/locations.sqlite.bz2
