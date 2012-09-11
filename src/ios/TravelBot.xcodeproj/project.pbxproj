@@ -18,6 +18,7 @@
 		0160497115ED0BA600579B45 /* TravelBotSearchViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0160497015ED0BA600579B45 /* TravelBotSearchViewController.m */; };
 		0160497415ED119000579B45 /* AIDatabaseManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 0160497315ED119000579B45 /* AIDatabaseManager.m */; };
 		0160497715ED3F4600579B45 /* TravelBotPlace.m in Sources */ = {isa = PBXBuildFile; fileRef = 0160497615ED3F4600579B45 /* TravelBotPlace.m */; };
+		018467A815FEB1AB001F31E3 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 018467A715FEB1AB001F31E3 /* Security.framework */; };
 		01962B6215EABA60009CAEBA /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01962B6115EABA60009CAEBA /* UIKit.framework */; };
 		01962B6415EABA60009CAEBA /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01962B6315EABA60009CAEBA /* Foundation.framework */; };
 		01962B6615EABA60009CAEBA /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01962B6515EABA60009CAEBA /* CoreGraphics.framework */; };
@@ -72,6 +73,7 @@
 		0160497315ED119000579B45 /* AIDatabaseManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AIDatabaseManager.m; sourceTree = "<group>"; };
 		0160497515ED3F4600579B45 /* TravelBotPlace.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TravelBotPlace.h; sourceTree = "<group>"; };
 		0160497615ED3F4600579B45 /* TravelBotPlace.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TravelBotPlace.m; sourceTree = "<group>"; };
+		018467A715FEB1AB001F31E3 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		01962B5D15EABA60009CAEBA /* TravelBot.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TravelBot.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		01962B6115EABA60009CAEBA /* UIKit.framework */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		01962B6315EABA60009CAEBA /* Foundation.framework */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -111,6 +113,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				018467A815FEB1AB001F31E3 /* Security.framework in Frameworks */,
 				011B689A15EB8A5C00057B6F /* libarc.a in Frameworks */,
 				01962D1C15EB8A03009CAEBA /* libz.dylib in Frameworks */,
 				01962C5B15EAC235009CAEBA /* libSQLite.a in Frameworks */,
@@ -189,6 +192,7 @@
 		01962B6015EABA60009CAEBA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				018467A715FEB1AB001F31E3 /* Security.framework */,
 				01962D1B15EB8A03009CAEBA /* libz.dylib */,
 				011B689C15EB8A5F00057B6F /* liblibarchive.a */,
 				011B689915EB8A5C00057B6F /* libarc.a */,

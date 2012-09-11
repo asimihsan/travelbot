@@ -23,11 +23,12 @@ x   Celery worker for Slovenia bus times. CUT.
         -   To/from search. Clicking goes to indexed list of locations.
         -   On search new window, show progress, display results. Also get list of holidays.
         -	 Warn if today is a local holiday.
+-   enable SSL.
+    x   actually enable SSL.
+    -   verify server certificate.
 -   Celery worker for Slovenia train times. CUT.
 -   Celery worker for Slovenia bus and train times, with synonyms for common places. CUT.
 -   Celery worker for Slovenia holidays (http://www.timeanddate.com/holidays/slovenia/)
--   enable SSL.
--   enable Tor.
 
 ## request API:
 

@@ -296,6 +296,76 @@ static AISocketManager *sharedInstance = nil;
 - (void)socketDidSecure:(GCDAsyncSocket *)socket
 {
     DDLogVerbose(@"AISocketManager:socketDidSecure entry.");
+    [socket performBlock:^{
+        // TODO Verify the server's certificate against a local copy.
+        // Reference: https://github.com/robbiehanson/CocoaAsyncSocket/issues/36
+        CFReadStreamRef readStream = [socket readStream];
+        
+        // Create SecTrustRef from Stream
+        CFTypeRef ref = CFReadStreamCopyProperty(readStream, kCFStreamPropertySSLPeerCertificates);
+        SecPolicyRef policy = SecPolicyCreateSSL(NO, (__bridge CFStringRef)@"app.theclic.co.uk");
+        SecTrustRef trust = NULL;
+        SecTrustCreateWithCertificates(ref, policy, &trust);
+        DDLogVerbose(@"trust: %@", trust);
+        
+        SecTrustResultType trustResultType = kSecTrustResultInvalid;
+        OSStatus status = SecTrustEvaluate(trust, &trustResultType);
+        DDLogVerbose(@"trust evaluate. status: %ld", status);
+        
+        DDLogVerbose(@"trust certificate count: %ld", SecTrustGetCertificateCount(trust));
+        SecCertificateRef cert = SecTrustGetCertificateAtIndex(trust, 0);
+        DDLogVerbose(@"cert: %@", cert);
+
+        CFStringRef certSummary = SecCertificateCopySubjectSummary(cert);
+        DDLogVerbose(@"certSummary: %@", certSummary);
+        CFDataRef certData = SecCertificateCopyData(cert);
+        
+        // !!AI these bytes are almost exactly the same as the base64 decoded
+        // bytes in server_crt.crt, i.e. the end of server_crt.pem.
+        // I think they're the same. TODO copy/base base64 encoded version,
+        // decode in iOS, byte compare.
+        DDLogVerbose(@"certData: %@", certData);
+        
+        SecKeyRef keyRef = SecTrustCopyPublicKey(trust);
+        DDLogVerbose(@"keyRef: %@. block size: %lu", keyRef, SecKeyGetBlockSize(keyRef));
+
+        CFRelease(certSummary);
+        CFRelease(certData);
+        CFRelease(ref);
+        //CFRelease(keyRef);
+        
+        /*
+        // Get our Root
+        NSString *path=[[NSBundle mainBundle] pathForResource:@"CACert-class3" ofType:@"der"];
+        NSData *certData=[NSData dataWithContentsOfFile:path];
+        SecCertificateRef cert = SecCertificateCreateWithData(NULL, (__bridge CFDataRef)certData);
+        
+        // Verify
+        SecTrustSetAnchorCertificates(trust, (__bridge CFArrayRef)[NSArray arrayWithObject:(__bridge id)cert]);
+        SecTrustResultType trustResultType = kSecTrustResultInvalid;
+        OSStatus status = SecTrustEvaluate(trust, &trustResultType);
+        
+        if (status == errSecSuccess) {
+            if (trustResultType == kSecTrustResultUnspecified) {
+                NSLog(@"%@ is Trustworthy", [sock theHost]);
+            } else {
+                NSLog(@"%@ is EVIL ;)", [sock theHost]);
+            }
+        } else {
+            NSLog(@"SecTrustEvaluate failed");
+        }
+         */
+        
+        // Configures the socket to allow it to operate when the iOS application has
+        // been backgrounded.
+        BOOL rc = [socket enableBackgroundingOnSocket];
+        DDLogVerbose(@"result of enableBackgroundingOnSocket: %@", rc == YES ? @"YES" : @"NO");
+        
+    }];
+    
+    // Perform a heartbeat
+    [self doHeartbeat];
+    
     self.isConnected = YES;
     self.isAttemptingConnection = NO;
     [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_SOCKET_OPENED
