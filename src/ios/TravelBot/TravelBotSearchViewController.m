@@ -23,6 +23,7 @@ static int ddLogLevel = LOG_LEVEL_VERBOSE;
 
 @interface TravelBotSearchViewController ()
 
+@property (copy, nonatomic) NSString *requestUUID;
 @property (retain, nonatomic) NSDictionary *countryCodeToMethod;
 @property (retain, nonatomic) NSArray *searchResults;
 
@@ -37,6 +38,7 @@ static int ddLogLevel = LOG_LEVEL_VERBOSE;
 @synthesize fromPlace = _fromPlace;
 @synthesize toPlace = _toPlace;
 @synthesize countryCodeToMethod = _countryCodeToMethod;
+@synthesize requestUUID = _requestUUID;
 
 #pragma mark - Searching.
 - (void)startSearch
@@ -65,14 +67,14 @@ static int ddLogLevel = LOG_LEVEL_VERBOSE;
                                   @"task", @"type",
                                   method, @"method",
                                   kwargs, @"kwargs");
-    NSString *request_uuid = [socketManager writeDictionary:request];
+    self.requestUUID = [socketManager writeDictionary:request];
     DDLogVerbose(@"TravelBotSearchViewController:startSearch. request_uuid: %@, request: %@",
-                 request_uuid, request);
+                 self.requestUUID, request);
     // -------------------------------------------------------------------------
     
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(onRequestCompletion:)
-                                                 name:request_uuid
+                                                 name:self.requestUUID
                                                object:nil];
     DDLogVerbose(@"TravelBotSearchViewController:startSearch exit.");
 }
@@ -80,6 +82,16 @@ static int ddLogLevel = LOG_LEVEL_VERBOSE;
 - (void)stopSearch
 {
     [SVProgressHUD dismiss];
+    
+    // If we've started a search a requestUUID exists. Remove ourselves as an
+    // observer for the result, as we don't care any more.
+    if (self.requestUUID)
+    {
+        [[NSNotificationCenter defaultCenter] removeObserver:self
+                                                        name:self.requestUUID
+                                                      object:nil];
+        self.requestUUID = nil;
+    }
 }
 
 - (void)onRequestCompletion:(NSNotification *)notification
@@ -160,6 +172,7 @@ static int ddLogLevel = LOG_LEVEL_VERBOSE;
         Journey *journey = [self.searchResults $at:indexPath.row];
         cell.textLabel.text = [NSString stringWithFormat:@"%@", journey];
     }
+    DDLogVerbose(@"cellForRowAtIndexPath. returning: %@.", cell);
     return cell;
 }
 
@@ -175,7 +188,7 @@ static int ddLogLevel = LOG_LEVEL_VERBOSE;
 
 - (void)viewWillDisappear:(BOOL)animated
 {
-    DDLogVerbose(@"TravelBotSarchViewController:viewWillDisappear entry.");
+    DDLogVerbose(@"TravelBotSearchViewController:viewWillDisappear entry.");
     [self stopSearch];
     [super viewWillDisappear:animated];
 }
