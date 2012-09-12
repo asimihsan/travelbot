@@ -68,13 +68,36 @@ const int TAG_SEARCH_BUTTON_CELL = 300;
     BOOL isCountrySelected = [self isCountrySelected];
     DDLogVerbose(@"isCountrySelected: %@", isCountrySelected ? @"YES" : @"NO");
     
+    // Country label.
     self.countryLabel.text = isCountrySelected ?
                                  self.selectedCountry.name :
                                  @"Select a country...";
-    self.toLabel.enabled = isCountrySelected;
-    self.toLabelContainerCell.userInteractionEnabled = isCountrySelected;
+
+    // From label.
     self.fromLabel.enabled = isCountrySelected;
     self.fromLabelContainerCell.userInteractionEnabled = isCountrySelected;
+    if (self.fromLabel.enabled && self.selectedFromPlace)
+    {
+        self.fromLabel.text = self.selectedFromPlace.name;
+    }
+    else
+    {
+        self.fromLabel.text = @"From...";
+    }
+        
+    // To label.
+    self.toLabel.enabled = isCountrySelected;
+    self.toLabelContainerCell.userInteractionEnabled = isCountrySelected;
+    if (self.toLabel.enabled && self.selectedToPlace)
+    {
+        self.toLabel.text = self.selectedToPlace.name;
+    }
+    else
+    {
+        self.toLabel.text = @"To..";
+    }
+    
+    // Search button.
     self.searchButton.userInteractionEnabled = isCountrySelected;
     self.searchButton.enabled = isCountrySelected;
     
@@ -158,7 +181,25 @@ const int TAG_SEARCH_BUTTON_CELL = 300;
                                      placeType:(NSString *)placeType
                                          place:(TravelBotPlace *)place
 {
-    DDLogVerbose(@"TravelBotMainMenuViewController:travelBotPlacesViewControllerDidFinish entry. controller: %@, place: %@", controller, place);
+    DDLogVerbose(@"TravelBotMainMenuViewController:travelBotPlacesViewControllerDidFinish entry. controller: %@, placeType: %@, place: %@",
+                 controller, placeType, place);
+    
+    // -------------------------------------------------------------------------
+    //  Validate inputs and assumptions.
+    // -------------------------------------------------------------------------
+    assert(($eql(placeType, @"from")) || $eql(placeType, @"to"));
+    // -------------------------------------------------------------------------
+    
+    if ($eql(placeType, @"from"))
+    {
+        DDLogVerbose(@"TravelBotMainMenuViewController:travelBotPlacesViewControllerDidFinish: place is 'from'");
+        self.selectedFromPlace = place;
+    }
+    else if ($eql(placeType, @"to"))
+    {
+        DDLogVerbose(@"TravelBotMainMenuViewController:travelBotPlacesViewControllerDidFinish: place is 'to'");
+        self.selectedToPlace = place;
+    }
 }
 
 #pragma mark - Private API.

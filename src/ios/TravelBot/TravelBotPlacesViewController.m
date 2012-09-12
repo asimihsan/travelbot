@@ -195,12 +195,36 @@ static int ddLogLevel = LOG_LEVEL_VERBOSE;
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     DDLogVerbose(@"TravelBotCountriesViewController:didSelectRowAtIndexPath entry. indexPath: %@", indexPath);
-    /*
-    TravelBotPlace *selectedPlace =
-    DDLogVerbose(@"selectedPlace: %@", selectedPlace);
-    [self.delegate travelBotCountriesViewControllerDidFinish:self
-                                                     place:selectedPlace];
-    */
+    
+    // -------------------------------------------------------------------------
+    //  Initialize local variables.
+    // -------------------------------------------------------------------------
+    NSNumber *row = [NSNumber numberWithInteger:indexPath.row];
+    AIDatabaseManager *databaseManager = [AIDatabaseManager sharedInstance];
+    NSString *placeName;
+    // -------------------------------------------------------------------------
+    
+    if ($eql(tableView, self.tableView))
+    {
+        DDLogVerbose(@"didSelectRowAtIndexPath: main table");
+        placeName = [databaseManager getPlaceWithCountryCode:self.country.code
+                                                      search:nil
+                                                       index:row];
+
+    }
+    else
+    {
+        DDLogVerbose(@"didSelectRowAtIndexPath: tableSearchDisplayController.");
+        placeName = [databaseManager getPlaceWithCountryCode:self.country.code
+                                                      search:self.currentSearchString
+                                                       index:row];
+    }
+    
+    TravelBotPlace *selectedPlace = [[TravelBotPlace alloc] initWithName:placeName
+                                                                 country:self.country];
+    [self.delegate travelBotPlacesViewControllerDidFinish:self
+                                                placeType:self.placeType
+                                                    place:selectedPlace];
     
     // In tutorials this will read [self dismissViewControllerAnimated]. This
     // doesn't work here because, I think, I haven't embedded this in a navigation

@@ -9,10 +9,13 @@
 #import <UIKit/UIKit.h>
 
 @class TravelBotCountry;
+@class TravelBotPlace;
 
 @interface TravelBotMainMenuViewController : UITableViewController
 
 @property (retain, nonatomic) TravelBotCountry *selectedCountry;
+@property (retain, nonatomic) TravelBotPlace *selectedFromPlace;
+@property (retain, nonatomic) TravelBotPlace *selectedToPlace;
 
 @property (weak, nonatomic) IBOutlet UILabel *countryLabel;
 @property (weak, nonatomic) IBOutlet UITableViewCell *fromLabelContainerCell;
