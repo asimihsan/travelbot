@@ -340,46 +340,68 @@ static AIDatabaseManager *sharedInstance = nil;
     dispatch_async(self.processingQueue,
     ^{
         DDLogVerbose(@"AIDatabaseManager:open entry.");
-        
-        // Download then decompress the locations database.
         NSString *dbCompressedPath = [[$ documentPath] stringByAppendingPathComponent:LOCATIONS_DATABASE_COMPRESSED_NAME];
-        DDLogVerbose(@"AIDatabaseManager:open: downloading database from S3 bucket %@, key %@, to %@...", AWS_S3_BUCKET, AWS_LOCATIONS_DATABASE_S3_PATH, dbCompressedPath);
-        ASIS3ObjectRequest *request = [ASIS3ObjectRequest requestWithBucket:AWS_S3_BUCKET
-                                                                        key:AWS_LOCATIONS_DATABASE_S3_PATH];
-        [request setSecretAccessKey:AWS_SECRET_ACCESS_KEY];
-        [request setAccessKey:AWS_ACCESS_KEY_ID];
-        [request setDownloadDestinationPath:dbCompressedPath];
-        [request startSynchronous];
-        if (request.error)
-        {
-            DDLogError(@"AIDatabaseManager:open: error during database download: %@",
-                       [request.error localizedDescription]);
-        }
-        else
-        {
-            DDLogVerbose(@"AIDatabaseManager:open: database downloaded. Decompressing...");
-            NSString *dbPath = [[$ documentPath] stringByAppendingPathComponent:LOCATIONS_DATABASE_NAME];
-            [AIUtilities bunzip2:dbCompressedPath
-                  outputFilepath:dbPath];
-
-            // Open the locations database.
-            DDLogVerbose(@"AIDatabaseManager:open: opening locations database at %@.", dbPath);
-            self.locations_db = [FMDatabase databaseWithPath:dbPath];
-            if (![self.locations_db open])
-            {
-                DDLogError(@"AIDatabaseManager:open: failed to open locations database.");
-                self.locations_db = nil;
-            }
-            DDLogVerbose(@"AIDatabaseManager:open: locations database is open.");
-        }
+        NSString *dbPath = [[$ documentPath] stringByAppendingPathComponent:LOCATIONS_DATABASE_NAME];
         
-        // Notify listeners that the database has opened.
+        // ---------------------------------------------------------------------
+        //  Maybe download and decompress the compressed database, if it
+        //  doesn't already exist.
+        //
+        //  TODO some other logic will delete the file before we get here if
+        //  e.g. the server tells us there's a new version available.
+        // ---------------------------------------------------------------------
+        if (!([[NSFileManager defaultManager] fileExistsAtPath:dbCompressedPath isDirectory:NO]))
+        {
+            DDLogVerbose(@"AIDatabaseManager:open. Compressed database does not exist at dbCompressedPath: %@",
+                         dbCompressedPath);
+            
+            // Download then decompress the locations database.
+            DDLogVerbose(@"AIDatabaseManager:open: downloading database from S3 bucket %@, key %@, to %@...",
+                         AWS_S3_BUCKET, AWS_LOCATIONS_DATABASE_S3_PATH, dbCompressedPath);
+            ASIS3ObjectRequest *request = [ASIS3ObjectRequest requestWithBucket:AWS_S3_BUCKET
+                                                                            key:AWS_LOCATIONS_DATABASE_S3_PATH];
+            [request setSecretAccessKey:AWS_SECRET_ACCESS_KEY];
+            [request setAccessKey:AWS_ACCESS_KEY_ID];
+            [request setDownloadDestinationPath:dbCompressedPath];
+            [request startSynchronous];
+            if (request.error)
+            {
+                DDLogError(@"AIDatabaseManager:open: error during database download: %@",
+                           [request.error localizedDescription]);
+            }
+            else
+            {
+                DDLogVerbose(@"AIDatabaseManager:open: database downloaded. Decompressing...");
+                [AIUtilities bunzip2:dbCompressedPath
+                      outputFilepath:dbPath];
+            } // if (request.error) for database download
+        } // if compressed database doesn't already exist.
+        // ---------------------------------------------------------------------
+
+        // ---------------------------------------------------------------------
+        //  Open the locations database.
+        // ---------------------------------------------------------------------
+        DDLogVerbose(@"AIDatabaseManager:open: opening locations database at %@.", dbPath);
+        self.locations_db = [FMDatabase databaseWithPath:dbPath];
+        if (![self.locations_db open])
+        {
+            DDLogError(@"AIDatabaseManager:open: failed to open locations database.");
+            self.locations_db = nil;
+        }
+        DDLogVerbose(@"AIDatabaseManager:open: locations database is open.");
+        // ---------------------------------------------------------------------
+        
+        // ---------------------------------------------------------------------
+        //  Notify listeners that the database has opened.
+        // ---------------------------------------------------------------------
         if ([self isOpened])
         {
             DDLogVerbose(@"posting notification that database has opened.");
             [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_DATABASE_OPENED
                                                                 object:self];
         }
+        // ---------------------------------------------------------------------
+        
         [self stopProcessingTask];
     });
 }

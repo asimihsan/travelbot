@@ -35,6 +35,11 @@
 		01962C5B15EAC235009CAEBA /* libSQLite.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 01962C5A15EAC235009CAEBA /* libSQLite.a */; };
 		01962C7E15EB83B7009CAEBA /* AIUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 01962C7D15EB83B7009CAEBA /* AIUtilities.m */; };
 		01962D1C15EB8A03009CAEBA /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 01962D1B15EB8A03009CAEBA /* libz.dylib */; };
+		019754F81600C66D00E071AD /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 019754F71600C66D00E071AD /* QuartzCore.framework */; };
+		019754FC1600CCD400E071AD /* Journey.m in Sources */ = {isa = PBXBuildFile; fileRef = 019754FB1600CCD400E071AD /* Journey.m */; };
+		019754FF1600CCE100E071AD /* JourneyLeg.m in Sources */ = {isa = PBXBuildFile; fileRef = 019754FE1600CCE100E071AD /* JourneyLeg.m */; };
+		019755021600CCEB00E071AD /* JourneyLegPoint.m in Sources */ = {isa = PBXBuildFile; fileRef = 019755011600CCEB00E071AD /* JourneyLegPoint.m */; };
+		019755061600CD3700E071AD /* Location.m in Sources */ = {isa = PBXBuildFile; fileRef = 019755051600CD3700E071AD /* Location.m */; };
 		01AC82FE15ECE14C0072992A /* TravelBotCountriesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 01AC82FD15ECE14C0072992A /* TravelBotCountriesViewController.m */; };
 		01AC830115ECE2DA0072992A /* TravelBotPlacesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 01AC830015ECE2DA0072992A /* TravelBotPlacesViewController.m */; };
 		01AC830515ECE5760072992A /* si.png in Resources */ = {isa = PBXBuildFile; fileRef = 01AC830415ECE5760072992A /* si.png */; };
@@ -97,6 +102,15 @@
 		01962C7C15EB83B7009CAEBA /* AIUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AIUtilities.h; sourceTree = "<group>"; };
 		01962C7D15EB83B7009CAEBA /* AIUtilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AIUtilities.m; sourceTree = "<group>"; };
 		01962D1B15EB8A03009CAEBA /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
+		019754F71600C66D00E071AD /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		019754FA1600CCD400E071AD /* Journey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Journey.h; sourceTree = "<group>"; };
+		019754FB1600CCD400E071AD /* Journey.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Journey.m; sourceTree = "<group>"; };
+		019754FD1600CCE100E071AD /* JourneyLeg.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JourneyLeg.h; sourceTree = "<group>"; };
+		019754FE1600CCE100E071AD /* JourneyLeg.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JourneyLeg.m; sourceTree = "<group>"; };
+		019755001600CCEB00E071AD /* JourneyLegPoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JourneyLegPoint.h; sourceTree = "<group>"; };
+		019755011600CCEB00E071AD /* JourneyLegPoint.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JourneyLegPoint.m; sourceTree = "<group>"; };
+		019755041600CD3700E071AD /* Location.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Location.h; sourceTree = "<group>"; };
+		019755051600CD3700E071AD /* Location.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Location.m; sourceTree = "<group>"; };
 		01AC82FC15ECE14C0072992A /* TravelBotCountriesViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TravelBotCountriesViewController.h; sourceTree = "<group>"; };
 		01AC82FD15ECE14C0072992A /* TravelBotCountriesViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TravelBotCountriesViewController.m; sourceTree = "<group>"; };
 		01AC82FF15ECE2DA0072992A /* TravelBotPlacesViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TravelBotPlacesViewController.h; sourceTree = "<group>"; };
@@ -113,6 +127,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				019754F81600C66D00E071AD /* QuartzCore.framework in Frameworks */,
 				018467A815FEB1AB001F31E3 /* Security.framework in Frameworks */,
 				011B689A15EB8A5C00057B6F /* libarc.a in Frameworks */,
 				01962D1C15EB8A03009CAEBA /* libz.dylib in Frameworks */,
@@ -192,6 +207,7 @@
 		01962B6015EABA60009CAEBA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				019754F71600C66D00E071AD /* QuartzCore.framework */,
 				018467A715FEB1AB001F31E3 /* Security.framework */,
 				01962D1B15EB8A03009CAEBA /* libz.dylib */,
 				011B689C15EB8A5F00057B6F /* liblibarchive.a */,
@@ -263,6 +279,21 @@
 			name = Libs;
 			sourceTree = "<group>";
 		};
+		019755031600CD1A00E071AD /* Backend models */ = {
+			isa = PBXGroup;
+			children = (
+				019754FA1600CCD400E071AD /* Journey.h */,
+				019754FB1600CCD400E071AD /* Journey.m */,
+				019754FD1600CCE100E071AD /* JourneyLeg.h */,
+				019754FE1600CCE100E071AD /* JourneyLeg.m */,
+				019755001600CCEB00E071AD /* JourneyLegPoint.h */,
+				019755011600CCEB00E071AD /* JourneyLegPoint.m */,
+				019755041600CD3700E071AD /* Location.h */,
+				019755051600CD3700E071AD /* Location.m */,
+			);
+			name = "Backend models";
+			sourceTree = "<group>";
+		};
 		01AC82FA15ECE1250072992A /* ViewControllers */ = {
 			isa = PBXGroup;
 			children = (
@@ -292,6 +323,7 @@
 		01AC830315ECE3120072992A /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				019755031600CD1A00E071AD /* Backend models */,
 				0160496B15ECEF8600579B45 /* TravelBotCountry.h */,
 				0160496C15ECEF8600579B45 /* TravelBotCountry.m */,
 				0160497515ED3F4600579B45 /* TravelBotPlace.h */,
@@ -449,6 +481,10 @@
 				0160497115ED0BA600579B45 /* TravelBotSearchViewController.m in Sources */,
 				0160497415ED119000579B45 /* AIDatabaseManager.m in Sources */,
 				0160497715ED3F4600579B45 /* TravelBotPlace.m in Sources */,
+				019754FC1600CCD400E071AD /* Journey.m in Sources */,
+				019754FF1600CCE100E071AD /* JourneyLeg.m in Sources */,
+				019755021600CCEB00E071AD /* JourneyLegPoint.m in Sources */,
+				019755061600CD3700E071AD /* Location.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -3,6 +3,7 @@ pod 'ASIHTTPRequest',        '~> 1.8.1'
 pod 'CocoaAsyncSocket',      '~> 0.0.1'
 pod 'ConciseKit',            '~> 0.1.2'
 pod 'CocoaLumberjack',       '~> 1.6'
-pod 'JSONKit',               '~> 1.4'
 pod 'FMDB',                  '~> 2.0'
+pod 'JSONKit',               '~> 1.4'
+pod 'SVProgressHUD',         '~> 0.8'
 

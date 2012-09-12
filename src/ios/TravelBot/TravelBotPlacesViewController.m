@@ -50,43 +50,7 @@ static int ddLogLevel = LOG_LEVEL_VERBOSE;
     // Add and configure the search bar
     self.tableView.tableHeaderView = self.searchBar;
     self.searchBar.autocorrectionType = UITextAutocorrectionTypeNo;
-
-        /*
-        !!AI
-         
-        This is how to make requests over the socket, so very important. Howver,
-        we don't request locations any more.
-         
-        DDLogVerbose(@"update places for Slovenia.");
-        AISocketManager *socketManager = [AISocketManager sharedInstance];
-        NSDictionary *request = $dict(@"1.0", @"version",
-                                      @"task", @"type",
-                                      @"slovenia.bus_ap.get_locations", @"method");
-        NSString *request_uuid = [socketManager writeDictionary:request];
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(onRequestCompletion:)
-                                                     name:request_uuid
-                                                   object:nil];
-         */
-        
-        /*
-         
-         also need:
-         
-         - (void)onRequestCompletion:(NSNotification *)notification
-         {
-         DDLogVerbose(@"TravelBotPlacesViewController:onRequestCompletion entry.");
-         [[NSNotificationCenter defaultCenter] removeObserver:self
-         name:notification.name
-         object:nil];
-         NSArray *result = notification.object;
-         DDLogVerbose(@"result.count: %d", result.count);
-         DDLogVerbose(@"result[0]: %@", [result $at:0]);
-         DDLogVerbose(@"result[1]: %@", [result $at:1]);
-         DDLogVerbose(@"TravelBotPlacesViewController:onRequestCompletion exit.");
-         }
-         
-        */
+    
     [super viewDidLoad];
     DDLogVerbose(@"TravelBotPlacesViewController:viewDidLoad exit.");
 }

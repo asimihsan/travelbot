@@ -8,6 +8,11 @@
 
 #import <UIKit/UIKit.h>
 
+@class TravelBotPlace;
+
 @interface TravelBotSearchViewController : UITableViewController
+
+@property (retain, nonatomic) TravelBotPlace *fromPlace;
+@property (retain, nonatomic) TravelBotPlace *toPlace;
 
 @end

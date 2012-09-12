@@ -18,7 +18,6 @@
 // ----------------------------------------------------------------------------
 //  Constants.
 // ----------------------------------------------------------------------------
-
 static int ddLogLevel = LOG_LEVEL_VERBOSE;
 
 // Tag of the UITableViewCell that contains country label view.
@@ -98,8 +97,16 @@ const int TAG_SEARCH_BUTTON_CELL = 300;
     }
     
     // Search button.
-    self.searchButton.userInteractionEnabled = isCountrySelected;
-    self.searchButton.enabled = isCountrySelected;
+    if (isCountrySelected && self.selectedToPlace && self.selectedFromPlace)
+    {
+        self.searchButton.userInteractionEnabled = YES;
+        self.searchButton.enabled = YES;
+    }
+    else
+    {
+        self.searchButton.userInteractionEnabled = NO;
+        self.searchButton.enabled = NO;
+    }
     
     // Always set up the search button container cell to be transparent.
     self.searchButtonContainerCell.backgroundColor = [UIColor clearColor];
@@ -164,6 +171,11 @@ const int TAG_SEARCH_BUTTON_CELL = 300;
     else if ($eql(segue.identifier, @"search"))
     {
         DDLogVerbose(@"segue to 'search'");
+        TravelBotSearchViewController *controller = segue.destinationViewController;
+        assert(self.selectedFromPlace != nil);
+        assert(self.selectedToPlace != nil);
+        controller.fromPlace = self.selectedFromPlace;
+        controller.toPlace = self.selectedToPlace;
     }
 }
 - (void)travelBotCountriesViewControllerDidFinish:(TravelBotCountriesViewController *)controller
