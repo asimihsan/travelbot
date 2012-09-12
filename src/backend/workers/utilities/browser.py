@@ -2,6 +2,8 @@ from selenium import webdriver
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.firefox.firefox_profile import FirefoxProfile
 import lxml.html
+import pyvirtualdisplay
+import platform
 
 class BrowserManager(object):
     def __enter__(self):
@@ -15,6 +17,11 @@ class BrowserManager(object):
 
 class Browser(object):
     def __init__(self):
+        self.display = None
+        if platform.system() == "Linux":
+            self.display = pyvirtualdisplay.Display(visible=0, size=(800, 600))
+            self.display.start()
+
         #self.selenium = webdriver.Chrome()
 
         firefox_profile = FirefoxProfile()
@@ -32,6 +39,8 @@ class Browser(object):
 
     def close(self):
         self.selenium.quit()
+        if self.display:
+            self.display.stop()
 
     def get(self, uri):
         self.selenium.get(uri)
