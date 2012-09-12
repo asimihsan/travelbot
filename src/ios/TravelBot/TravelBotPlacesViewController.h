@@ -13,10 +13,15 @@
 @class TravelBotPlace;
 
 @interface TravelBotPlacesViewController : UITableViewController
+<UISearchDisplayDelegate>
 
 @property (retain, nonatomic) TravelBotCountry *country;
 @property (copy, nonatomic) NSString *placeType;
 @property (weak, nonatomic) id <TravelBotPlacesViewControllerDelegate> delegate;
+
+@property (weak, nonatomic) IBOutlet UISearchBar *searchBar;
+@property (weak, nonatomic) IBOutlet UISearchDisplayController *tableSearchDisplayController;
+@property (copy, nonatomic) NSString *currentSearchString;
 
 @end
 

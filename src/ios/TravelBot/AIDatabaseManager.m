@@ -61,11 +61,11 @@ static AIDatabaseManager *sharedInstance = nil;
 
 #pragma mark - Public API
 - (NSString *)getPlaceWithCountryCode:(NSString *)countryCode
-                    filter:(NSString *)filter
+                    search:(NSString *)search
                     index:(NSNumber *)index
 {
-    DDLogVerbose(@"AIDatabaseManager:getPlaceWithCountryCode entry. countryCode: %@, filter: %@, index: %@",
-                 countryCode, filter, index);
+    DDLogVerbose(@"AIDatabaseManager:getPlaceWithCountryCode entry. countryCode: %@, search: %@, index: %@",
+                 countryCode, search, index);
     
     // -------------------------------------------------------------------------
     //  Initialize output variable.
@@ -76,9 +76,31 @@ static AIDatabaseManager *sharedInstance = nil;
     // -------------------------------------------------------------------------
     //  Initialize variables.
     // -------------------------------------------------------------------------
-    NSString *selectQuery = @"SELECT name FROM locations WHERE country_code = :country_code ORDER BY name ASC LIMIT 1 OFFSET :offset";
-    NSDictionary *arguments = $dict(index, @"offset",
-                                    countryCode, @"country_code");
+    NSString *selectQuery;
+    NSDictionary *arguments;
+    if (search)
+    {
+        DDLogVerbose(@"AIDatabaseManager:getPlaceWithCountryCode. search present.");
+        selectQuery = @"SELECT locations.name \
+                        FROM locations, locations_by_name \
+                        WHERE country_code = :country_code AND \
+                              locations_by_name MATCH :searchTerm AND \
+                              locations.geonameid = locations_by_name.rowid \
+                        ORDER BY locations.name ASC LIMIT 1 OFFSET :offset;";
+        NSString *searchTerm = [NSString stringWithFormat:@"%@*", search];
+        arguments = $dict(index, @"offset",
+                          countryCode, @"country_code",
+                          searchTerm, @"searchTerm");
+    }
+    else
+    {
+        DDLogVerbose(@"AIDatabaseManager:getPlaceWithCountryCode. search not present.");
+        selectQuery = @"SELECT name FROM locations \
+                        WHERE country_code = :country_code \
+                        ORDER BY name ASC LIMIT 1 OFFSET :offset";
+        arguments = $dict(index, @"offset",
+                          countryCode, @"country_code");
+    }
     // -------------------------------------------------------------------------
     
     FMResultSet *resultSet = [self executeQuery:self.locations_db
@@ -102,8 +124,9 @@ static AIDatabaseManager *sharedInstance = nil;
 }
 
 - (NSNumber *)getNumberOfPlaces:(NSString *)countryCode
+                         search:(NSString *)search
 {
-    DDLogVerbose(@"AIDatabaseManager:getNumberOfPlaces entry. countryCode: %@", countryCode);
+    DDLogVerbose(@"AIDatabaseManager:getNumberOfPlaces entry. countryCode: %@, search: %@", countryCode, search);
     
     // -------------------------------------------------------------------------
     //  Initialize output variable.
@@ -113,9 +136,31 @@ static AIDatabaseManager *sharedInstance = nil;
     
     // -------------------------------------------------------------------------
     //  Initialize variables.
+    //
+    //  -   If search is nil then we want all places from the country code.
+    //  -   Else we want to use the FTS index to determine how many matching
+    //      places there are in the country.
     // -------------------------------------------------------------------------
-    NSString *selectQuery = @"SELECT COUNT(*) FROM locations WHERE country_code = :country_code;";
-    NSDictionary *arguments = $dict(countryCode, @"country_code");
+    NSString *selectQuery;
+    NSDictionary *arguments;
+    if (search)
+    {
+        DDLogVerbose(@"AIDatabaseManager:getNumberOfPlaces. search specified.");
+        selectQuery = @"SELECT COUNT(locations.name) \
+                        FROM locations, locations_by_name \
+                        WHERE country_code = :country_code AND \
+                              locations_by_name MATCH :searchTerm AND \
+                              locations.geonameid = locations_by_name.rowid;";
+        NSString *searchTerm = [NSString stringWithFormat:@"%@*", search];
+        arguments = $dict(countryCode, @"country_code",
+                          searchTerm, @"searchTerm");
+    }
+    else
+    {
+        DDLogVerbose(@"AIDatabaseManager:getNumberOfPlaces. search not specified.");
+        selectQuery = @"SELECT COUNT(*) FROM locations WHERE country_code = :country_code;";
+        arguments = $dict(countryCode, @"country_code");
+    }
     // -------------------------------------------------------------------------
     
     FMResultSet *resultSet = [self executeQuery:self.locations_db

@@ -27,10 +27,12 @@ static int ddLogLevel = LOG_LEVEL_VERBOSE;
 
 @implementation TravelBotPlacesViewController
 
-@synthesize numberOfRows = _numberOfRows;
 @synthesize placeType = _placeType;
 @synthesize country = _country;
 @synthesize delegate = _delegate;
+@synthesize searchBar = _searchBar;
+@synthesize tableSearchDisplayController = _tableSearchDisplayController;
+@synthesize currentSearchString = _currentSearchString;
 
 - (id)initWithStyle:(UITableViewStyle)style
 {
@@ -45,9 +47,9 @@ static int ddLogLevel = LOG_LEVEL_VERBOSE;
 {
     DDLogVerbose(@"TravelBotPlacesViewController:viewDidLoad entry.");
     
-    AIDatabaseManager *databaseManager = [AIDatabaseManager sharedInstance];
-    NSNumber *return_value = [databaseManager getNumberOfPlaces:self.country.code];
-    self.numberOfRows = return_value.integerValue;
+    // Add and configure the search bar
+    self.tableView.tableHeaderView = self.searchBar;
+    self.searchBar.autocorrectionType = UITextAutocorrectionTypeNo;
 
         /*
         !!AI
@@ -97,6 +99,9 @@ static int ddLogLevel = LOG_LEVEL_VERBOSE;
 
 - (void)viewDidUnload
 {
+    [self setSearchBar:nil];
+    [self setSearchBar:nil];
+    [self setTableSearchDisplayController:nil];
     [super viewDidUnload];
 }
 
@@ -115,26 +120,74 @@ static int ddLogLevel = LOG_LEVEL_VERBOSE;
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    // Return the number of rows in the section.
-    return self.numberOfRows;
+    NSNumber *return_value;
+    AIDatabaseManager *databaseManager = [AIDatabaseManager sharedInstance];
+    if ($eql(tableView, self.tableView))
+    {
+        DDLogVerbose(@"numberOfRows: main table");
+        return_value = [databaseManager getNumberOfPlaces:self.country.code
+                                                 search:nil];
+    }
+    else
+    {
+        DDLogVerbose(@"numberOfRows: tableSearchDisplayController. self.currentSearchString: %@", self.currentSearchString);
+        return_value = [databaseManager getNumberOfPlaces:self.country.code
+                                                   search:self.currentSearchString];
+    }
+    DDLogVerbose(@"TravelBotPlacesViewController:numberOfRowsInSection. returning: %@", return_value);
+    return return_value.integerValue;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    static NSString *CellIdentifier = @"PlaceCell";
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
-    
-    // Get the place name.
-    NSNumber *row = [[NSNumber alloc] initWithInteger:indexPath.row];
+    // -------------------------------------------------------------------------
+    //  Initialize local variables.
+    // -------------------------------------------------------------------------
+    static NSString *cellIdentifier = @"PlaceCell";
+    NSNumber *row = [NSNumber numberWithInteger:indexPath.row];
     AIDatabaseManager *databaseManager = [AIDatabaseManager sharedInstance];
-    NSString *place = [databaseManager getPlaceWithCountryCode:self.country.code
-                                                        filter:nil
-                                                         index:row];
+    NSString *place;
+    // -------------------------------------------------------------------------
+    
+    // -------------------------------------------------------------------------
+    //  Dequeue or create a cell.
+    // -------------------------------------------------------------------------
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier];
+    if (!cell)
+    {
+        DDLogVerbose(@"cellForRowAtIndexPath. cell is nil, create a new one.");
+        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault
+                                      reuseIdentifier:cellIdentifier];
+    }
+    // -------------------------------------------------------------------------
+
+    if ($eql(tableView, self.tableView))
+    {
+        DDLogVerbose(@"cellForRowAtIndexPath: main table");
+        place = [databaseManager getPlaceWithCountryCode:self.country.code
+                                                  search:nil
+                                                   index:row];
+    }
+    else
+    {
+        DDLogVerbose(@"cellForRowAtIndexPath: tableSearchDisplayController.");
+        place = [databaseManager getPlaceWithCountryCode:self.country.code
+                                                  search:self.currentSearchString
+                                                   index:row];
+    }
     
     // Configure the cell...
     cell.textLabel.text = place;
     
+    DDLogVerbose(@"cellForRowAtIndexPath returning: %@", cell);
     return cell;
+}
+
+- (BOOL)searchDisplayController:(UISearchDisplayController *)controller shouldReloadTableForSearchString:(NSString *)searchString
+{
+    DDLogVerbose(@"TravelBotPlacesViewController:shouldReloadTableForSearchString entry. searchString: %@", searchString);
+    self.currentSearchString = searchString;
+    return YES;
 }
 
 #pragma mark - Table view delegate
