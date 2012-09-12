@@ -1,0 +1,15 @@
+#
+# exampleserver.cnf
+#
+
+[ req ]
+prompt                  = no
+distinguished_name      = server_distinguished_name
+
+[ server_distinguished_name ]
+commonName              = travelbot.asimihsan.com
+stateOrProvinceName     = N/A
+countryName             = UK
+emailAddress            = me@asimihsan.com
+organizationName        = TravelBot
+organizationalUnitName  = N/A

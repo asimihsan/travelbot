@@ -1,6 +1,5 @@
 .eunit
 deps
-priv
 *.o
 *.beam
 *.plt
@@ -8,3 +7,15 @@ priv
 *.pyc
 src/backend/workers/slovenia/locations.sqlite
 src/backend/workers/slovenia/locations.sqlite.bz2
+src/tcpproxy/priv/ssl/cacert.crt
+src/tcpproxy/priv/ssl/cacert.pem
+src/tcpproxy/priv/ssl/index.txt
+src/tcpproxy/priv/ssl/index.txt.attr
+src/tcpproxy/priv/ssl/index.txt.old
+src/tcpproxy/priv/ssl/private/cakey.pem
+src/tcpproxy/priv/ssl/serial
+src/tcpproxy/priv/ssl/serial.old
+src/tcpproxy/priv/ssl/server_crt.crt
+src/tcpproxy/priv/ssl/server_crt.pem
+src/tcpproxy/priv/ssl/server_key.pem
+10000002.pem
