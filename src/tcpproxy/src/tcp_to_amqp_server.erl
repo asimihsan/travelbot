@@ -59,7 +59,9 @@ init([ListenerPid, Socket, Transport, Opts]) ->
     Transport:setopts(Socket, [
         {active, once},
         {packet, 4},
-        {packet_size, MaxRequestSize}
+        {packet_size, MaxRequestSize},
+        {keepalive, true},
+        {nodelay, true}
     ]),
 
     % -------------------------------------------------------------------------
