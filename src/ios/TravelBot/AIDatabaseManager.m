@@ -83,14 +83,17 @@ static AIDatabaseManager *sharedInstance = nil;
         DDLogVerbose(@"AIDatabaseManager:getPlaceWithCountryCode. search present.");
         selectQuery = @"SELECT locations.name \
                         FROM locations, locations_by_name \
-                        WHERE country_code = :country_code AND \
-                              locations_by_name MATCH :searchTerm AND \
+                        WHERE locations.country_code = :country_code AND \
+                              locations_by_name.name MATCH :searchTermFTS AND \
+                              locations_by_name.name LIKE :searchTermLike AND \
                               locations.geonameid = locations_by_name.rowid \
                         ORDER BY locations.name ASC LIMIT 1 OFFSET :offset;";
-        NSString *searchTerm = [NSString stringWithFormat:@"%@*", search];
+        NSString *searchTermFTS = [NSString stringWithFormat:@"%@*", search];
+        NSString *searchTermLike = [NSString stringWithFormat:@"%@%%", search];
         arguments = $dict(index, @"offset",
                           countryCode, @"country_code",
-                          searchTerm, @"searchTerm");
+                          searchTermFTS, @"searchTermFTS",
+                          searchTermLike, @"searchTermLike");
     }
     else
     {
@@ -148,12 +151,15 @@ static AIDatabaseManager *sharedInstance = nil;
         DDLogVerbose(@"AIDatabaseManager:getNumberOfPlaces. search specified.");
         selectQuery = @"SELECT COUNT(locations.name) \
                         FROM locations, locations_by_name \
-                        WHERE country_code = :country_code AND \
-                              locations_by_name MATCH :searchTerm AND \
+                        WHERE locations.country_code = :country_code AND \
+                              locations_by_name.name MATCH :searchTermFTS AND \
+                              locations_by_name.name LIKE :searchTermLike AND \
                               locations.geonameid = locations_by_name.rowid;";
-        NSString *searchTerm = [NSString stringWithFormat:@"%@*", search];
+        NSString *searchTermFTS = [NSString stringWithFormat:@"%@*", search];
+        NSString *searchTermLike = [NSString stringWithFormat:@"%@%%", search];
         arguments = $dict(countryCode, @"country_code",
-                          searchTerm, @"searchTerm");
+                          searchTermFTS, @"searchTermFTS",
+                          searchTermLike, @"searchTermLike");
     }
     else
     {

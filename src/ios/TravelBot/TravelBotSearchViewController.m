@@ -7,6 +7,7 @@
 //
 
 #import "TravelBotSearchViewController.h"
+#import "TravelBotSearchHeader.h"
 #import "TravelBotPlace.h"
 #import "AISocketManager.h"
 #import "Journey.h"
@@ -52,6 +53,9 @@ static int ddLogLevel = LOG_LEVEL_VERBOSE;
     NSString *method = [self.countryCodeToMethod $for:self.fromPlace.country.code];
     assert(method);
     // -------------------------------------------------------------------------
+    
+    // TODO !!AI remove me
+    return;
     
     [SVProgressHUD showWithStatus:@"Searching..."
                          maskType:SVProgressHUDMaskTypeNone];
@@ -131,6 +135,19 @@ static int ddLogLevel = LOG_LEVEL_VERBOSE;
 }
 
 #pragma mark - Table view data source
+
+// -----------------------------------------------------------------------------
+//  Set up a custom header view here rather than in the storyboard.
+// -----------------------------------------------------------------------------
+- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
+    DDLogVerbose(@"TravelBotSearchViewController:viewForHeaderInSection() entry.");
+    TravelBotSearchHeader *searchHeader = [[TravelBotSearchHeader alloc]
+                                           initWithTableView:tableView
+                                                        from:self.fromPlace.name
+                                                          to:self.toPlace.name
+                                                        when:@"when"];
+    return searchHeader;
+}
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {

@@ -19,6 +19,8 @@
 		0160497415ED119000579B45 /* AIDatabaseManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 0160497315ED119000579B45 /* AIDatabaseManager.m */; };
 		0160497715ED3F4600579B45 /* TravelBotPlace.m in Sources */ = {isa = PBXBuildFile; fileRef = 0160497615ED3F4600579B45 /* TravelBotPlace.m */; };
 		018467A815FEB1AB001F31E3 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 018467A715FEB1AB001F31E3 /* Security.framework */; };
+		0190A8BB16022E560098B8F8 /* TravelBotSearchCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 0190A8BA16022E560098B8F8 /* TravelBotSearchCell.m */; };
+		0190A8BF16023AC30098B8F8 /* TravelBotSearchHeader.m in Sources */ = {isa = PBXBuildFile; fileRef = 0190A8BE16023AC30098B8F8 /* TravelBotSearchHeader.m */; };
 		01962B6215EABA60009CAEBA /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01962B6115EABA60009CAEBA /* UIKit.framework */; };
 		01962B6415EABA60009CAEBA /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01962B6315EABA60009CAEBA /* Foundation.framework */; };
 		01962B6615EABA60009CAEBA /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01962B6515EABA60009CAEBA /* CoreGraphics.framework */; };
@@ -79,6 +81,10 @@
 		0160497515ED3F4600579B45 /* TravelBotPlace.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TravelBotPlace.h; sourceTree = "<group>"; };
 		0160497615ED3F4600579B45 /* TravelBotPlace.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TravelBotPlace.m; sourceTree = "<group>"; };
 		018467A715FEB1AB001F31E3 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
+		0190A8B916022E560098B8F8 /* TravelBotSearchCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TravelBotSearchCell.h; sourceTree = "<group>"; };
+		0190A8BA16022E560098B8F8 /* TravelBotSearchCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TravelBotSearchCell.m; sourceTree = "<group>"; };
+		0190A8BD16023AC30098B8F8 /* TravelBotSearchHeader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TravelBotSearchHeader.h; sourceTree = "<group>"; };
+		0190A8BE16023AC30098B8F8 /* TravelBotSearchHeader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TravelBotSearchHeader.m; sourceTree = "<group>"; };
 		01962B5D15EABA60009CAEBA /* TravelBot.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TravelBot.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		01962B6115EABA60009CAEBA /* UIKit.framework */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		01962B6315EABA60009CAEBA /* Foundation.framework */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -337,6 +343,10 @@
 			children = (
 				01AC830A15ECE7B90072992A /* TravelBotCountryCell.h */,
 				01AC830B15ECE7B90072992A /* TravelBotCountryCell.m */,
+				0190A8B916022E560098B8F8 /* TravelBotSearchCell.h */,
+				0190A8BA16022E560098B8F8 /* TravelBotSearchCell.m */,
+				0190A8BD16023AC30098B8F8 /* TravelBotSearchHeader.h */,
+				0190A8BE16023AC30098B8F8 /* TravelBotSearchHeader.m */,
 			);
 			name = Views;
 			sourceTree = "<group>";
@@ -485,6 +495,8 @@
 				019754FF1600CCE100E071AD /* JourneyLeg.m in Sources */,
 				019755021600CCEB00E071AD /* JourneyLegPoint.m in Sources */,
 				019755061600CD3700E071AD /* Location.m in Sources */,
+				0190A8BB16022E560098B8F8 /* TravelBotSearchCell.m in Sources */,
+				0190A8BF16023AC30098B8F8 /* TravelBotSearchHeader.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
