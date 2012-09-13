@@ -6,25 +6,13 @@ The following covers the part of travelbot that fetches travel information.
 
 ## TODO
 
-x   Celery worker for Slovenia bus times. CUT.
--   Create Cloudfront-backed SQLite database of Geonames-based locations for all desired countries. Use APSW, latest SQLite, FTS+RTree, bzip2 it.
--   iOS app uses ASIHTTPRequest to get the pre-built SQLite database. If HTTP GET returns 200 decompress the file _on disk_, then open using AIDatabaseManager.
-    -   Need a modification to the bunzip2() method with 'onInitialization' and 'onDecompressedBlock' callback blocks.
-    -   Likely that we'll store e.g. old searches in the same database, so want to copy the 'locations' table from the downloaded database to the local database.
 -   Create task to return URI of location data. App has a baked-in URI but if a HTTP HEAD doesn't return 200 it asks the server for a new URI.
--	Load locations using local data.
 -	Load holidays using local data.
 -   create simple test app in xcode simulator, test it works.
-    -   When app starts:
-        -   start socket and 'ping' server,
-        -   get list of locations in background.
     -   Tab for search:
-        -   Country dropdown, Slovenia for now.
-        -   To/from search. Clicking goes to indexed list of locations.
         -   On search new window, show progress, display results. Also get list of holidays.
         -	 Warn if today is a local holiday.
 -   enable SSL.
-    x   actually enable SSL.
     -   verify server certificate.
 -   Celery worker for Slovenia train times. CUT.
 -   Celery worker for Slovenia bus and train times, with synonyms for common places. CUT.

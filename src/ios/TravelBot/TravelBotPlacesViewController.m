@@ -50,7 +50,7 @@ static int ddLogLevel = LOG_LEVEL_VERBOSE;
     // Add and configure the search bar
     self.tableView.tableHeaderView = self.searchBar;
     self.searchBar.autocorrectionType = UITextAutocorrectionTypeNo;
-    
+
     [super viewDidLoad];
     DDLogVerbose(@"TravelBotPlacesViewController:viewDidLoad exit.");
 }
@@ -59,6 +59,16 @@ static int ddLogLevel = LOG_LEVEL_VERBOSE;
 {
     DDLogVerbose(@"TravelBotPlacesViewController:viewWillAppear entry.");
     self.navigationItem.title = [self.placeType capitalizedString];
+}
+
+// -----------------------------------------------------------------------------
+//  When the view controller is finished drawing elements we want to focus on
+//  the search bar.
+// -----------------------------------------------------------------------------
+- (void)viewDidAppear:(BOOL)animated
+{
+    [self.searchBar becomeFirstResponder];
+    [super viewDidAppear:animated];
 }
 
 - (void)viewDidUnload

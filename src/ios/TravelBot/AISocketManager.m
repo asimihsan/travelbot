@@ -12,7 +12,11 @@
 #import "AIUtilities.h"
 #import "JSONKit/JSONKit.h"
 #import "ConciseKit/ConciseKit.h"
+
 #import "CocoaAsyncSocket/GCDAsyncSocket.h"
+#include <netinet/tcp.h>
+#include <netinet/in.h>
+
 #import "CocoaLumberJack/DDLog.h"
 
 // ----------------------------------------------------------------------------
@@ -107,31 +111,43 @@ static AISocketManager *sharedInstance = nil;
         DDLogVerbose(@"Already attempting connection.");
         return;
     }
-    [self startConnectToHost:@"127.0.0.1" port:8080];
+    
+    [self startConnectToHost:@"travelbot.asimihsan.com" port:8080];
+    //[self startConnectToHost:@"192.168.1.99" port:8080];
+    //[self startConnectToHost:@"127.0.0.1" port:8080];
     DDLogVerbose(@"AISocketManager:connect() exit.");
 }
 
+// -----------------------------------------------------------------------------
+//  We're often disconnecting as the application enters the background so
+//  put this onto the processing GCD queue as a background task.
+// -----------------------------------------------------------------------------
 - (void)disconnect
 {
-    DDLogVerbose(@"AISocketManager:disconnect() entry.");
-    if (!(self.isConnected))
-    {
-        DDLogVerbose(@"Already disconnected.");
-        return;
-    }
-    if (self.isAttemptingConnection)
-    {
-        DDLogError(@"Attempting to connect during disconnect() call.");
-        return;
-    }
-    static NSString *close = @"close";
-    [self writeString:close
-              timeout:-1
-           header_tag:TAG_CLOSE_HEADER
-          payload_tag:TAG_CLOSE_PAYLOAD];
-    [self.socket disconnectAfterReadingAndWriting];
-    self.isConnected = NO;
-    DDLogVerbose(@"AISocketManager:disconnect() exit.");
+    [self startProcessingTask];
+    dispatch_async(self.processingQueue,
+    ^{
+        DDLogVerbose(@"AISocketManager:disconnect() entry.");
+        if (!(self.isConnected))
+        {
+            DDLogVerbose(@"Already disconnected.");
+            return;
+        }
+        if (self.isAttemptingConnection)
+        {
+            DDLogError(@"Attempting to connect during disconnect() call.");
+            return;
+        }
+        static NSString *close = @"close";
+        [self writeString:close
+                  timeout:-1
+               header_tag:TAG_CLOSE_HEADER
+              payload_tag:TAG_CLOSE_PAYLOAD];
+        [self.socket disconnectAfterWriting];
+        self.isConnected = NO;
+        DDLogVerbose(@"AISocketManager:disconnect() exit.");
+        [self stopProcessingTask];
+    });
 }
 
 - (NSString *)writeDictionary:(NSDictionary *)dictionary
@@ -297,6 +313,19 @@ static AISocketManager *sharedInstance = nil;
 {
     DDLogVerbose(@"AISocketManager:socketDidSecure entry.");
     [socket performBlock:^{
+        // ---------------------------------------------------------------------
+        //  Disable Nagle's algorithm using the TCP_NODELAY socket option in
+        //  order to send packets as possible, at the cost of wasted
+        //  bandwidth.
+        // ---------------------------------------------------------------------
+        int fd = [socket socketFD];
+        int on = 1;
+        if (setsockopt(fd, IPPROTO_TCP, TCP_NODELAY, (char*)&on, sizeof(on)) == -1)
+        {
+            DDLogError(@"AISocketManager:socketDidSecure(). Failed to set TCP_NODELAY on socket.");
+        }
+        // ---------------------------------------------------------------------
+        
         // TODO Verify the server's certificate against a local copy.
         // Reference: https://github.com/robbiehanson/CocoaAsyncSocket/issues/36
         CFReadStreamRef readStream = [socket readStream];
