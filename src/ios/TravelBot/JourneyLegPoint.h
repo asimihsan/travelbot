@@ -12,8 +12,8 @@
 
 @interface JourneyLegPoint : NSObject
 
-@property (copy, nonatomic) NSString *datetimeString;
 @property (retain, nonatomic) Location *location;
+@property (retain, nonatomic) NSDate *datetime;
 
 - (id)init:(NSDictionary *)jsonDictionary;
 + (BOOL)validateJsonDictionary:(NSDictionary *)jsonDictionary;

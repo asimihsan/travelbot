@@ -13,4 +13,7 @@
 - (id)init:(NSDictionary *)jsonDictionary;
 + (BOOL)validateJsonDictionary:(NSDictionary *)jsonDictionary;
 
+- (NSDate *)getFirstDepartureTime;
+- (NSDate *)getLastArrivalTime;
+
 @end

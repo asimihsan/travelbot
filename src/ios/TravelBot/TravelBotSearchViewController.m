@@ -10,7 +10,10 @@
 #import "TravelBotSearchHeader.h"
 #import "TravelBotPlace.h"
 #import "AISocketManager.h"
+#import "TravelBotSearchCell.h"
+
 #import "Journey.h"
+#import "JourneyLeg.h"
 
 #import "SVProgressHUD/SVProgressHUD.h"
 #import "ConciseKit/ConciseKit.h"
@@ -27,6 +30,7 @@ static int ddLogLevel = LOG_LEVEL_VERBOSE;
 @property (copy, nonatomic) NSString *requestUUID;
 @property (retain, nonatomic) NSDictionary *countryCodeToMethod;
 @property (retain, nonatomic) NSArray *searchResults;
+@property (retain, nonatomic) TravelBotSearchHeader *searchHeader;
 
 - (void)startSearch;
 - (void)stopSearch;
@@ -55,7 +59,7 @@ static int ddLogLevel = LOG_LEVEL_VERBOSE;
     // -------------------------------------------------------------------------
     
     // TODO !!AI remove me
-    return;
+    //return;
     
     [SVProgressHUD showWithStatus:@"Searching..."
                          maskType:SVProgressHUDMaskTypeNone];
@@ -139,14 +143,14 @@ static int ddLogLevel = LOG_LEVEL_VERBOSE;
 // -----------------------------------------------------------------------------
 //  Set up a custom header view here rather than in the storyboard.
 // -----------------------------------------------------------------------------
-- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
-    DDLogVerbose(@"TravelBotSearchViewController:viewForHeaderInSection() entry.");
-    TravelBotSearchHeader *searchHeader = [[TravelBotSearchHeader alloc]
-                                           initWithTableView:tableView
-                                                        from:self.fromPlace.name
-                                                          to:self.toPlace.name
-                                                        when:@"when"];
-    return searchHeader;
+- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
+{
+    return self.searchHeader;
+}
+
+- (float)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
+{
+    return self.searchHeader.frame.size.height;
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
@@ -175,19 +179,27 @@ static int ddLogLevel = LOG_LEVEL_VERBOSE;
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    static NSString *cellIdentifier = @"PlaceCell";
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier];
+    static NSString *cellIdentifier = @"SearchCell";
+    TravelBotSearchCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier];
     if (!cell)
     {
         DDLogVerbose(@"cellForRowAtIndexPath. cell is nil, create a new one.");
-        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault
-                                      reuseIdentifier:cellIdentifier];
+        cell = [[TravelBotSearchCell alloc] initWithStyle:UITableViewCellStyleDefault
+                                          reuseIdentifier:cellIdentifier];
     }
     if (self.searchResults)
     {
         DDLogVerbose(@"cellForRowAtIndexPath. search results are present.");
         Journey *journey = [self.searchResults $at:indexPath.row];
-        cell.textLabel.text = [NSString stringWithFormat:@"%@", journey];
+        NSDate *firstDepartureTime = [journey getFirstDepartureTime];
+        NSDate *lastArrivalTime = [journey getLastArrivalTime];
+        NSTimeInterval duration = [lastArrivalTime timeIntervalSinceDate:firstDepartureTime];
+        NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+        dateFormatter.dateFormat = @"HH:mm";
+        NSString *departureString = [dateFormatter stringFromDate:firstDepartureTime];
+        NSString *arrivalString = [dateFormatter stringFromDate:lastArrivalTime];
+        cell.textLabel.text = [NSString stringWithFormat:@"Depart: %@, arrive: %@, duration: %f",
+                               departureString, arrivalString, duration];
     }
     DDLogVerbose(@"cellForRowAtIndexPath. returning: %@.", cell);
     return cell;
@@ -215,10 +227,23 @@ static int ddLogLevel = LOG_LEVEL_VERBOSE;
     DDLogVerbose(@"TravelBotSearchViewController:viewDidLoad entry.");
     
     // -------------------------------------------------------------------------
-    //  This is an important run-time constnat. This maps country codes onto
+    //  This is an important run-time constant. This maps country codes onto
     //  methods that are used in socket calls.
+    //
+    //  TODO move this to the plist or some other config store.
     // -------------------------------------------------------------------------
     self.countryCodeToMethod = $dict(@"slovenia.bus_ap.get_journeys", @"SI");
+    // -------------------------------------------------------------------------
+
+    // -------------------------------------------------------------------------
+    //  Create the search header view that contains from, to, and when
+    //  details.
+    // -------------------------------------------------------------------------
+    self.searchHeader = [[TravelBotSearchHeader alloc]
+                         initWithTableView:self.tableView
+                         from:self.fromPlace.name
+                         to:self.toPlace.name
+                         when:@"Now"];
     // -------------------------------------------------------------------------
     
     [super viewDidLoad];

@@ -23,29 +23,89 @@
                      to:(NSString *)to
                    when:(NSString *)when
 {
+    // -------------------------------------------------------------------------
+    //  Get copies of the input variables.
+    // -------------------------------------------------------------------------
     self.from = from;
     self.to = to;
     self.when = when;
+    // -------------------------------------------------------------------------
     
+    // -------------------------------------------------------------------------
+    //  Initialize using the main rect.
+    // -------------------------------------------------------------------------
     CGRect headerViewRect = CGRectMake(0,
                                        0,
                                        tableView.frame.size.width,
-                                       100);
+                                       60);
     self = [super initWithFrame:headerViewRect];
     if (!self)
         return nil;
+    // -------------------------------------------------------------------------
+
+    // -------------------------------------------------------------------------
+    //  From header label.
+    // -------------------------------------------------------------------------
+    CGRect fromHeaderLabelRect = CGRectMake(10,
+                                            0,
+                                            self.frame.size.width - 120.0,
+                                            40);
+    UILabel *fromHeaderLabel = [[UILabel alloc] initWithFrame:fromHeaderLabelRect];
     
-    CGRect fromLabelRect = CGRectMake(60,
-                                      0,
-                                      self.frame.size.width - 120.0,
-                                      30);
-    UILabel *fromLabel = [[UILabel alloc] initWithFrame:fromLabelRect];
+    fromHeaderLabel.textAlignment = UITextAlignmentLeft;
+    fromHeaderLabel.text = @"From";
+    [fromHeaderLabel setFont:[UIFont boldSystemFontOfSize:17.0]];
+    fromHeaderLabel.backgroundColor = [UIColor clearColor];
+    [self addSubview:fromHeaderLabel];
+    // -------------------------------------------------------------------------
+
+    // -------------------------------------------------------------------------
+    //  From detail label.
+    // -------------------------------------------------------------------------
+    CGRect fromDetailLabelRect = CGRectMake(80,
+                                            5,
+                                            self.frame.size.width - 120.0,
+                                            30);
+    UILabel *fromDetailLabel = [[UILabel alloc] initWithFrame:fromDetailLabelRect];
     
-    fromLabel.textAlignment = UITextAlignmentLeft;
-    fromLabel.text = self.from;
-    fromLabel.backgroundColor = [UIColor clearColor];
+    fromDetailLabel.textAlignment = UITextAlignmentLeft;
+    fromDetailLabel.text = self.from;
+    fromDetailLabel.font = [UIFont systemFontOfSize:17.0];
+    fromDetailLabel.backgroundColor = [UIColor clearColor];
+    [self addSubview:fromDetailLabel];
+    // -------------------------------------------------------------------------
     
-    [self addSubview:fromLabel];
+    // -------------------------------------------------------------------------
+    //  To header label.
+    // -------------------------------------------------------------------------
+    CGRect toHeaderLabelRect = CGRectMake(10,
+                                          20,
+                                          self.frame.size.width - 120.0,
+                                          40);
+    UILabel *toHeaderLabel = [[UILabel alloc] initWithFrame:toHeaderLabelRect];
+    
+    toHeaderLabel.textAlignment = UITextAlignmentLeft;
+    toHeaderLabel.text = @"To";
+    [toHeaderLabel setFont:[UIFont boldSystemFontOfSize:17.0]];
+    toHeaderLabel.backgroundColor = [UIColor clearColor];
+    [self addSubview:toHeaderLabel];
+    // -------------------------------------------------------------------------
+    
+    // -------------------------------------------------------------------------
+    //  From detail label.
+    // -------------------------------------------------------------------------
+    CGRect toDetailLabelRect = CGRectMake(80,
+                                          25,
+                                          self.frame.size.width - 120.0,
+                                          30);
+    UILabel *toDetailLabel = [[UILabel alloc] initWithFrame:toDetailLabelRect];
+    
+    toDetailLabel.textAlignment = UITextAlignmentLeft;
+    toDetailLabel.text = self.to;
+    toDetailLabel.font = [UIFont systemFontOfSize:17.0];
+    toDetailLabel.backgroundColor = [UIColor clearColor];
+    [self addSubview:toDetailLabel];
+    // -------------------------------------------------------------------------
     
     return self;
 }

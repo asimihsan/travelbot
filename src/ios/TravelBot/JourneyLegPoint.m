@@ -27,14 +27,15 @@ static int ddLogLevel = LOG_LEVEL_INFO;
 
 @implementation JourneyLegPoint
 
-@synthesize datetimeString = _datetimeString;
 @synthesize location = _location;
+@synthesize datetime = _datetime;
 
 - (id)init:(NSDictionary *)jsonDictionary
 {
     DDLogVerbose(@"JourneyLegPoint:init entry. jsonDictionary: %@", jsonDictionary);
     if (!(self = [super init]))
         return nil;
+    
     if (![self.class validateJsonDictionary:jsonDictionary])
     {
         DDLogError(@"JourneyLegPoint:init. jsonDictionary is invalid.");
@@ -53,7 +54,10 @@ static int ddLogLevel = LOG_LEVEL_INFO;
     // -------------------------------------------------------------------------
     BOOL return_value = NO;
     NSDictionary *topLevelKey;
-    NSString *datetime;
+    NSString *datetimeString;
+    NSDate *datetime;
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    dateFormatter.dateFormat = @"yyyy-MM-dd'T'HH:mm:ss";
     NSDictionary *location;
     // -------------------------------------------------------------------------
     
@@ -63,10 +67,16 @@ static int ddLogLevel = LOG_LEVEL_INFO;
         DDLogVerbose(@"Top-level key 'JourneyLegPoint' not found.");
         goto EXIT_LABEL;
     }
-    datetime = [topLevelKey $for:@"datetime"];
-    if (!datetime)
+    datetimeString = [topLevelKey $for:@"datetime"];
+    if (!datetimeString)
     {
         DDLogVerbose(@"Second-level key 'datetime' not found.");
+        goto EXIT_LABEL;
+    }
+    datetime = [dateFormatter dateFromString:datetimeString];
+    if (!datetime)
+    {
+        DDLogVerbose(@"Second-level key 'datetime' could not be parsed.");
         goto EXIT_LABEL;
     }
     location = [topLevelKey $for:@"location"];
@@ -91,8 +101,11 @@ EXIT_LABEL:
 - (void)populateUsingJsonDictionary:(NSDictionary *)jsonDictionary
 {
     NSDictionary *topLevelKey = [jsonDictionary $for:@"JourneyLegPoint"];
+    
     NSString *datetimeString = [topLevelKey $for:@"datetime"];
-    self.datetimeString = datetimeString;
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    dateFormatter.dateFormat = @"yyyy-MM-dd'T'HH:mm:ss";
+    self.datetime = [dateFormatter dateFromString:datetimeString];
     
     NSDictionary *locationDictionary = [topLevelKey $for:@"location"];
     Location *location = [[Location alloc] init:locationDictionary];
@@ -107,7 +120,7 @@ EXIT_LABEL:
         return NO;
     
     JourneyLegPoint *other = (JourneyLegPoint *)object;
-    if (!$eql(self.datetimeString, other.datetimeString))
+    if (!$eql(self.datetime, other.datetime))
         return NO;
     if (!$eql(self.location, other.location))
         return NO;
@@ -120,15 +133,15 @@ EXIT_LABEL:
     // Reference: Effective Java 2nd edition.
     const NSUInteger prime = 31;
     NSUInteger result = 17;
-    result = prime * result + self.datetimeString.hash;
+    result = prime * result + self.datetime.hash;
     result = prime * result + self.location.hash;
     return result;
 }
 
 - (NSString *)description
 {
-    return $str(@"{Location. datetimeString=%@, location: %@}",
-                self.datetimeString, self.location);
+    return $str(@"{Location. datetime=%@, location: %@}",
+                self.datetime, self.location);
 }
 
 @end

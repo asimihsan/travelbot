@@ -8,6 +8,8 @@
 
 #import "Journey.h"
 #import "JourneyLeg.h"
+#import "JourneyLegPoint.h"
+#import "Location.h"
 
 #import "ConciseKit/ConciseKit.h"
 #import "CocoaLumberJack/DDLog.h"
@@ -27,6 +29,21 @@ static int ddLogLevel = LOG_LEVEL_INFO;
 @end
 
 @implementation Journey
+
+#pragma mark - Public API
+- (NSDate *)getFirstDepartureTime
+{
+    JourneyLeg *firstLeg = [self.legs $first];
+    NSDate *firstDepartureTime = firstLeg.departure.datetime;
+    return [firstDepartureTime copy];
+}
+
+- (NSDate *)getLastArrivalTime
+{
+    JourneyLeg *lastLeg = [self.legs $last];
+    NSDate *lastArrivalTime = lastLeg.arrival.datetime;
+    return [lastArrivalTime copy];
+}
 
 - (id)init:(NSDictionary *)jsonDictionary
 {

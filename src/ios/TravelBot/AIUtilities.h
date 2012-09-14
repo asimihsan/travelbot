@@ -40,4 +40,6 @@
 + (NSData *)bunzip2:(NSData *)input;
 + (void)bunzip2:(NSString *)inputFilepath outputFilepath:(NSString *)outputFilepath;
 
++ (UIColor *)colorWithR:(CGFloat)red G:(CGFloat)green B:(CGFloat)blue A:(CGFloat)alpha;
+
 @end

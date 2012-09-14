@@ -12,6 +12,8 @@
 #import "TravelBotSearchViewController.h"
 #import "TravelBotCountry.h"
 #import "TravelBotPlace.h"
+#import "AISocketManager.h"
+#import "AIUtilities.h"
 #import "ConciseKit/ConciseKit.h"
 #import "CocoaLumberJack/DDLog.h"
 
@@ -36,6 +38,7 @@ const int TAG_SEARCH_BUTTON_CELL = 300;
  TravelBotPlacesViewControllerDelegate>
 
 - (BOOL)isCountrySelected;
+- (void)updateServerStatusLabel;
 
 @end
 
@@ -51,6 +54,7 @@ const int TAG_SEARCH_BUTTON_CELL = 300;
 @synthesize toLabel = _toLabel;
 @synthesize searchButtonContainerCell = _searchButtonContainerCell;
 @synthesize searchButton = _searchButton;
+@synthesize serverStatusLabel = _serverStatusLabel;
 
 - (id)initWithStyle:(UITableViewStyle)style
 {
@@ -67,36 +71,47 @@ const int TAG_SEARCH_BUTTON_CELL = 300;
     BOOL isCountrySelected = [self isCountrySelected];
     DDLogVerbose(@"isCountrySelected: %@", isCountrySelected ? @"YES" : @"NO");
     
-    // Country label.
+    // -------------------------------------------------------------------------
+    //  Country label.
+    // -------------------------------------------------------------------------
     self.countryLabel.text = isCountrySelected ?
                                  self.selectedCountry.name :
                                  @"Select a country...";
+    // -------------------------------------------------------------------------
 
-    // From label.
+    // -------------------------------------------------------------------------
+    //  From label.
+    // -------------------------------------------------------------------------
     self.fromLabel.enabled = isCountrySelected;
     self.fromLabelContainerCell.userInteractionEnabled = isCountrySelected;
     if (self.fromLabel.enabled && self.selectedFromPlace)
     {
-        self.fromLabel.text = self.selectedFromPlace.name;
+        self.fromLabel.text = [NSString stringWithFormat:@"From: %@", self.selectedFromPlace.name];
     }
     else
     {
         self.fromLabel.text = @"From...";
     }
+    // -------------------------------------------------------------------------
         
-    // To label.
+    // -------------------------------------------------------------------------
+    //  To label.
+    // -------------------------------------------------------------------------
     self.toLabel.enabled = isCountrySelected;
     self.toLabelContainerCell.userInteractionEnabled = isCountrySelected;
     if (self.toLabel.enabled && self.selectedToPlace)
     {
-        self.toLabel.text = self.selectedToPlace.name;
+        self.toLabel.text = [NSString stringWithFormat:@"To: %@", self.selectedToPlace.name];
     }
     else
     {
         self.toLabel.text = @"To..";
     }
+    // -------------------------------------------------------------------------
     
-    // Search button.
+    // -------------------------------------------------------------------------
+    //  Search button.
+    // -------------------------------------------------------------------------
     if (isCountrySelected && self.selectedToPlace && self.selectedFromPlace)
     {
         self.searchButton.userInteractionEnabled = YES;
@@ -107,18 +122,75 @@ const int TAG_SEARCH_BUTTON_CELL = 300;
         self.searchButton.userInteractionEnabled = NO;
         self.searchButton.enabled = NO;
     }
+    // -------------------------------------------------------------------------
+
+    // -------------------------------------------------------------------------
+    //  Server status cell.
+    // -------------------------------------------------------------------------
+    [self updateServerStatusLabel];
+    // -------------------------------------------------------------------------
     
-    // Always set up the search button container cell to be transparent.
+    // -------------------------------------------------------------------------
+    //  Always set up the search button container cell to be transparent.
+    // -------------------------------------------------------------------------
     self.searchButtonContainerCell.backgroundColor = [UIColor clearColor];
     UIView *backView = [[UIView alloc] initWithFrame:CGRectZero];
     self.searchButtonContainerCell.backgroundView = backView;
+    // -------------------------------------------------------------------------
     
     [super viewWillAppear:animated];
+}
+
+// -----------------------------------------------------------------------------
+//  Update the server status label on the main menu. As this may get called
+//  via the notification center we may not be on the main thread, so use
+//  GCD to execute this on the main thread.
+// -----------------------------------------------------------------------------
+- (void)updateServerStatusLabel
+{
+    dispatch_async(dispatch_get_main_queue(), ^{
+        DDLogVerbose(@"TravelBotMainMenuViewController:updateServerStatusLabel entry.");
+        self.serverStatusLabel.textLabel.text = @"Server status";
+        AISocketManager *socketManager = [AISocketManager sharedInstance];
+        if ([socketManager isConnected])
+        {
+            self.serverStatusLabel.detailTextLabel.text = @"Connected";
+            self.serverStatusLabel.detailTextLabel.textColor = [AIUtilities colorWithR:50.0
+                                                                                     G:205.0
+                                                                                     B:50.0
+                                                                                     A:1.0];
+
+        }
+        else
+        {
+            self.serverStatusLabel.detailTextLabel.text = @"Not connected";
+            self.serverStatusLabel.detailTextLabel.textColor = [AIUtilities colorWithR:178.0
+                                                                                     G:34.0
+                                                                                     B:34.0
+                                                                                     A:1.0];
+        }
+        DDLogVerbose(@"TravelBotMainMenuViewContrlller:updateServerStatusLabel exit.");
+    });
 }
 
 - (void)viewDidLoad
 {
     DDLogVerbose(@"TravelBotMainMenuViewController:viewDidLoad entry.");
+    
+    // -------------------------------------------------------------------------
+    //  Update to the notification that the server socket is opened or closed.
+    //  Use this to update the server status label.
+    // -------------------------------------------------------------------------
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(updateServerStatusLabel)
+                                                 name:NOTIFICATION_SOCKET_OPENED
+                                               object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(updateServerStatusLabel)
+                                                 name:NOTIFICATION_SOCKET_CLOSED
+                                               object:nil];
+    // -------------------------------------------------------------------------
+    
     [super viewDidLoad];
 }
 
@@ -131,6 +203,13 @@ const int TAG_SEARCH_BUTTON_CELL = 300;
     [self setSearchButtonContainerCell:nil];
     [self setFromLabelContainerCell:nil];
     [self setToLabelContainerCell:nil];
+    [self setServerStatusLabel:nil];
+    
+    [[NSNotificationCenter defaultCenter] removeObserver:self
+                                              forKeyPath:NOTIFICATION_SOCKET_OPENED];
+    [[NSNotificationCenter defaultCenter] removeObserver:self
+                                              forKeyPath:NOTIFICATION_SOCKET_CLOSED];
+    
     [super viewDidUnload];
 }
 
