@@ -12,7 +12,7 @@
 
 @interface TravelBotSearchViewController : UITableViewController
 
-@property (retain, nonatomic) TravelBotPlace *fromPlace;
-@property (retain, nonatomic) TravelBotPlace *toPlace;
+@property (strong, nonatomic) TravelBotPlace *fromPlace;
+@property (strong, nonatomic) TravelBotPlace *toPlace;
 
 @end

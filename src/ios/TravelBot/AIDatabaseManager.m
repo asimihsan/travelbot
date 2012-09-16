@@ -27,6 +27,10 @@ static NSString *AWS_SECRET_ACCESS_KEY = @"3abl+yk7C7TaeIAV8BlWdcRF1gTZvHHnv0dJm
 static NSString *AWS_ACCESS_KEY_ID = @"AKIAJXMF5MIE2I7MEFYQ";
 static NSString *AWS_S3_BUCKET = @"ai-travelbot";
 static NSString *AWS_LOCATIONS_DATABASE_S3_PATH = @"locations.sqlite.bz2";
+
+// Query caches.
+static int GET_PLACE_WITH_COUNTRY_CODE_CACHE_SIZE = 100;
+static NSMutableDictionary *getPlaceWithCountryCodeCache;
 // ----------------------------------------------------------------------------
 
 static AIDatabaseManager *sharedInstance = nil;
@@ -60,11 +64,12 @@ static AIDatabaseManager *sharedInstance = nil;
 @synthesize locations_db = _locations_db;
 
 #pragma mark - Public API
+
 - (NSString *)getPlaceWithCountryCode:(NSString *)countryCode
                     search:(NSString *)search
-                    index:(NSNumber *)index
+                    index:(NSInteger)index
 {
-    DDLogVerbose(@"AIDatabaseManager:getPlaceWithCountryCode entry. countryCode: %@, search: %@, index: %@",
+    DDLogVerbose(@"AIDatabaseManager:getPlaceWithCountryCode entry. countryCode: %@, search: %@, index: %d",
                  countryCode, search, index);
     
     // -------------------------------------------------------------------------
@@ -78,6 +83,12 @@ static AIDatabaseManager *sharedInstance = nil;
     // -------------------------------------------------------------------------
     NSString *selectQuery;
     NSDictionary *arguments;
+    FMResultSet *resultSet;
+    const NSInteger CACHE_HALF = GET_PLACE_WITH_COUNTRY_CODE_CACHE_SIZE / 2;
+    NSInteger startIndex = (index - CACHE_HALF > 0) ? (index - CACHE_HALF) : 0;
+    NSNumber *startIndexArgument = [NSNumber numberWithInteger:startIndex];
+    NSNumber *cacheSizeArgument = [NSNumber numberWithInteger:GET_PLACE_WITH_COUNTRY_CODE_CACHE_SIZE];
+    
     if (search)
     {
         DDLogVerbose(@"AIDatabaseManager:getPlaceWithCountryCode. search present.");
@@ -87,10 +98,11 @@ static AIDatabaseManager *sharedInstance = nil;
                               locations_by_name.name MATCH :searchTermFTS AND \
                               locations_by_name.name LIKE :searchTermLike AND \
                               locations.geonameid = locations_by_name.rowid \
-                        ORDER BY locations.name ASC LIMIT 1 OFFSET :offset;";
+                        ORDER BY locations.name ASC LIMIT :limit OFFSET :offset;";
         NSString *searchTermFTS = [NSString stringWithFormat:@"%@*", search];
         NSString *searchTermLike = [NSString stringWithFormat:@"%@%%", search];
-        arguments = $dict(index, @"offset",
+        arguments = $dict(startIndexArgument, @"offset",
+                          cacheSizeArgument, @"limit",
                           countryCode, @"country_code",
                           searchTermFTS, @"searchTermFTS",
                           searchTermLike, @"searchTermLike");
@@ -100,28 +112,59 @@ static AIDatabaseManager *sharedInstance = nil;
         DDLogVerbose(@"AIDatabaseManager:getPlaceWithCountryCode. search not present.");
         selectQuery = @"SELECT name FROM locations \
                         WHERE country_code = :country_code \
-                        ORDER BY name ASC LIMIT 1 OFFSET :offset";
-        arguments = $dict(index, @"offset",
+                        ORDER BY name ASC LIMIT :limit OFFSET :offset";
+        arguments = $dict(startIndexArgument, @"offset",
+                          cacheSizeArgument, @"limit",
                           countryCode, @"country_code");
     }
     // -------------------------------------------------------------------------
-    
-    FMResultSet *resultSet = [self executeQuery:self.locations_db
-                                          query:selectQuery
-                                      arguments:arguments];
-    DDLogVerbose(@"AIDatabaseManager:getPlaceWithCountryCode. resultSet: %@", resultSet);
-    if ([resultSet next])
+
+    // -------------------------------------------------------------------------
+    //  Perform the query. Try to dip into the cache, using it if there's a hit
+    //  else update after the database query if not.
+    // -------------------------------------------------------------------------
+    NSString *cacheKey;
+    NSNumber *indexArgument = [NSNumber numberWithInteger:index];
+    if (search)
+        cacheKey = [NSString stringWithFormat:@"%@_%@_%@",
+                    countryCode, search, indexArgument];
+    else
+        cacheKey = [NSString stringWithFormat:@"%@_%@", countryCode, indexArgument];
+    NSString *queryResult = [getPlaceWithCountryCodeCache $for:cacheKey];
+    DDLogVerbose(@"AIDatabaseManager:getPlaceWithCountryCode. cacheKey: %@", cacheKey);
+    if (queryResult)
     {
-        DDLogVerbose(@"AIDatabaseManager:getPlaceWithCountryCode: there is a result.");
-        return_value = [resultSet stringForColumnIndex:0];
+        DDLogVerbose(@"AIDatabaseManager:getPlaceWithCountryCode. cache hit.");
+        return_value = queryResult;
     }
     else
     {
-        DDLogError(@"AIDatabaseManager:getPlaceWithCountryCode: there isn't a result.");
-        return_value = nil;
+        DDLogVerbose(@"AIDatabaseManager:getPlaceWithCountryCode. cache miss.");
+        [getPlaceWithCountryCodeCache removeAllObjects];
+        resultSet = [self executeQuery:self.locations_db
+                                 query:selectQuery
+                             arguments:arguments];
+        DDLogVerbose(@"AIDatabaseManager:getPlaceWithCountryCode. resultSet: %@", resultSet);
+        const NSInteger MAX = startIndex + GET_PLACE_WITH_COUNTRY_CODE_CACHE_SIZE;
+        for (NSInteger i = startIndex; i < MAX; i++)
+        {
+            if (search)
+                cacheKey = [NSString stringWithFormat:@"%@_%@_%d",
+                            countryCode, search, i];
+            else
+                cacheKey = [NSString stringWithFormat:@"%@_%d", countryCode, i];
+            [resultSet next];
+            NSString *cacheValue = [resultSet stringForColumnIndex:0];
+            if (!cacheValue)
+                break;
+            [getPlaceWithCountryCodeCache $obj:cacheValue for:cacheKey];
+            if (i == index)
+                return_value = cacheValue;
+        }
+        [resultSet close];
     }
-    [resultSet close];
-
+    // -------------------------------------------------------------------------
+    
     DDLogVerbose(@"AIDatabaseManager:getPlaceWithCountryCode returning: %@", return_value);
     return return_value;
 }
@@ -328,11 +371,13 @@ static AIDatabaseManager *sharedInstance = nil;
 - (void)initDatabaseManager
 {
     self.processingQueue = dispatch_queue_create("com.ai.AIDatabaseManager.processingQueue", NULL);
+    getPlaceWithCountryCodeCache = [NSMutableDictionary dictionaryWithCapacity:GET_PLACE_WITH_COUNTRY_CODE_CACHE_SIZE];
 }
 
 - (void)dealloc
 {
     self.processingQueue = nil;
+    getPlaceWithCountryCodeCache = nil;
 }
 
 - (BOOL)isOpened

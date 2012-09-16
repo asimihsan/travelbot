@@ -215,7 +215,6 @@ static const short _base64DecodingTable[256] = {
             [decompressed appendBytes:[buffer bytes] length:(buffer_size - stream.avail_out)];
             [outputFileHandle writeData:decompressed];
             [decompressed setLength:0];
-
             stream.next_out = [buffer mutableBytes];
             stream.avail_out = buffer_size;
             // -----------------------------------------------------------------

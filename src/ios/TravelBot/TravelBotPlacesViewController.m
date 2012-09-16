@@ -118,7 +118,7 @@ static int ddLogLevel = LOG_LEVEL_VERBOSE;
     //  Initialize local variables.
     // -------------------------------------------------------------------------
     static NSString *cellIdentifier = @"PlaceCell";
-    NSNumber *row = [NSNumber numberWithInteger:indexPath.row];
+    NSInteger row = indexPath.row;
     AIDatabaseManager *databaseManager = [AIDatabaseManager sharedInstance];
     NSString *place;
     // -------------------------------------------------------------------------
@@ -173,7 +173,7 @@ static int ddLogLevel = LOG_LEVEL_VERBOSE;
     // -------------------------------------------------------------------------
     //  Initialize local variables.
     // -------------------------------------------------------------------------
-    NSNumber *row = [NSNumber numberWithInteger:indexPath.row];
+    NSInteger row = indexPath.row;
     AIDatabaseManager *databaseManager = [AIDatabaseManager sharedInstance];
     NSString *placeName;
     // -------------------------------------------------------------------------
@@ -196,6 +196,7 @@ static int ddLogLevel = LOG_LEVEL_VERBOSE;
     
     TravelBotPlace *selectedPlace = [[TravelBotPlace alloc] initWithName:placeName
                                                                  country:self.country];
+    DDLogVerbose(@"TravelBotCountriesViewController:didSelectRowAtIndexPath. selectedPlace: %@", selectedPlace);
     [self.delegate travelBotPlacesViewControllerDidFinish:self
                                                 placeType:self.placeType
                                                     place:selectedPlace];

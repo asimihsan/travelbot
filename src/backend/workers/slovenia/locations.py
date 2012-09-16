@@ -177,7 +177,7 @@ class LocationsDatabase(object):
         # ---------------------------------------------------------------------
         self.cursor.execute("""CREATE VIRTUAL TABLE locations_by_name USING fts4(content="locations",
                                                                                  matchinfo="fts3",
-                                                                                 prefix="2,4,6,8",
+                                                                                 prefix="1,2,4,6,8",
                                                                                  name);""")
         # ---------------------------------------------------------------------
         return self

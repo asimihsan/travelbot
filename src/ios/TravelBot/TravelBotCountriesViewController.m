@@ -55,6 +55,10 @@ static int ddLogLevel = LOG_LEVEL_VERBOSE;
     [countries $push:[[TravelBotCountry alloc] initWithName:@"Slovenia"
                                                       image:@"si.png"
                                                        code:@"SI"]];
+    [countries $push:[[TravelBotCountry alloc] initWithName:@"Spain"
+                                                      image:@"es.png"
+                                                       code:@"ES"]];
+
     self.countries = [countries copy];
 }
 

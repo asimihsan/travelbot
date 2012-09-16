@@ -10,4 +10,6 @@
 
 @interface TravelBotSearchCell : UITableViewCell
 
+@property (weak, nonatomic) IBOutlet UILabel *departureLabel;
+
 @end

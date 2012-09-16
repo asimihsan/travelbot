@@ -7,15 +7,21 @@
 //
 
 #import "TravelBotSearchCell.h"
+#import "DDLog.h"
+
+static int ddLogLevel = LOG_LEVEL_VERBOSE;
 
 @implementation TravelBotSearchCell
 
+@synthesize departureLabel = _departureLabel;
+
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
 {
+    DDLogVerbose(@"TravelBotSearchCell:initWithStyle entry.");
+    
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (!self)
         return nil;
-    [self.textLabel setFont:[UIFont systemFontOfSize:15.0]];
     return self;
 }
 

@@ -21,6 +21,7 @@
 		018467A815FEB1AB001F31E3 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 018467A715FEB1AB001F31E3 /* Security.framework */; };
 		0190A8BB16022E560098B8F8 /* TravelBotSearchCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 0190A8BA16022E560098B8F8 /* TravelBotSearchCell.m */; };
 		0190A8BF16023AC30098B8F8 /* TravelBotSearchHeader.m in Sources */ = {isa = PBXBuildFile; fileRef = 0190A8BE16023AC30098B8F8 /* TravelBotSearchHeader.m */; };
+		0190A8C11604EC050098B8F8 /* es.png in Resources */ = {isa = PBXBuildFile; fileRef = 0190A8C01604EC050098B8F8 /* es.png */; };
 		01962B6215EABA60009CAEBA /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01962B6115EABA60009CAEBA /* UIKit.framework */; };
 		01962B6415EABA60009CAEBA /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01962B6315EABA60009CAEBA /* Foundation.framework */; };
 		01962B6615EABA60009CAEBA /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01962B6515EABA60009CAEBA /* CoreGraphics.framework */; };
@@ -85,6 +86,7 @@
 		0190A8BA16022E560098B8F8 /* TravelBotSearchCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TravelBotSearchCell.m; sourceTree = "<group>"; };
 		0190A8BD16023AC30098B8F8 /* TravelBotSearchHeader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TravelBotSearchHeader.h; sourceTree = "<group>"; };
 		0190A8BE16023AC30098B8F8 /* TravelBotSearchHeader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TravelBotSearchHeader.m; sourceTree = "<group>"; };
+		0190A8C01604EC050098B8F8 /* es.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = es.png; path = resources/images/es.png; sourceTree = "<group>"; };
 		01962B5D15EABA60009CAEBA /* TravelBot.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TravelBot.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		01962B6115EABA60009CAEBA /* UIKit.framework */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		01962B6315EABA60009CAEBA /* Foundation.framework */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -181,6 +183,7 @@
 		014D2BDF15ECCC55008205BE /* Images */ = {
 			isa = PBXGroup;
 			children = (
+				0190A8C01604EC050098B8F8 /* es.png */,
 				01AC830415ECE5760072992A /* si.png */,
 				014D2BF715ECD8DB008205BE /* search_button_highlight.png */,
 				014D2BF815ECD8DB008205BE /* search_button-highlight@2x.png */,
@@ -431,6 +434,7 @@
 				014D2BFD15ECD8DB008205BE /* search_button.png in Resources */,
 				014D2BFE15ECD8DB008205BE /* search_button@2x.png in Resources */,
 				01AC830515ECE5760072992A /* si.png in Resources */,
+				0190A8C11604EC050098B8F8 /* es.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

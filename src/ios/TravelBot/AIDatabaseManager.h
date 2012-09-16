@@ -24,6 +24,6 @@ static NSString *NOTIFICATION_DATABASE_OPENED = @"AIDatabaseManager:notification
                          search:(NSString *)search;
 - (NSString *)getPlaceWithCountryCode:(NSString *)countryCode
                                search:(NSString *)search
-                                index:(NSNumber *)index;
+                                index:(NSInteger)index;
 
 @end
