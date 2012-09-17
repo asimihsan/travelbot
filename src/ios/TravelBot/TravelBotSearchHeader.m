@@ -7,6 +7,13 @@
 //
 
 #import "TravelBotSearchHeader.h"
+#import "CocoaLumberJack/DDLog.h"
+
+// ----------------------------------------------------------------------------
+//  Constants.
+// ----------------------------------------------------------------------------
+static int ddLogLevel = LOG_LEVEL_VERBOSE;
+// ----------------------------------------------------------------------------
 
 @interface TravelBotSearchHeader ()
 
@@ -14,99 +21,56 @@
 
 @implementation TravelBotSearchHeader
 
-@synthesize from = _from;
-@synthesize to = _to;
-@synthesize when = _when;
+@synthesize toValueLabel = _toValueLabel;
+@synthesize fromValueLabel = _fromValueLabel;
+@synthesize whenValueLabel = _whenValueLabel;
+
+- (id)initWithCoder:(NSCoder *)aDecoder
+{
+    DDLogVerbose(@"TravelBotSearchHeader:initWithCoder entry.");
+    self = [super initWithCoder:aDecoder];
+    if (self)
+    {
+        // init here.
+    }
+    return self;
+}
+
+- (void)awakeFromNib
+{
+    DDLogVerbose(@"TravelBotSearchHeader:awakeFromNib entry.");
+}
 
 - (id)initWithTableView:(UIView *)tableView
+              fromLabel:(UILabel *)fromLabel
+                toLabel:(UILabel *)toLabel
+              whenLabel:(UILabel *)whenLabel
                    from:(NSString *)from
                      to:(NSString *)to
-                   when:(NSString *)when
+                   when:(NSString *)when;
 {
-    // -------------------------------------------------------------------------
-    //  Get copies of the input variables.
-    // -------------------------------------------------------------------------
-    self.from = from;
-    self.to = to;
-    self.when = when;
-    // -------------------------------------------------------------------------
-    
+    DDLogVerbose(@"TravelBotSearchHeader:initWithTableView entry.");
+
     // -------------------------------------------------------------------------
     //  Initialize using the main rect.
     // -------------------------------------------------------------------------
     CGRect headerViewRect = CGRectMake(0,
                                        0,
                                        tableView.frame.size.width,
-                                       60);
+                                       88.0);
     self = [super initWithFrame:headerViewRect];
     if (!self)
         return nil;
     // -------------------------------------------------------------------------
 
     // -------------------------------------------------------------------------
-    //  From header label.
+    //  Set up the labels.
     // -------------------------------------------------------------------------
-    CGRect fromHeaderLabelRect = CGRectMake(10,
-                                            0,
-                                            self.frame.size.width - 120.0,
-                                            40);
-    UILabel *fromHeaderLabel = [[UILabel alloc] initWithFrame:fromHeaderLabelRect];
-    
-    fromHeaderLabel.textAlignment = UITextAlignmentLeft;
-    fromHeaderLabel.text = @"From";
-    [fromHeaderLabel setFont:[UIFont boldSystemFontOfSize:17.0]];
-    fromHeaderLabel.backgroundColor = [UIColor clearColor];
-    [self addSubview:fromHeaderLabel];
+    fromLabel.text = from;
+    toLabel.text = to;
+    whenLabel.text = when;
     // -------------------------------------------------------------------------
 
-    // -------------------------------------------------------------------------
-    //  From detail label.
-    // -------------------------------------------------------------------------
-    CGRect fromDetailLabelRect = CGRectMake(80,
-                                            5,
-                                            self.frame.size.width - 120.0,
-                                            30);
-    UILabel *fromDetailLabel = [[UILabel alloc] initWithFrame:fromDetailLabelRect];
-    
-    fromDetailLabel.textAlignment = UITextAlignmentLeft;
-    fromDetailLabel.text = self.from;
-    fromDetailLabel.font = [UIFont systemFontOfSize:17.0];
-    fromDetailLabel.backgroundColor = [UIColor clearColor];
-    [self addSubview:fromDetailLabel];
-    // -------------------------------------------------------------------------
-    
-    // -------------------------------------------------------------------------
-    //  To header label.
-    // -------------------------------------------------------------------------
-    CGRect toHeaderLabelRect = CGRectMake(10,
-                                          20,
-                                          self.frame.size.width - 120.0,
-                                          40);
-    UILabel *toHeaderLabel = [[UILabel alloc] initWithFrame:toHeaderLabelRect];
-    
-    toHeaderLabel.textAlignment = UITextAlignmentLeft;
-    toHeaderLabel.text = @"To";
-    [toHeaderLabel setFont:[UIFont boldSystemFontOfSize:17.0]];
-    toHeaderLabel.backgroundColor = [UIColor clearColor];
-    [self addSubview:toHeaderLabel];
-    // -------------------------------------------------------------------------
-    
-    // -------------------------------------------------------------------------
-    //  From detail label.
-    // -------------------------------------------------------------------------
-    CGRect toDetailLabelRect = CGRectMake(80,
-                                          25,
-                                          self.frame.size.width - 120.0,
-                                          30);
-    UILabel *toDetailLabel = [[UILabel alloc] initWithFrame:toDetailLabelRect];
-    
-    toDetailLabel.textAlignment = UITextAlignmentLeft;
-    toDetailLabel.text = self.to;
-    toDetailLabel.font = [UIFont systemFontOfSize:17.0];
-    toDetailLabel.backgroundColor = [UIColor clearColor];
-    [self addSubview:toDetailLabel];
-    // -------------------------------------------------------------------------
-    
     return self;
 }
 

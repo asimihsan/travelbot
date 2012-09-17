@@ -62,12 +62,15 @@ static int ddLogLevel = LOG_LEVEL_VERBOSE;
 }
 
 // -----------------------------------------------------------------------------
-//  When the view controller is finished drawing elements we want to focus on
+//  When the view controller is finished drawing elements we could focus on
 //  the search bar.
 // -----------------------------------------------------------------------------
 - (void)viewDidAppear:(BOOL)animated
 {
-    [self.searchBar becomeFirstResponder];
+    // Uncomment the line below to focus on the search bar. This is an unusual
+    // UX choice, despite it being the main use case.
+    //[self.searchBar becomeFirstResponder];
+    
     [super viewDidAppear:animated];
 }
 

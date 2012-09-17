@@ -68,6 +68,8 @@ const int TAG_SEARCH_BUTTON_CELL = 300;
 - (void)viewWillAppear:(BOOL)animated
 {
     DDLogVerbose(@"TravelBotMainMenuViewController:viewWillAppear entry.");
+    [super viewWillAppear:animated];
+    
     BOOL isCountrySelected = [self isCountrySelected];
     DDLogVerbose(@"isCountrySelected: %@", isCountrySelected ? @"YES" : @"NO");
     
@@ -137,8 +139,6 @@ const int TAG_SEARCH_BUTTON_CELL = 300;
     UIView *backView = [[UIView alloc] initWithFrame:CGRectZero];
     self.searchButtonContainerCell.backgroundView = backView;
     // -------------------------------------------------------------------------
-    
-    [super viewWillAppear:animated];
 }
 
 // -----------------------------------------------------------------------------
@@ -176,6 +176,7 @@ const int TAG_SEARCH_BUTTON_CELL = 300;
 - (void)viewDidLoad
 {
     DDLogVerbose(@"TravelBotMainMenuViewController:viewDidLoad entry.");
+    [super viewDidLoad];
     
     // -------------------------------------------------------------------------
     //  Update to the notification that the server socket is opened or closed.
@@ -190,12 +191,12 @@ const int TAG_SEARCH_BUTTON_CELL = 300;
                                                  name:NOTIFICATION_SOCKET_CLOSED
                                                object:nil];
     // -------------------------------------------------------------------------
-    
-    [super viewDidLoad];
 }
 
 - (void)viewDidUnload
 {
+    [super viewDidUnload];
+    
     [self setSearchButton:nil];
     [self setFromLabel:nil];
     [self setToLabel:nil];
@@ -209,8 +210,6 @@ const int TAG_SEARCH_BUTTON_CELL = 300;
                                               forKeyPath:NOTIFICATION_SOCKET_OPENED];
     [[NSNotificationCenter defaultCenter] removeObserver:self
                                               forKeyPath:NOTIFICATION_SOCKET_CLOSED];
-    
-    [super viewDidUnload];
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation

@@ -10,11 +10,14 @@
 
 @interface TravelBotSearchHeader : UIView
 
-@property (copy, nonatomic) NSString *from;
-@property (copy, nonatomic) NSString *to;
-@property (copy, nonatomic) NSString *when;
+@property (weak, nonatomic) IBOutlet UILabel *fromValueLabel;
+@property (weak, nonatomic) IBOutlet UILabel *toValueLabel;
+@property (weak, nonatomic) IBOutlet UILabel *whenValueLabel;
 
 - (id)initWithTableView:(UIView *)tableView
+              fromLabel:(UILabel *)fromLabel
+                toLabel:(UILabel *)toLabel
+              whenLabel:(UILabel *)whenLabel
                    from:(NSString *)from
                      to:(NSString *)to
                    when:(NSString *)when;

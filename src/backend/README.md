@@ -6,17 +6,28 @@ The following covers the part of travelbot that fetches travel information.
 
 ## TODO
 
--   Create task to return URI of location data. App has a baked-in URI but if a HTTP HEAD doesn't return 200 it asks the server for a new URI.
--	Load holidays using local data.
 -   create simple test app in xcode simulator, test it works.
     -   Tab for search:
-        -   On search new window, show progress, display results. Also get list of holidays.
-        -	 Warn if today is a local holiday.
+        -   On search new window, show progress, display result summaries.
+-   clicking on a search result displays a detailed view of the journey in a new view controller.
+    -   very un-iOS to slide in the details in the same view controller.
+-   from places view controller should be able to see nearby locations via a button. data is already there, but not in RTree index.
+-   start using preferences, even if read-only, to store major configuration.
+    -   server hostname(s).
+    -   method names for country codes.
+-   improve table views of places and searches of places.
+    -   do not show results for first letter. it's too slow, could cache but why bother. first letter will never show useful results.
+    -   show indexed sections depending on depth of search. zero-letter search is A-Z, then second-letter search for e.g. "L" is "LA-LZ", but only for matching records, etc. Be careful of spaces (e.g. "A ") and accented letters. (this might be a bad idea).
+-   Create task to return URI of location data. App has a baked-in URI but if a HTTP HEAD doesn't return 200 it asks the server for a new URI.
+-   App comes with a copy of the location database. if server says it's outdated it'll try to update on Wi-Fi.
 -   enable SSL.
     -   verify server certificate.
 -   Celery worker for Slovenia train times. CUT.
 -   Celery worker for Slovenia bus and train times, with synonyms for common places. CUT.
 -   Celery worker for Slovenia holidays (http://www.timeanddate.com/holidays/slovenia/)
+-   Celery worker for Spain.
+-	Load holidays using local data.
+-   Show warning on search results if today is a holiday.
 
 ## request API:
 

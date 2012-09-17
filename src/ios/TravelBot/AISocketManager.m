@@ -56,7 +56,7 @@ static const long TAG_CLOSE_PAYLOAD                  = 10;
 @property (nonatomic, assign) dispatch_queue_t processingQueue;
 @property (nonatomic, assign) BOOL isAttemptingConnection;
 @property (nonatomic, assign) UIBackgroundTaskIdentifier processingTask;
-@property (nonatomic, retain) UIApplication *application;
+@property (nonatomic, strong) UIApplication *application;
 
 - (void)startProcessingTask;
 - (void)stopProcessingTask;
@@ -112,9 +112,9 @@ static AISocketManager *sharedInstance = nil;
         return;
     }
     
-    [self startConnectToHost:@"travelbot.asimihsan.com" port:8080];
+    //[self startConnectToHost:@"travelbot.asimihsan.com" port:8080];
     //[self startConnectToHost:@"192.168.1.99" port:8080];
-    //[self startConnectToHost:@"127.0.0.1" port:8080];
+    [self startConnectToHost:@"127.0.0.1" port:8080];
     DDLogVerbose(@"AISocketManager:connect() exit.");
 }
 

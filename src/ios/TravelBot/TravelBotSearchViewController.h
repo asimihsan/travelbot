@@ -9,10 +9,13 @@
 #import <UIKit/UIKit.h>
 
 @class TravelBotPlace;
+@class TravelBotSearchHeader;
 
 @interface TravelBotSearchViewController : UITableViewController
 
 @property (strong, nonatomic) TravelBotPlace *fromPlace;
 @property (strong, nonatomic) TravelBotPlace *toPlace;
+
+@property (weak, nonatomic) IBOutlet TravelBotSearchHeader *searchHeaderView;
 
 @end

@@ -37,10 +37,10 @@ static AIDatabaseManager *sharedInstance = nil;
 
 @interface AIDatabaseManager ()
 
-@property (nonatomic, retain) UIApplication *application;
+@property (nonatomic, strong) UIApplication *application;
 @property (nonatomic, assign) dispatch_queue_t processingQueue;
 @property (nonatomic, assign) UIBackgroundTaskIdentifier processingTask;
-@property (nonatomic, retain) FMDatabase *locations_db;
+@property (nonatomic, strong) FMDatabase *locations_db;
 
 - (void)initDatabaseManager;
 - (void)initListener;

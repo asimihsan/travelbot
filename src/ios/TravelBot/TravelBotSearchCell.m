@@ -13,7 +13,9 @@ static int ddLogLevel = LOG_LEVEL_VERBOSE;
 
 @implementation TravelBotSearchCell
 
-@synthesize departureLabel = _departureLabel;
+@synthesize departValue = _departValue;
+@synthesize arriveValue = _arriveValue;
+@synthesize durationValue = _durationValue;
 
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
 {

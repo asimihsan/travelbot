@@ -12,8 +12,8 @@
 
 @interface JourneyLeg : NSObject
 
-@property (retain, nonatomic) JourneyLegPoint *departure;
-@property (retain, nonatomic) JourneyLegPoint *arrival;
+@property (strong, nonatomic) JourneyLegPoint *departure;
+@property (strong, nonatomic) JourneyLegPoint *arrival;
 
 - (id)init:(NSDictionary *)jsonDictionary;
 + (BOOL)validateJsonDictionary:(NSDictionary *)jsonDictionary;

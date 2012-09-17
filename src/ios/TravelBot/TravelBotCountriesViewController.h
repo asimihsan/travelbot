@@ -13,7 +13,7 @@
 
 @interface TravelBotCountriesViewController : UITableViewController
 
-@property (retain, nonatomic) NSArray *countries;
+@property (strong, nonatomic) NSArray *countries;
 @property (weak, nonatomic) id <TravelBotCountriesViewControllerDelegate> delegate;
 
 @end

@@ -15,7 +15,7 @@
 @interface TravelBotPlacesViewController : UITableViewController
 <UISearchDisplayDelegate>
 
-@property (retain, nonatomic) TravelBotCountry *country;
+@property (strong, nonatomic) TravelBotCountry *country;
 @property (copy, nonatomic) NSString *placeType;
 @property (weak, nonatomic) id <TravelBotPlacesViewControllerDelegate> delegate;
 

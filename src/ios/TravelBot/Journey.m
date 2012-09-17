@@ -22,7 +22,7 @@ static int ddLogLevel = LOG_LEVEL_INFO;
 
 @interface Journey ()
 
-@property (retain, nonatomic) NSArray *legs;
+@property (strong, nonatomic) NSArray *legs;
 
 - (void)populateUsingJsonDictionary:(NSDictionary *)jsonDictionary;
 
