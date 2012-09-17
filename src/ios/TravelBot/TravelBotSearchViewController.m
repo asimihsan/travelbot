@@ -222,10 +222,18 @@ static int ddLogLevel = LOG_LEVEL_VERBOSE;
                               duration_minutes];
         }
         // ---------------------------------------------------------------------
+
+        // ---------------------------------------------------------------------
+        //  Determine changes string.
+        // ---------------------------------------------------------------------
+        NSString *changesString = [NSString stringWithFormat:@"%d",
+                                   [journey getNumberOfChanges]];
+        // ---------------------------------------------------------------------
         
         cell.departValue.text = departureString;
         cell.arriveValue.text = arrivalString;
         cell.durationValue.text = durationString;
+        cell.changesValue.text = changesString;
     }
     DDLogVerbose(@"cellForRowAtIndexPath. returning: %@.", cell);
     return cell;

@@ -15,5 +15,6 @@
 
 - (NSDate *)getFirstDepartureTime;
 - (NSDate *)getLastArrivalTime;
+- (NSInteger)getNumberOfChanges;
 
 @end

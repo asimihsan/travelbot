@@ -41,37 +41,4 @@ static int ddLogLevel = LOG_LEVEL_VERBOSE;
     DDLogVerbose(@"TravelBotSearchHeader:awakeFromNib entry.");
 }
 
-- (id)initWithTableView:(UIView *)tableView
-              fromLabel:(UILabel *)fromLabel
-                toLabel:(UILabel *)toLabel
-              whenLabel:(UILabel *)whenLabel
-                   from:(NSString *)from
-                     to:(NSString *)to
-                   when:(NSString *)when;
-{
-    DDLogVerbose(@"TravelBotSearchHeader:initWithTableView entry.");
-
-    // -------------------------------------------------------------------------
-    //  Initialize using the main rect.
-    // -------------------------------------------------------------------------
-    CGRect headerViewRect = CGRectMake(0,
-                                       0,
-                                       tableView.frame.size.width,
-                                       88.0);
-    self = [super initWithFrame:headerViewRect];
-    if (!self)
-        return nil;
-    // -------------------------------------------------------------------------
-
-    // -------------------------------------------------------------------------
-    //  Set up the labels.
-    // -------------------------------------------------------------------------
-    fromLabel.text = from;
-    toLabel.text = to;
-    whenLabel.text = when;
-    // -------------------------------------------------------------------------
-
-    return self;
-}
-
 @end

@@ -13,6 +13,7 @@
 @property (weak, nonatomic) IBOutlet UILabel *departValue;
 @property (weak, nonatomic) IBOutlet UILabel *arriveValue;
 @property (weak, nonatomic) IBOutlet UILabel *durationValue;
+@property (weak, nonatomic) IBOutlet UILabel *changesValue;
 
 
 @end

@@ -16,6 +16,7 @@ static int ddLogLevel = LOG_LEVEL_VERBOSE;
 @synthesize departValue = _departValue;
 @synthesize arriveValue = _arriveValue;
 @synthesize durationValue = _durationValue;
+@synthesize changesValue = _changesValue;
 
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
 {

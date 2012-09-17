@@ -45,6 +45,29 @@ static int ddLogLevel = LOG_LEVEL_INFO;
     return [lastArrivalTime copy];
 }
 
+- (NSInteger)getNumberOfChanges
+{
+    // -------------------------------------------------------------------------
+    //  Validate assumptions.
+    // -------------------------------------------------------------------------
+    if (!self.legs)
+        DDLogError(@"Journey:getNumberOfChanges. self.legs is nil.");
+    assert(self.legs);
+    // -------------------------------------------------------------------------
+    
+    NSInteger return_value = [self.legs count];
+    
+    // -------------------------------------------------------------------------
+    //  Post-validation.
+    // -------------------------------------------------------------------------
+    if (!(return_value > 0))
+        DDLogError(@"Journey:getNumberOfChanges. return_value %d invalid.", return_value);
+    assert(return_value > 0);
+    // -------------------------------------------------------------------------
+    
+    return [self.legs count];
+}
+
 - (id)init:(NSDictionary *)jsonDictionary
 {
     DDLogVerbose(@"Journey:init entry. jsonDictionary: %@", jsonDictionary);

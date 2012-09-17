@@ -349,42 +349,56 @@
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" text="Depart" adjustsFontSizeToFit="NO" autoshrinkMode="none" id="GWZ-Yl-NTb">
-                                            <rect key="frame" x="20" y="8" width="42" height="21"/>
+                                            <rect key="frame" x="20" y="4" width="42" height="21"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                             <color key="highlightedColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                             <color key="textColor" red="0.40000000596046448" green="0.40000000596046448" blue="0.40000000596046448" alpha="1" colorSpace="calibratedRGB"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="13"/>
                                         </label>
                                         <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" text="00:00" adjustsFontSizeToFit="NO" autoshrinkMode="none" id="NmA-KQ-hBo" userLabel="Label - departValue">
-                                            <rect key="frame" x="20" y="27" width="42" height="21"/>
+                                            <rect key="frame" x="20" y="23" width="42" height="21"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                            <color key="highlightedColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                            <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                            <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
+                                        </label>
+                                        <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" text="Changes" adjustsFontSizeToFit="NO" autoshrinkMode="none" id="2Y9-EM-Y0B">
+                                            <rect key="frame" x="20" y="45" width="53" height="21"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                            <color key="highlightedColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                            <color key="textColor" red="0.40000000600000002" green="0.40000000600000002" blue="0.40000000600000002" alpha="1" colorSpace="calibratedRGB"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                                        </label>
+                                        <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" text="0" adjustsFontSizeToFit="NO" autoshrinkMode="none" id="dGg-kd-8zj" userLabel="Label - changesValue">
+                                            <rect key="frame" x="20" y="64" width="42" height="21"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                             <color key="highlightedColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                             <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                             <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
                                         </label>
                                         <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" text="Arrive" adjustsFontSizeToFit="NO" autoshrinkMode="none" id="Yrj-uC-eV8">
-                                            <rect key="frame" x="89" y="8" width="42" height="21"/>
+                                            <rect key="frame" x="89" y="4" width="42" height="21"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                             <color key="highlightedColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                             <color key="textColor" red="0.40000000600000002" green="0.40000000600000002" blue="0.40000000600000002" alpha="1" colorSpace="calibratedRGB"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="13"/>
                                         </label>
                                         <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" text="00:00" adjustsFontSizeToFit="NO" autoshrinkMode="none" id="tQB-ob-Z1r" userLabel="Label - arriveValue">
-                                            <rect key="frame" x="89" y="27" width="42" height="21"/>
+                                            <rect key="frame" x="89" y="23" width="42" height="21"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                             <color key="highlightedColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                             <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                             <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
                                         </label>
                                         <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" text="Duration" adjustsFontSizeToFit="NO" autoshrinkMode="none" id="pu4-yG-IPL">
-                                            <rect key="frame" x="154" y="8" width="53" height="21"/>
+                                            <rect key="frame" x="154" y="4" width="53" height="21"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                             <color key="highlightedColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                             <color key="textColor" red="0.40000000600000002" green="0.40000000600000002" blue="0.40000000600000002" alpha="1" colorSpace="calibratedRGB"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="13"/>
                                         </label>
                                         <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" text="00 hr 00 min" adjustsFontSizeToFit="NO" autoshrinkMode="none" id="NIr-Oo-a1Y" userLabel="Label - durationValue">
-                                            <rect key="frame" x="154" y="27" width="88" height="21"/>
+                                            <rect key="frame" x="154" y="23" width="88" height="21"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                             <color key="highlightedColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                             <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
@@ -395,6 +409,7 @@
                                 </view>
                                 <connections>
                                     <outlet property="arriveValue" destination="tQB-ob-Z1r" id="782-ch-m9B"/>
+                                    <outlet property="changesValue" destination="dGg-kd-8zj" id="3WA-mx-kZp"/>
                                     <outlet property="departValue" destination="NmA-KQ-hBo" id="eg9-ah-rHw"/>
                                     <outlet property="durationValue" destination="NIr-Oo-a1Y" id="Oqc-gj-D10"/>
                                 </connections>

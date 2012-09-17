@@ -9,6 +9,10 @@ The following covers the part of travelbot that fetches travel information.
 -   create simple test app in xcode simulator, test it works.
     -   Tab for search:
         -   On search new window, show progress, display result summaries.
+-   bug fix - going to background then foreground doesn't recover socket connection, despite it seeming like it's reconnected.
+    -   for future projects i want the socket to survive in the background. don't close it.
+    -   use ping, wait five seconds for pong. if no pong the connection is dead regardless of object state.
+    -   use recovery timer, e.g. 10 seconds, if socket is dead and we're not waiting for a ping.
 -   clicking on a search result displays a detailed view of the journey in a new view controller.
     -   very un-iOS to slide in the details in the same view controller.
 -   from places view controller should be able to see nearby locations via a button. data is already there, but not in RTree index.
