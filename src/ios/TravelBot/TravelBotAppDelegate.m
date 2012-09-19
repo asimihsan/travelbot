@@ -131,7 +131,7 @@ static int ddLogLevel = LOG_LEVEL_VERBOSE;
     
     AIDatabaseManager *databaseManager = [AIDatabaseManager sharedInstance];
     AISocketManager *socketManager = [AISocketManager sharedInstance];
-    if (([databaseManager isOpened] && socketManager.isConnected))
+    if (([databaseManager isOpened] && [socketManager isConnected]))
     {
         DDLogVerbose(@"Both database and socket are up.");
     }

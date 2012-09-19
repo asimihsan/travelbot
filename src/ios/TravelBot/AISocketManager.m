@@ -47,6 +47,19 @@ static const long TAG_PONG_PAYLOAD                   = 8;
 static const long TAG_CLOSE_HEADER                   = 9;
 static const long TAG_CLOSE_PAYLOAD                  = 10;
 
+// connection state.
+static const int64_t CONNECTION_STATE_NOT_CONNECTED         = 0;
+static const int64_t CONNECTION_STATE_ATTEMPTING_CONNECTION = 1;
+static const int64_t CONNECTION_STATE_CONNECTED             = 2;
+
+// How often to send heartbeats.
+static const float HEARTBEAT_SEND_INTERVAL = 10.0;
+
+// How long before a heartbeat is considered to fail. Try to make this 2 * RTT.
+static const float HEARTBEAT_TIMEOUT_INTERVAL = 3.0;
+
+// If disconnected how long before trying to connect again.
+static const float RECONNECT_INTERVAL = 10.0;
 // ----------------------------------------------------------------------------
 
 #pragma mark - Private methods and constants.
@@ -54,9 +67,12 @@ static const long TAG_CLOSE_PAYLOAD                  = 10;
 
 @property (nonatomic, assign) dispatch_queue_t socketQueue;
 @property (nonatomic, assign) dispatch_queue_t processingQueue;
-@property (nonatomic, assign) BOOL isAttemptingConnection;
 @property (nonatomic, assign) UIBackgroundTaskIdentifier processingTask;
 @property (nonatomic, strong) UIApplication *application;
+@property (nonatomic, assign) int64_t connectionState;
+
+@property (nonatomic, strong) NSTimer *heartbeatSendTimer;
+@property (nonatomic, strong) NSTimer *heartbeatTimeoutTimer;
 
 - (void)startProcessingTask;
 - (void)stopProcessingTask;
@@ -81,7 +97,12 @@ static const long TAG_CLOSE_PAYLOAD                  = 10;
 - (void)handleResponseBody:(NSData *)data;
 - (BOOL)maybeHandleControlResponse:(NSString *)response;
 
-- (void)doHeartbeat;
+- (void)startHeartbeatSend;
+- (void)startHeartbeatTimeout;
+- (void)stopHeartbeatSend;
+- (void)stopHeartbeatTimeout;
+- (void)doHeartbeat:(NSTimer *)timer;
+- (void)handleHeartbeatTimeout:(NSTimer *)timer;
 - (void)notification:(NSNotification *)notification;
 
 @end
@@ -91,30 +112,46 @@ static const long TAG_CLOSE_PAYLOAD                  = 10;
 @synthesize socket = _socket,
             socketQueue = _socketQueue,
             processingQueue = _processingQueue,
-            isConnected = _isConnected,
-            isAttemptingConnection = _isAttemptingConnection;
+            connectionState = _connectionState;
 
 static AISocketManager *sharedInstance = nil;
+
+#pragma mark - Public API for querying connection state.
+- (BOOL)isNotConnected
+{
+    return self.connectionState == CONNECTION_STATE_NOT_CONNECTED;
+}
+
+- (BOOL)isAttemptingConnection
+{
+    return self.connectionState == CONNECTION_STATE_ATTEMPTING_CONNECTION;
+}
+
+- (BOOL)isConnected
+{
+    return self.connectionState == CONNECTION_STATE_CONNECTED;
+}
 
 #pragma mark - Public API.
 
 - (void)connect
 {
-    DDLogVerbose(@"AISocketManager:connect() entry.");
-    if (self.isConnected)
+    DDLogVerbose(@"AISocketManager:connect() entry. connection state: %llu",
+                 self.connectionState);
+    if ([self isConnected])
     {
         DDLogVerbose(@"Already connected.");
         return;
     }
-    if (self.isAttemptingConnection)
+    if ([self isAttemptingConnection])
     {
         DDLogVerbose(@"Already attempting connection.");
         return;
     }
     
-    [self startConnectToHost:@"travelbot.asimihsan.com" port:8080];
+    //[self startConnectToHost:@"travelbot.asimihsan.com" port:8080];
     //[self startConnectToHost:@"192.168.1.99" port:8080];
-    //[self startConnectToHost:@"127.0.0.1" port:8080];
+    [self startConnectToHost:@"127.0.0.1" port:8080];
     DDLogVerbose(@"AISocketManager:connect() exit.");
 }
 
@@ -128,12 +165,12 @@ static AISocketManager *sharedInstance = nil;
     dispatch_async(self.processingQueue,
     ^{
         DDLogVerbose(@"AISocketManager:disconnect() entry.");
-        if (!(self.isConnected))
+        if ([self isNotConnected])
         {
             DDLogVerbose(@"Already disconnected.");
             return;
         }
-        if (self.isAttemptingConnection)
+        if ([self isAttemptingConnection])
         {
             DDLogError(@"Attempting to connect during disconnect() call.");
             return;
@@ -144,7 +181,9 @@ static AISocketManager *sharedInstance = nil;
                header_tag:TAG_CLOSE_HEADER
               payload_tag:TAG_CLOSE_PAYLOAD];
         [self.socket disconnectAfterWriting];
-        self.isConnected = NO;
+        self.connectionState = CONNECTION_STATE_NOT_CONNECTED;
+        [self stopHeartbeatSend];
+        [self stopHeartbeatTimeout];
         DDLogVerbose(@"AISocketManager:disconnect() exit.");
         [self stopProcessingTask];
     });
@@ -188,7 +227,7 @@ static AISocketManager *sharedInstance = nil;
 {
     DDLogVerbose(@"AISocketManager:initSocketManager() entry.");
     
-    if (self.isConnected)
+    if ([self isConnected])
     {
         DDLogVerbose(@"isConnected, so disconnect.");
         [self disconnect];
@@ -215,24 +254,54 @@ static AISocketManager *sharedInstance = nil;
                                                object: nil];
 }
 
+// -----------------------------------------------------------------------------
+//  Handle notifications that tell us when the application is coming into
+//  foreground or background.
+// -----------------------------------------------------------------------------
 - (void)notification:(NSNotification *)notification
 {
-    DDLogVerbose(@"AISocketManager:notification entry.");
-    if ([notification.name isEqualToString:UIApplicationDidBecomeActiveNotification])
+    DDLogVerbose(@"AISocketManager:notification entry. notification: %@, self.connectionState: %llu",
+                 notification, self.connectionState);
+    
+    // -------------------------------------------------------------------------
+    //  If application enter foreground:
+    //  -   If we are not connected or not attempting a connection then just
+    //      attempt to connect.
+    //  -   Else if we are not attempting to connect this means we are
+    //      "connected". We need to verify whether the connection is still
+    //      working by sending a heartbeat and expecting a response. If there
+    //      is no timely response to the heartbeat we're not actually connected.
+    // -------------------------------------------------------------------------
+    if ($eql(notification.name, UIApplicationDidBecomeActiveNotification))
     {
-        DDLogVerbose(@"application did become active notification.");
-        if ((!self.isConnected) && (!self.isAttemptingConnection))
+        DDLogVerbose(@"AISocketManager:notification. application did become active notification.");
+        if ([self isNotConnected])
         {
-            DDLogError(@"Not connecting or attempting connection.");
+            DDLogVerbose(@"AISocketManager:notification. not connected.");
             [self connect];
-            //[self doHeartbeat];
+        }
+        
+        else if ([self isConnected])
+        {
+            DDLogVerbose(@"AISocketManager:notification. allegedly connected");
+            [self startHeartbeatSend];
         }
     }
-    else if ([notification.name isEqualToString:UIApplicationDidEnterBackgroundNotification])
+    // -------------------------------------------------------------------------
+    
+    // -------------------------------------------------------------------------
+    //  If application enters background don't disconnect, instead halt the
+    //  heartbeat as iOS will only let us receive socket activity in the
+    //  background, not actively send.
+    // -------------------------------------------------------------------------
+    else if ($eql(notification.name, UIApplicationDidEnterBackgroundNotification))
     {
-        DDLogVerbose(@"application did entry background notification.");
-        [self disconnect];
+        DDLogVerbose(@"application did become background notification.");
+        [self stopHeartbeatSend];
+        [self stopHeartbeatTimeout];
     }
+    // -------------------------------------------------------------------------
+    
     DDLogVerbose(@"AISocketManager:notification exit.");
 }
 
@@ -249,13 +318,12 @@ static AISocketManager *sharedInstance = nil;
 - (void)startConnectToHost:(NSString *)host port:(uint16_t)port
 {
     DDLogVerbose(@"AISocketManager:startConnectToHost() entry.");
-    self.isAttemptingConnection = YES;
+    self.connectionState = CONNECTION_STATE_ATTEMPTING_CONNECTION;
     NSError *err = nil;
     if (![self.socket connectToHost:host onPort:port error:&err]) // Asynchronous!
     {
         // If there was an error it's likely to be "already connected." or "no delegate set."
         DDLogError(@"Failed asynchronous call to socket:connectToHost: %@", err);
-        self.isAttemptingConnection = NO;
     }
     DDLogVerbose(@"AISocketManager:startConnectToHost() exit.");
 }
@@ -391,12 +459,9 @@ static AISocketManager *sharedInstance = nil;
         DDLogVerbose(@"result of enableBackgroundingOnSocket: %@", rc == YES ? @"YES" : @"NO");
         
     }];
-    
-    // Perform a heartbeat
-    [self doHeartbeat];
-    
-    self.isConnected = YES;
-    self.isAttemptingConnection = NO;
+
+    self.connectionState = CONNECTION_STATE_CONNECTED;
+    [self startHeartbeatSend];
     [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_SOCKET_OPENED
                                                         object:self];
     [self readHeader];
@@ -411,11 +476,20 @@ static AISocketManager *sharedInstance = nil;
 // ----------------------------------------------------------------------------
 - (void)socketDidDisconnect:(GCDAsyncSocket *)socket withError:(NSError *)error
 {
-    DDLogVerbose(@"AISocketManager:socketDidDisconnect entry.");
-    DDLogWarn(@"Socket failed with error: %@", error);
-    DDLogVerbose(@"AISocketManager:socketDidDisconnect exit.");
+    dispatch_async(dispatch_get_main_queue(),
+    ^{
+        DDLogVerbose(@"AISocketManager:socketDidDisconnect entry.");
+        DDLogWarn(@"Socket failed with error: %@", error);
+        [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_SOCKET_CLOSED
+                                                            object:self];
+        [self stopHeartbeatSend];
+        [self stopHeartbeatTimeout];
+        [self performSelector:@selector(connect)
+                   withObject:nil
+                   afterDelay:RECONNECT_INTERVAL];
+        DDLogVerbose(@"AISocketManager:socketDidDisconnect exit.");
+    });
 }
-
 
 #pragma mark Reading data from socket.
 
@@ -525,11 +599,13 @@ static AISocketManager *sharedInstance = nil;
     else if ([response isEqualToString:@"pong"])
     {
         DDLogVerbose(@"AISocketManager:maybeHandleControlResponse: server responds 'pong' to our ping.");
+        [self stopHeartbeatTimeout];
         goto EXIT_LABEL;
     }
     else if ([response isEqualToString:@"close"])
     {
         DDLogVerbose(@"AISocketManager:maybeHandleControlResponse: server requests we close the connection.");
+        [self disconnect];
         goto EXIT_LABEL;
     }
     return_value = NO;
@@ -584,15 +660,118 @@ EXIT_LABEL:
 }
 // ----------------------------------------------------------------------------
 
-- (void)doHeartbeat
+// -----------------------------------------------------------------------------
+//  -   All heartbeating is performed on the main thread. This is because in
+//      order to create NSTimers we need access to the current run loop, which
+//      is only available in the main thread. Moreover, we use this to
+//      synchronize over the timers.
+// -----------------------------------------------------------------------------
+#pragma mark - Heartbeats.
+- (void)startHeartbeatSend
 {
-    DDLogVerbose(@"AISocketManager:doHeartbeat entry.");
+    dispatch_async(dispatch_get_main_queue(),
+    ^{
+        DDLogVerbose(@"AISocketManager:startHeartbeatSend entry.");
+        
+        // -------------------------------------------------------------------------
+        //  Validate assumptions.
+        // -------------------------------------------------------------------------
+        if (self.heartbeatSendTimer)
+        {
+            DDLogError(@"self.heartbeatSendTimer must be nil beforehand, but is: %@",
+                       self.heartbeatSendTimer);
+        }
+        assert(!(self.heartbeatSendTimer));
+        // -------------------------------------------------------------------------
+        
+        self.heartbeatSendTimer = [NSTimer scheduledTimerWithTimeInterval:HEARTBEAT_SEND_INTERVAL
+                                                                   target:self
+                                                                 selector:@selector(doHeartbeat:)
+                                                                 userInfo:nil
+                                                                  repeats:YES];
+        [self doHeartbeat:nil];
+        DDLogVerbose(@"AISocketManager:startHeartbeatSend exit.");
+    });
+}
+
+- (void)startHeartbeatTimeout
+{
+    dispatch_async(dispatch_get_main_queue(),
+    ^{
+        DDLogVerbose(@"AISocketManager:startHeartbeatTimeout entry.");
+        
+        // -------------------------------------------------------------------------
+        //  Validate assumptions.
+        // -------------------------------------------------------------------------
+        if (self.heartbeatTimeoutTimer)
+        {
+            DDLogError(@"self.heartbeatTimeoutTimer must be nil beforehand, but is: %@",
+                       self.heartbeatTimeoutTimer);
+        }
+        assert(!(self.heartbeatTimeoutTimer));
+        // -------------------------------------------------------------------------
+
+        self.heartbeatTimeoutTimer = [NSTimer scheduledTimerWithTimeInterval:HEARTBEAT_TIMEOUT_INTERVAL
+                                                                      target:self
+                                                                    selector:@selector(handleHeartbeatTimeout:)
+                                                                    userInfo:nil
+                                                                     repeats:YES];
+        DDLogVerbose(@"AISocketManager:startHeartbeatTimeout exit.");
+    });
+}
+
+- (void)stopHeartbeatSend
+{
+    dispatch_async(dispatch_get_main_queue(),
+    ^{
+        DDLogVerbose(@"AISocketManager:stopHeartbeatSend entry. self.heartbeatSendTimer: %@",
+                     self.heartbeatSendTimer);
+        if (!self.heartbeatSendTimer)
+        {
+            DDLogVerbose(@"AISocketManager:stopHeartbeatSend. self.heartbeatSendTimer is nil, exiting.");
+            return;
+        }
+        [self.heartbeatSendTimer invalidate];
+        self.heartbeatSendTimer = nil;
+        DDLogVerbose(@"AISocketManager:stopHeartbeatSend exit.");
+    });
+}
+
+- (void)stopHeartbeatTimeout
+{
+    dispatch_async(dispatch_get_main_queue(),
+    ^{
+        DDLogVerbose(@"AISocketManager:stopHeartbeatTimeout entry. self.heartbeatTimeoutTimer: %@",
+                     self.heartbeatTimeoutTimer);
+        if (!self.heartbeatTimeoutTimer)
+        {
+            DDLogVerbose(@"AISocketManager:stopHeartbeatTimer. self.heartbeatTimeoutTimer is nil, exiting.");
+            return;
+        }
+        [self.heartbeatTimeoutTimer invalidate];
+        self.heartbeatTimeoutTimer = nil;
+        DDLogVerbose(@"AISocketManager:stopHeartbeatTimeout exit.");
+    });
+}
+
+- (void)doHeartbeat:(NSTimer *)timer
+{
+    DDLogVerbose(@"AISocketManager:doHeartbeat entry. timer: %@", timer);
     static NSString *ping = @"ping";
     [self writeString:ping
               timeout:-1
            header_tag:TAG_PING_HEADER
           payload_tag:TAG_PING_PAYLOAD];
+    [self stopHeartbeatTimeout];
+    [self startHeartbeatTimeout];
     DDLogVerbose(@"AISocketManager:doHeartbeat exit.");
+}
+
+- (void)handleHeartbeatTimeout:(NSTimer *)timer
+{
+    DDLogInfo(@"AISocketManager:handleHeartbeatTimeout entry. timer: %@", timer);
+    [self disconnect];
+    DDLogInfo(@"AISocketManager:handleHeartbeatTimeout exit.");
 }
 
 #pragma mark - Singleton methods, lifecycle.
@@ -622,8 +801,7 @@ EXIT_LABEL:
     // ------------------------------------------------------------------------
     //  Initialize instance variables.
     // ------------------------------------------------------------------------
-    _isAttemptingConnection = NO;
-    _isConnected = NO;
+    self.connectionState = CONNECTION_STATE_NOT_CONNECTED;
     self.application = [UIApplication sharedApplication];
     // ------------------------------------------------------------------------
     

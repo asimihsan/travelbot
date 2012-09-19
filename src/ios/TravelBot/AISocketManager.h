@@ -16,11 +16,18 @@ static NSString *NOTIFICATION_SOCKET_CLOSED = @"AISocketManager:notificationSock
 @interface AISocketManager : NSObject
 
 @property (strong, nonatomic) GCDAsyncSocket *socket;
-@property (nonatomic, assign) BOOL isConnected;
 
 + (AISocketManager *)sharedInstance;
 - (void)connect;
 - (void)disconnect;
+
+// -----------------------------------------------------------------------------
+//  Query connection state.
+// -----------------------------------------------------------------------------
+- (BOOL)isNotConnected;
+- (BOOL)isAttemptingConnection;
+- (BOOL)isConnected;
+// -----------------------------------------------------------------------------
 
 - (NSString *)writeDictionary:(NSDictionary *)dictionary;
 

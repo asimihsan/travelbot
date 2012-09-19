@@ -55,17 +55,17 @@ static int ddLogLevel = LOG_LEVEL_INFO;
     assert(self.legs);
     // -------------------------------------------------------------------------
     
-    NSInteger return_value = [self.legs count];
+    NSInteger return_value = [self.legs count] - 1;
     
     // -------------------------------------------------------------------------
     //  Post-validation.
     // -------------------------------------------------------------------------
-    if (!(return_value > 0))
+    if (!(return_value >= 0))
         DDLogError(@"Journey:getNumberOfChanges. return_value %d invalid.", return_value);
-    assert(return_value > 0);
+    assert(return_value >= 0);
     // -------------------------------------------------------------------------
     
-    return [self.legs count];
+    return return_value;
 }
 
 - (id)init:(NSDictionary *)jsonDictionary
