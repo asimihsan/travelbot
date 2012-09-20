@@ -47,6 +47,7 @@
 		01AC830115ECE2DA0072992A /* TravelBotPlacesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 01AC830015ECE2DA0072992A /* TravelBotPlacesViewController.m */; };
 		01AC830515ECE5760072992A /* si.png in Resources */ = {isa = PBXBuildFile; fileRef = 01AC830415ECE5760072992A /* si.png */; };
 		01AC830C15ECE7B90072992A /* TravelBotCountryCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 01AC830B15ECE7B90072992A /* TravelBotCountryCell.m */; };
+		01C6A777160B67A2006B3E19 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 01C6A776160B67A1006B3E19 /* Default-568h@2x.png */; };
 		8478498E553A465784C5EDA4 /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A293237B22E44B69AC333154 /* libPods.a */; };
 /* End PBXBuildFile section */
 
@@ -126,6 +127,7 @@
 		01AC830415ECE5760072992A /* si.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = si.png; path = resources/images/si.png; sourceTree = "<group>"; };
 		01AC830A15ECE7B90072992A /* TravelBotCountryCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TravelBotCountryCell.h; sourceTree = "<group>"; };
 		01AC830B15ECE7B90072992A /* TravelBotCountryCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TravelBotCountryCell.m; sourceTree = "<group>"; };
+		01C6A776160B67A1006B3E19 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
 		A293237B22E44B69AC333154 /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		EABBC4AF54824A1598C0BA05 /* Pods.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.xcconfig; path = Pods/Pods.xcconfig; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
@@ -196,6 +198,7 @@
 		01962B5215EABA60009CAEBA = {
 			isa = PBXGroup;
 			children = (
+				01C6A776160B67A1006B3E19 /* Default-568h@2x.png */,
 				01962B6715EABA60009CAEBA /* TravelBot */,
 				01962B8815EABA60009CAEBA /* TravelBotTests */,
 				01962B6015EABA60009CAEBA /* Frameworks */,
@@ -435,6 +438,7 @@
 				014D2BFE15ECD8DB008205BE /* search_button@2x.png in Resources */,
 				01AC830515ECE5760072992A /* si.png in Resources */,
 				0190A8C11604EC050098B8F8 /* es.png in Resources */,
+				01C6A777160B67A2006B3E19 /* Default-568h@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

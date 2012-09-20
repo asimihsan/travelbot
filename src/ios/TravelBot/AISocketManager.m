@@ -480,8 +480,12 @@ static AISocketManager *sharedInstance = nil;
     ^{
         DDLogVerbose(@"AISocketManager:socketDidDisconnect entry.");
         DDLogWarn(@"Socket failed with error: %@", error);
-        [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_SOCKET_CLOSED
-                                                            object:self];
+        if ([self isConnected])
+        {
+            DDLogVerbose(@"Socket was connected to notify about socket failure.");
+            [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_SOCKET_CLOSED
+                                                                object:self];
+        }
         [self stopHeartbeatSend];
         [self stopHeartbeatTimeout];
         self.connectionState = CONNECTION_STATE_NOT_CONNECTED;
@@ -782,9 +786,13 @@ EXIT_LABEL:
 
 - (void)handleHeartbeatTimeout:(NSTimer *)timer
 {
-    DDLogInfo(@"AISocketManager:handleHeartbeatTimeout entry. timer: %@", timer);
-    [self disconnect];
-    DDLogInfo(@"AISocketManager:handleHeartbeatTimeout exit.");
+    DDLogVerbose(@"AISocketManager:handleHeartbeatTimeout entry. timer: %@", timer);
+    if ([self isConnected])
+    {
+        DDLogInfo(@"AISocketManager:handleHeartbeatTimeout. connected so disconnect.");
+        [self disconnect];
+    }
+    DDLogVerbose(@"AISocketManager:handleHeartbeatTimeout exit.");
 }
 
 #pragma mark - Singleton methods, lifecycle.

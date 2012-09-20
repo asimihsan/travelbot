@@ -8,8 +8,6 @@ The following covers the part of travelbot that fetches travel information.
 
 -   clicking on a search result displays a detailed view of the journey in a new view controller.
     -   very un-iOS to slide in the details in the same view controller.
--   bug fix - search should continue in background, finish, and then when app is foregrounded the results should appear.
-    -   detect if you're in background, only publish notification of task result if in foreground.
 -   from places view controller should be able to see nearby locations via a button. data is already there, but not in RTree index.
 -   start using preferences, even if read-only, to store major configuration.
     -   server hostname(s).

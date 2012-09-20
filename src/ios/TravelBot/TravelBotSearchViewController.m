@@ -35,6 +35,8 @@ static int ddLogLevel = LOG_LEVEL_VERBOSE;
 - (void)stopSearch;
 - (void)onRequestCompletion:(NSNotification *)notification;
 - (TravelBotSearchCell *)setupCell:(TravelBotSearchCell *)cell;
+- (void)onSocketClosed;
+- (void)showNetworkFailureError;
 
 @end
 
@@ -57,10 +59,15 @@ static int ddLogLevel = LOG_LEVEL_VERBOSE;
     assert($eql(self.fromPlace.country, self.toPlace.country));
     NSString *method = [self.countryCodeToMethod $for:self.fromPlace.country.code];
     assert(method);
-    // -------------------------------------------------------------------------
     
-    // TODO !!AI remove me
-    //return;
+    AISocketManager *socketManager = [AISocketManager sharedInstance];
+    if (![socketManager isConnected])
+    {
+        DDLogInfo(@"TravelBotSearchViewController:startSearch. Socket is not connected.");
+        [self showNetworkFailureError];
+        return;
+    }
+    // -------------------------------------------------------------------------
     
     [SVProgressHUD showWithStatus:@"Searching..."
                          maskType:SVProgressHUDMaskTypeNone];
@@ -69,7 +76,7 @@ static int ddLogLevel = LOG_LEVEL_VERBOSE;
     //  Make a request to the socket manager to search for journeys using
     //  the appropriate workers, depending on the country.
     // -------------------------------------------------------------------------
-    AISocketManager *socketManager = [AISocketManager sharedInstance];
+
     NSDictionary *kwargs = $dict(self.fromPlace.name, @"from_location",
                                  self.toPlace.name, @"to_location");
     NSDictionary *request = $dict(@"1.0", @"version",
@@ -291,6 +298,16 @@ static int ddLogLevel = LOG_LEVEL_VERBOSE;
     self.countryCodeToMethod = $dict(@"slovenia.bus_ap.get_journeys", @"SI");
     // -------------------------------------------------------------------------
     
+    // -------------------------------------------------------------------------
+    //  Update to the notification that the server socket is closed.
+    //  Use this to fail searches if we lose the socket connection.
+    // -------------------------------------------------------------------------
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(onSocketClosed)
+                                                 name:NOTIFICATION_SOCKET_CLOSED
+                                               object:nil];
+    // -------------------------------------------------------------------------
+    
     [super viewDidLoad];
 }
 
@@ -300,7 +317,36 @@ static int ddLogLevel = LOG_LEVEL_VERBOSE;
     [self setToPlace:nil];
     [self setFromPlace:nil];
     [self setSearchHeaderView:nil];
+    
+    [[NSNotificationCenter defaultCenter] removeObserver:self
+                                              forKeyPath:NOTIFICATION_SOCKET_CLOSED];
+
     [super viewDidUnload];
+}
+
+- (void)onSocketClosed
+{
+    dispatch_async(dispatch_get_main_queue(),
+    ^{
+        DDLogVerbose(@"TravelBotSearchViewController:onSocketClosed entry.");
+        [self stopSearch];
+        [self showNetworkFailureError];
+        DDLogVerbose(@"TravelBotSearchViewController:onSocketClosed exit.");
+    });
+}
+
+- (void)showNetworkFailureError
+{
+    dispatch_async(dispatch_get_main_queue(),
+    ^{
+        UIAlertView *alert = [[UIAlertView alloc]
+                              initWithTitle: @"Search failed."
+                              message: @"Unable to establish network connection to server. Please try again."
+                              delegate:nil
+                              cancelButtonTitle:@"OK"
+                              otherButtonTitles:nil];
+        [alert show];
+    });
 }
 
 
