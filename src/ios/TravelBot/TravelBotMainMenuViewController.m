@@ -154,6 +154,7 @@ const int TAG_SEARCH_BUTTON_CELL = 300;
         AISocketManager *socketManager = [AISocketManager sharedInstance];
         if ([socketManager isConnected])
         {
+            DDLogVerbose(@"TravelBotMainMenuViewController:updateServerStatusLabel. is connected.");
             self.serverStatusLabel.detailTextLabel.text = @"Connected";
             self.serverStatusLabel.detailTextLabel.textColor = [AIUtilities colorWithR:50.0
                                                                                      G:205.0
@@ -163,6 +164,7 @@ const int TAG_SEARCH_BUTTON_CELL = 300;
         }
         else
         {
+            DDLogVerbose(@"TravelBotMainMenuViewController:updateServerStatusLabel. is not connected.");            
             self.serverStatusLabel.detailTextLabel.text = @"Not connected";
             self.serverStatusLabel.detailTextLabel.textColor = [AIUtilities colorWithR:178.0
                                                                                      G:34.0

@@ -56,7 +56,7 @@ static const int64_t CONNECTION_STATE_CONNECTED             = 2;
 static const float HEARTBEAT_SEND_INTERVAL = 10.0;
 
 // How long before a heartbeat is considered to fail. Try to make this 2 * RTT.
-static const float HEARTBEAT_TIMEOUT_INTERVAL = 3.0;
+static const float HEARTBEAT_TIMEOUT_INTERVAL = 5.0;
 
 // If disconnected how long before trying to connect again.
 static const float RECONNECT_INTERVAL = 10.0;
@@ -150,8 +150,8 @@ static AISocketManager *sharedInstance = nil;
     }
     
     //[self startConnectToHost:@"travelbot.asimihsan.com" port:8080];
-    //[self startConnectToHost:@"192.168.1.99" port:8080];
-    [self startConnectToHost:@"127.0.0.1" port:8080];
+    [self startConnectToHost:@"192.168.1.77" port:8080];
+    //[self startConnectToHost:@"127.0.0.1" port:8080];
     DDLogVerbose(@"AISocketManager:connect() exit.");
 }
 
@@ -484,6 +484,7 @@ static AISocketManager *sharedInstance = nil;
                                                             object:self];
         [self stopHeartbeatSend];
         [self stopHeartbeatTimeout];
+        self.connectionState = CONNECTION_STATE_NOT_CONNECTED;
         [self performSelector:@selector(connect)
                    withObject:nil
                    afterDelay:RECONNECT_INTERVAL];
@@ -525,7 +526,14 @@ static AISocketManager *sharedInstance = nil;
 
 - (void)readHeader
 {
-    [self.socket readDataToLength:HEADER_SIZE withTimeout:-1 tag:TAG_FIXED_LENGTH_HEADER_READ];
+    [self startProcessingTask];
+    dispatch_async(self.processingQueue,
+    ^{
+        [self.socket readDataToLength:HEADER_SIZE
+                          withTimeout:-1
+                                  tag:TAG_FIXED_LENGTH_HEADER_READ];
+        [self stopProcessingTask];
+    });
 }
 
 // ----------------------------------------------------------------------------
@@ -623,11 +631,16 @@ EXIT_LABEL:
          header_tag:(long)header_tag
         payload_tag:(long)payload_tag
 {
-    NSData *data_using_encoding = [string dataUsingEncoding:NSUTF8StringEncoding];
-    [self writeData:data_using_encoding
-        withTimeout:timeout
-         header_tag:header_tag
-        payload_tag:payload_tag];
+    [self startProcessingTask];
+    dispatch_async(self.processingQueue,
+    ^{
+        NSData *data_using_encoding = [string dataUsingEncoding:NSUTF8StringEncoding];
+        [self writeData:data_using_encoding
+            withTimeout:timeout
+             header_tag:header_tag
+            payload_tag:payload_tag];
+        [self stopProcessingTask];
+    });
 }
 
 - (void)writeData:(NSData *)data

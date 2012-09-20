@@ -19,7 +19,13 @@
     max_request_size :: integer(),
     task_timeout :: timeout(),
     source_address :: inet:ip_address(),
-    source_port :: non_neg_integer()
+    source_port :: non_neg_integer(),
+
+    % Heartbeat send and timeout timers
+    heartbeat_send_timer :: timer:tref(),
+    heartbeat_send_interval :: timer:time(),
+    heartbeat_timeout_timer :: timer:tref(),
+    heartbeat_timeout_interval :: timer:time()
 }).
 
 -define(ERROR_REQUEST_IS_TOO_BIG, 1).
@@ -51,6 +57,8 @@ init([ListenerPid, Socket, Transport, Opts]) ->
     InactivityTimeout = proplists:get_value(inactivity_timeout, Opts, 5000),
     MaxRequestSize = proplists:get_value(max_request_size, Opts, 65536),
     TaskTimeout = proplists:get_value(task_timeout, Opts, 60000),
+    HeartbeatSendInterval = proplists:get_value(heartbeat_send_interval, Opts, 10*60*1000), % 10 minutes
+    HeartbeatTimeoutInterval = proplists:get_value(heartbeat_timeout_interval, Opts, 5000),
 
     % To get peername for non-SSL socket is inet:peername(Socket).
     % To get peername for SSL socket is ssl:peername(Socket).
@@ -60,7 +68,6 @@ init([ListenerPid, Socket, Transport, Opts]) ->
         {active, once},
         {packet, 4},
         {packet_size, MaxRequestSize},
-        {keepalive, true},
         {nodelay, true}
     ]),
 
@@ -81,7 +88,9 @@ init([ListenerPid, Socket, Transport, Opts]) ->
                 max_request_size=MaxRequestSize,
                 task_timeout=TaskTimeout,
                 source_address=SourceAddress,
-                source_port=SourcePort}, 0}.
+                source_port=SourcePort,
+                heartbeat_send_interval=HeartbeatSendInterval,
+                heartbeat_timeout_interval=HeartbeatTimeoutInterval}, 0}.
     % -------------------------------------------------------------------------
 
 handle_call(Msg, _From, State) ->
@@ -103,10 +112,13 @@ handle_cast(stop, State) ->
 handle_info(timeout, State=#state{listener=ListenerPid,
                                   socket=_Socket,
                                   source_address=SourceAddress,
-                                  source_port=SourcePort}) ->
+                                  source_port=SourcePort,
+                                  heartbeat_send_interval=HeartbeatSendInterval}) ->
     ok = lager:info("tcp_to_amqp_server:handle_info/1. Msg is timeout, initialization finished for ~p:~p.", [SourceAddress, SourcePort]),
     ok = cowboy:accept_ack(ListenerPid),
-    {noreply, State};
+    {ok, HeartbeatSendTimer} = timer:send_after(HeartbeatSendInterval, heartbeat_send),
+    State2 = State#state{heartbeat_send_timer = HeartbeatSendTimer},
+    {noreply, State2};
 % -----------------------------------------------------------------------------
 
 % -----------------------------------------------------------------------------
@@ -115,9 +127,16 @@ handle_info(timeout, State=#state{listener=ListenerPid,
 %   The first atom is different for SSL connections. We explicitly support
 %   messages from only SSL connections, but leave TCP connection messages
 %   commented as reference.
+%
+%   Any reads on the socket imply that it is still alive, so cancel the
+%   heartbeat timer for this interval.
 % -----------------------------------------------------------------------------
 % SSL
-handle_info({ssl, _Socket, RawData}, State) ->
+handle_info({ssl, _Socket, RawData}, State=#state{heartbeat_timeout_timer=HeartbeatTimeoutTimer}) ->
+    % the timeout timer may not be activated yet, so don't pattern match
+    % on the result.
+    timer:cancel(HeartbeatTimeoutTimer),
+
     handle_request(RawData, State);
 handle_info({ssl_closed, _Socket}, State) ->
     handle_connection_closed(State);
@@ -125,7 +144,8 @@ handle_info({ssl_error, _Socket, Reason}, State) ->
     handle_connection_error(Reason, State);
 
 % non-SSL
-%handle_info({tcp, _Socket, RawData}, State) ->
+%handle_info({ssl, _Socket, RawData}, State=#state{heartbeat_timeout_timer=HeartbeatTimeoutTimer}) ->
+%    {ok, cancel} = timer:cancel(HeartbeatTimeoutTimer),
 %    handle_request(RawData, State);
 %handle_info({tcp_closed, _Socket}, State) ->
 %    handle_connection_closed(State);
@@ -134,10 +154,27 @@ handle_info({ssl_error, _Socket, Reason}, State) ->
 % -----------------------------------------------------------------------------
 
 % -----------------------------------------------------------------------------
+%   handle_info/2 for heartbeats.
+% -----------------------------------------------------------------------------
+handle_info(heartbeat_send, State=#state{socket=Socket,
+                                         transport=Transport,
+                                         heartbeat_timeout_interval=HeartbeatTimeoutInterval}) ->
+    ok = lager:info("tcp_to_amqp_server:handle_info/2. heartbeat_send"),
+    Transport:send(Socket, <<"ping">>),
+    {ok, HeartbeatTimeoutTimer} = timer:send_after(HeartbeatTimeoutInterval, heartbeat_timeout),
+    State2 = State#state{heartbeat_timeout_timer = HeartbeatTimeoutTimer},
+    {noreply, State2};
+
+handle_info(heartbeat_timeout, State=#state{}) ->
+    ok = lager:info("tcp_to_amqp_server:handle_info/2. heartbeat_timeout"),
+    {stop, normal, State};
+% -----------------------------------------------------------------------------
+
+% -----------------------------------------------------------------------------
 %   handle_info/2 for unknown message.
 % -----------------------------------------------------------------------------
 handle_info(Msg, State=#state{}) ->
-    ok = lager:info("tcp_to_amqp_server:handle_info/1. Unknown msg: ~p.\n", [Msg]),
+    ok = lager:info("tcp_to_amqp_server:handle_info/2. Unknown msg: ~p.\n", [Msg]),
     {noreply, State}.
 % -----------------------------------------------------------------------------
 
@@ -170,6 +207,21 @@ handle_request(RawData, State=#state{socket=Socket,
     Transport:send(Socket, <<"pong">>),
     Transport:setopts(Socket, [{active, once}]),
     {noreply, State};
+% -----------------------------------------------------------------------------
+
+% -----------------------------------------------------------------------------
+%   handle_request/2 for 'pong'.
+% -----------------------------------------------------------------------------
+handle_request(RawData, State=#state{socket=Socket,
+                                     transport=Transport,
+                                     source_address=SourceAddress,
+                                     source_port=SourcePort,
+                                     heartbeat_send_interval=HeartbeatSendInterval}) when RawData =:= <<"pong">> ->
+    ok = lager:debug("tcp_to_amqp_server:handle_request/2. 'pong' received from ~p:~p.", [SourceAddress, SourcePort]),
+    {ok, HeartbeatSendTimer} = timer:send_after(HeartbeatSendInterval, heartbeat_send),
+    State2 = State#state{heartbeat_send_timer = HeartbeatSendTimer},
+    Transport:setopts(Socket, [{active, once}]),
+    {noreply, State2};
 % -----------------------------------------------------------------------------
 
 % -----------------------------------------------------------------------------
