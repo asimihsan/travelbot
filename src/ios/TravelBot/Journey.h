@@ -8,6 +8,8 @@
 
 #import <Foundation/Foundation.h>
 
+@class JourneyLeg;
+
 @interface Journey : NSObject
 
 - (id)init:(NSDictionary *)jsonDictionary;
@@ -16,5 +18,7 @@
 - (NSDate *)getFirstDepartureTime;
 - (NSDate *)getLastArrivalTime;
 - (NSInteger)getNumberOfChanges;
+- (NSInteger)getNumberOfLegs;
+- (JourneyLeg *)getJourneyLegAt:(NSInteger)index;
 
 @end

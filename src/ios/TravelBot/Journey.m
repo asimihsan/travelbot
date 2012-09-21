@@ -68,6 +68,38 @@ static int ddLogLevel = LOG_LEVEL_INFO;
     return return_value;
 }
 
+- (NSInteger)getNumberOfLegs
+{
+    // -------------------------------------------------------------------------
+    //  Validate assumptions.
+    // -------------------------------------------------------------------------
+    assert(self.legs);
+    // -------------------------------------------------------------------------
+    
+    return [self.legs count];
+}
+
+- (JourneyLeg *)getJourneyLegAt:(NSInteger)index
+{
+    // -------------------------------------------------------------------------
+    //  Validate assumptions.
+    // -------------------------------------------------------------------------
+    assert(self.legs);
+    assert(index < [self.legs count]);
+    assert(index >= 0);
+    // -------------------------------------------------------------------------
+    
+    JourneyLeg *leg = [self.legs $at:index];
+    
+    // -------------------------------------------------------------------------
+    //  Validate post-assumptions.
+    // -------------------------------------------------------------------------
+    assert(leg);
+    // -------------------------------------------------------------------------
+    
+    return leg;
+}
+
 - (id)init:(NSDictionary *)jsonDictionary
 {
     DDLogVerbose(@"Journey:init entry. jsonDictionary: %@", jsonDictionary);

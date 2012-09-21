@@ -246,11 +246,11 @@ static AISocketManager *sharedInstance = nil;
                                              selector: @selector(notification:)
                                                  name: UIApplicationDidBecomeActiveNotification
                                                object: nil];
-    
+
     // Listen for application enters background
     [[NSNotificationCenter defaultCenter] addObserver: self
                                              selector: @selector(notification:)
-                                                 name: UIApplicationDidEnterBackgroundNotification
+                                                 name: UIApplicationWillResignActiveNotification
                                                object: nil];
 }
 
@@ -290,13 +290,13 @@ static AISocketManager *sharedInstance = nil;
     // -------------------------------------------------------------------------
     
     // -------------------------------------------------------------------------
-    //  If application enters background don't disconnect, instead halt the
+    //  If application resigns active don't disconnect, instead halt the
     //  heartbeat as iOS will only let us receive socket activity in the
     //  background, not actively send.
     // -------------------------------------------------------------------------
-    else if ($eql(notification.name, UIApplicationDidEnterBackgroundNotification))
+    else if ($eql(notification.name, UIApplicationWillResignActiveNotification))
     {
-        DDLogVerbose(@"application did become background notification.");
+        DDLogVerbose(@"application will resign active notification.");
         [self stopHeartbeatSend];
         [self stopHeartbeatTimeout];
     }

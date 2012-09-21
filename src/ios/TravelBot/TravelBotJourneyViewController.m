@@ -8,7 +8,9 @@
 
 #import "TravelBotJourneyViewController.h"
 #import "Journey.h"
+#import "JourneyLeg.h"
 #import "TravelBotJourneyHeader.h"
+#import "TravelBotJourneyLegCell.h"
 
 #import "ConciseKit/ConciseKit.h"
 #import "CocoaLumberJack/DDLog.h"
@@ -135,13 +137,25 @@ static int ddLogLevel = LOG_LEVEL_VERBOSE;
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return 0;
+    return [self.journey getNumberOfLegs];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    static NSString *CellIdentifier = @"JourneyCell";
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
+    // -------------------------------------------------------------------------
+    //  Get a table cell. As we use Storyboard to set up the cell it will
+    //  always be non-nil.
+    // -------------------------------------------------------------------------
+    static NSString *cellIdentifier = @"JourneyCell";
+    TravelBotJourneyLegCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier];
+    if (!cell)
+        DDLogError(@"TravelBotSearchViewController:cellForRowAtIndexPath. cell is nil.");
+    assert(cell);
+    // -------------------------------------------------------------------------
+    
+    JourneyLeg *leg = [self.journey getJourneyLegAt:indexPath.row];
+    assert(leg);
+    cell.textLabel.text = [NSString stringWithFormat:@"%@", leg];
     
     return cell;
 }

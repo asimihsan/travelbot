@@ -11,6 +11,7 @@
 #import "FMDB/FMDatabase.h"
 #import "ConciseKit/ConciseKit.h"
 #import "CocoaLumberJack/DDLog.h"
+#import "ConciseKit.h"
 
 #import "ASIS3Request.h"
 #import "ASIS3ObjectRequest.h"
@@ -312,24 +313,24 @@ static AIDatabaseManager *sharedInstance = nil;
                                                  name: UIApplicationDidBecomeActiveNotification
                                                object: nil];
     
-    // Listen for application enters background
+    // Listen for application resigns active.
     [[NSNotificationCenter defaultCenter] addObserver: self
                                              selector: @selector(notification:)
-                                                 name: UIApplicationDidEnterBackgroundNotification
+                                                 name: UIApplicationWillResignActiveNotification
                                                object: nil];
 }
 
 - (void)notification:(NSNotification *)notification
 {
     DDLogVerbose(@"AIDatabaseManager:notification entry.");
-    if ([notification.name isEqualToString:UIApplicationDidBecomeActiveNotification])
+    if ($eql(notification.name, UIApplicationDidBecomeActiveNotification))
     {
         DDLogVerbose(@"application did become active notification.");
         [self open];
     }
-    else if ([notification.name isEqualToString:UIApplicationDidEnterBackgroundNotification])
+    else if ($eql(notification.name, UIApplicationWillResignActiveNotification))
     {
-        DDLogVerbose(@"application did become background notification.");
+        DDLogVerbose(@"application will resign active notification.");
         [self close];
     }
     DDLogVerbose(@"AIDatabaseManager:notification exit.");
