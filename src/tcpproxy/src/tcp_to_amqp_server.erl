@@ -158,15 +158,17 @@ handle_info({ssl_error, _Socket, Reason}, State) ->
 % -----------------------------------------------------------------------------
 handle_info(heartbeat_send, State=#state{socket=Socket,
                                          transport=Transport,
+                                         source_address=SourceAddress,
+                                         source_port=SourcePort,
                                          heartbeat_timeout_interval=HeartbeatTimeoutInterval}) ->
-    ok = lager:info("tcp_to_amqp_server:handle_info/2. heartbeat_send"),
+    ok = lager:info("tcp_to_amqp_server:handle_info/2. heartbeat_send for ~p:~p.", [SourceAddress, SourcePort]),
     Transport:send(Socket, <<"ping">>),
     {ok, HeartbeatTimeoutTimer} = timer:send_after(HeartbeatTimeoutInterval, heartbeat_timeout),
     State2 = State#state{heartbeat_timeout_timer = HeartbeatTimeoutTimer},
     {noreply, State2};
 
-handle_info(heartbeat_timeout, State=#state{}) ->
-    ok = lager:info("tcp_to_amqp_server:handle_info/2. heartbeat_timeout"),
+handle_info(heartbeat_timeout, State=#state{source_address=SourceAddress, source_port=SourcePort}) ->
+    ok = lager:info("tcp_to_amqp_server:handle_info/2. heartbeat_timeout for ~p:~p.", [SourceAddress, SourcePort]),
     {stop, normal, State};
 % -----------------------------------------------------------------------------
 

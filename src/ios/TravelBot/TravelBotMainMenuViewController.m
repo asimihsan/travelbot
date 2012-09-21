@@ -35,7 +35,8 @@ const int TAG_SEARCH_BUTTON_CELL = 300;
 
 @interface TravelBotMainMenuViewController ()
 <TravelBotCountriesViewControllerDelegate,
- TravelBotPlacesViewControllerDelegate>
+ TravelBotPlacesViewControllerDelegate,
+ TravelBotSearchViewControllerDelegate>
 
 - (BOOL)isCountrySelected;
 - (void)updateServerStatusLabel;
@@ -252,12 +253,14 @@ const int TAG_SEARCH_BUTTON_CELL = 300;
     {
         DDLogVerbose(@"segue to 'search'");
         TravelBotSearchViewController *controller = segue.destinationViewController;
+        controller.delegate = self;
         assert(self.selectedFromPlace != nil);
         assert(self.selectedToPlace != nil);
         controller.fromPlace = self.selectedFromPlace;
         controller.toPlace = self.selectedToPlace;
     }
 }
+
 - (void)travelBotCountriesViewControllerDidFinish:(TravelBotCountriesViewController *)controller
                                           country:(TravelBotCountry *)country
 {
@@ -267,6 +270,7 @@ const int TAG_SEARCH_BUTTON_CELL = 300;
         DDLogVerbose(@"setting country.");
         self.selectedCountry = country;
     }
+    [self.navigationController popViewControllerAnimated:YES];
 }
 
 - (void)travelBotPlacesViewControllerDidFinish:(TravelBotPlacesViewController *)controller
@@ -292,6 +296,15 @@ const int TAG_SEARCH_BUTTON_CELL = 300;
         DDLogVerbose(@"TravelBotMainMenuViewController:travelBotPlacesViewControllerDidFinish: place is 'to'");
         self.selectedToPlace = place;
     }
+    
+    [self.navigationController popViewControllerAnimated:YES];
+}
+
+- (void)travelBotSearchViewControllerDidFinish:(TravelBotSearchViewController *)controller
+{
+    DDLogVerbose(@"TravelBotMainMenuViewController:travelBotSearchViewControllerDidFinish entry.");
+    [self.navigationController popViewControllerAnimated:YES];
+    DDLogVerbose(@"TravelBotMainMenuViewController:travelBotSearchViewControllerDidFinish exit.");
 }
 
 #pragma mark - Private API.
@@ -300,4 +313,27 @@ const int TAG_SEARCH_BUTTON_CELL = 300;
     return (self.selectedCountry != nil);
 }
 
+- (IBAction)searchButtonAction:(id)sender
+{
+    DDLogVerbose(@"TravelBotMainMenuViewController:searchButtonAction entry.");
+    AISocketManager *socketManager = [AISocketManager sharedInstance];
+    if ([socketManager isConnected])
+    {
+        DDLogVerbose(@"Socket is connected.");
+        [self performSegueWithIdentifier:@"search" sender:self];
+    }
+    else
+    {
+        DDLogVerbose(@"Socket is not connected.");
+        UIAlertView *alert = [[UIAlertView alloc]
+                              initWithTitle: @"Search failed."
+                              message: @"Unable to establish network connection to server."
+                              delegate:nil
+                              cancelButtonTitle:@"OK"
+                              otherButtonTitles:nil];
+        [alert show];
+    }
+    
+    DDLogVerbose(@"TravelBotMainMenuViewController:searchButtonAction exit.");
+}
 @end

@@ -24,6 +24,7 @@
 @property (weak, nonatomic) IBOutlet UILabel *toLabel;
 @property (weak, nonatomic) IBOutlet UITableViewCell *searchButtonContainerCell;
 @property (weak, nonatomic) IBOutlet UIButton *searchButton;
+- (IBAction)searchButtonAction:(id)sender;
 @property (weak, nonatomic) IBOutlet UITableViewCell *serverStatusLabel;
 
 

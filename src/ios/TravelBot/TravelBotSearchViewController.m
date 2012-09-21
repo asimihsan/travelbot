@@ -341,7 +341,7 @@ static int ddLogLevel = LOG_LEVEL_VERBOSE;
     ^{
         UIAlertView *alert = [[UIAlertView alloc]
                               initWithTitle: @"Search failed."
-                              message: @"Unable to establish network connection to server. Please try again."
+                              message: @"Unable to establish network connection to server."
                               delegate:nil
                               cancelButtonTitle:@"OK"
                               otherButtonTitles:nil];
@@ -349,5 +349,11 @@ static int ddLogLevel = LOG_LEVEL_VERBOSE;
     });
 }
 
-
+- (IBAction)backButton:(id)sender
+{
+    DDLogVerbose(@"TravelBotSearchViewController:backButton entry.");
+    [self stopSearch];
+    [self.delegate travelBotSearchViewControllerDidFinish:self];
+    DDLogVerbose(@"TravelBotSearchViewController:backButton exit.");    
+}
 @end

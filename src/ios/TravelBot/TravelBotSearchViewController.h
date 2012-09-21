@@ -8,6 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
+@protocol TravelBotSearchViewControllerDelegate;
 @class TravelBotPlace;
 @class TravelBotSearchHeader;
 
@@ -15,7 +16,15 @@
 
 @property (strong, nonatomic) TravelBotPlace *fromPlace;
 @property (strong, nonatomic) TravelBotPlace *toPlace;
+@property (weak, nonatomic) id <TravelBotSearchViewControllerDelegate> delegate;
 
 @property (weak, nonatomic) IBOutlet TravelBotSearchHeader *searchHeaderView;
+- (IBAction)backButton:(id)sender;
+
+@end
+
+@protocol TravelBotSearchViewControllerDelegate <NSObject>
+
+- (void)travelBotSearchViewControllerDidFinish:(TravelBotSearchViewController *)controller;
 
 @end

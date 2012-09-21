@@ -137,4 +137,35 @@ static int ddLogLevel = LOG_LEVEL_VERBOSE;
     }
 }
 
+- (void)application:(UIApplication *)application didReceiveLocalNotification:(UILocalNotification *)notification {
+    if (application.applicationState == UIApplicationStateInactive )
+    {
+        //The application received the notification from an inactive state, i.e. the user tapped the "View" button for the alert.
+        //If the visible view controller in your view controller stack isn't the one you need then show the right one.
+        DDLogVerbose(@"TravelBotAppDelegate:didReceiveLocalNotification. Application was inactive.");
+    }
+    
+    if(application.applicationState == UIApplicationStateActive )
+    {
+        //The application received a notification in the active state, so you can display an alert view or do something appropriate.
+        DDLogVerbose(@"TravelBotAppDelegate:didReceiveLocalNotification. Application was active.");
+    }
+}
+/*
+ !!AI temporary code about how to send a notification. Above is how the app
+ delegate can detect notification both in foreground and in background.
+ 
+ NSDate *now = [NSDate dateWithTimeIntervalSinceNow:5];
+ [[UIApplication sharedApplication] cancelAllLocalNotifications];
+ UILocalNotification *localNotification = [[UILocalNotification alloc] init];
+ localNotification.fireDate = now;
+ localNotification.timeZone = [NSTimeZone defaultTimeZone];
+ localNotification.alertBody = [NSString stringWithFormat:@"Your notification"];
+ localNotification.alertAction = @"Action";
+ localNotification.soundName = UILocalNotificationDefaultSoundName;
+ localNotification.applicationIconBadgeNumber = 1;
+ [[UIApplication sharedApplication] scheduleLocalNotification:localNotification];
+ 
+*/
+
 @end

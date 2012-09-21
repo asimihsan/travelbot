@@ -214,7 +214,7 @@
                                                         <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                     </state>
                                                     <connections>
-                                                        <segue destination="yRb-Hv-L4p" kind="push" identifier="search" id="Czy-3M-TFz"/>
+                                                        <action selector="searchButtonAction:" destination="hRw-nq-epf" eventType="touchUpInside" id="yPU-HG-f4D"/>
                                                     </connections>
                                                 </button>
                                             </subviews>
@@ -272,6 +272,7 @@
                         <outlet property="serverStatusLabel" destination="63g-gw-TcX" id="v9y-f5-FDk"/>
                         <outlet property="toLabel" destination="nYM-TY-rRy" id="cW1-X7-KU0"/>
                         <outlet property="toLabelContainerCell" destination="k8w-8D-PmN" id="1dc-De-6Yc"/>
+                        <segue destination="yRb-Hv-L4p" kind="push" identifier="search" id="a3E-Iw-IRU"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="qg4-hh-Lik" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -421,7 +422,13 @@
                             <outlet property="delegate" destination="yRb-Hv-L4p" id="sGI-eJ-GQN"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" title="Results" id="F60-qf-rPI"/>
+                    <navigationItem key="navigationItem" title="Results" id="F60-qf-rPI">
+                        <barButtonItem key="leftBarButtonItem" title="Back" id="pFR-lz-Bem">
+                            <connections>
+                                <action selector="backButton:" destination="yRb-Hv-L4p" id="qzq-Va-Nui"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
                     <connections>
                         <outlet property="searchHeaderView" destination="Ocl-bD-FZf" id="1aL-ng-hej"/>
                     </connections>
@@ -466,6 +473,7 @@
         <class className="TravelBotMainMenuViewController" superclassName="UITableViewController">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/TravelBotMainMenuViewController.h"/>
             <relationships>
+                <relationship kind="action" name="searchButtonAction:"/>
                 <relationship kind="outlet" name="countryLabel" candidateClass="UILabel"/>
                 <relationship kind="outlet" name="fromLabel" candidateClass="UILabel"/>
                 <relationship kind="outlet" name="fromLabelContainerCell" candidateClass="UITableViewCell"/>
@@ -503,6 +511,7 @@
         <class className="TravelBotSearchViewController" superclassName="UITableViewController">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/TravelBotSearchViewController.h"/>
             <relationships>
+                <relationship kind="action" name="backButton:"/>
                 <relationship kind="outlet" name="searchHeaderView" candidateClass="TravelBotSearchHeader"/>
             </relationships>
         </class>

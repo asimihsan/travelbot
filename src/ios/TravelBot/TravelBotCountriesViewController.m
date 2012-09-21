@@ -115,13 +115,6 @@ static int ddLogLevel = LOG_LEVEL_VERBOSE;
     DDLogVerbose(@"selectedCountry: %@", selectedCountry);
     [self.delegate travelBotCountriesViewControllerDidFinish:self
                                                      country:selectedCountry];
-    
-    // In tutorials this will read [self dismissViewControllerAnimated]. This
-    // doesn't work here because, I think, I haven't embedded this in a navigation
-    // hierarchy, because I want to use push segues.
-    //
-    // Instead, we reach into the navigation controller and ask it to pop.
-    [self.navigationController popViewControllerAnimated:YES];
 }
 
 @end
