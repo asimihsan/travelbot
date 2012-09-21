@@ -17,6 +17,7 @@
 @property (strong, nonatomic) TravelBotPlace *fromPlace;
 @property (strong, nonatomic) TravelBotPlace *toPlace;
 @property (weak, nonatomic) id <TravelBotSearchViewControllerDelegate> delegate;
+@property (strong, nonatomic) NSArray *searchResults;
 
 @property (weak, nonatomic) IBOutlet TravelBotSearchHeader *searchHeaderView;
 - (IBAction)backButton:(id)sender;

@@ -11,6 +11,7 @@
 #import "TravelBotPlace.h"
 #import "AISocketManager.h"
 #import "TravelBotSearchCell.h"
+#import "TravelBotJourneyViewController.h"
 
 #import "Journey.h"
 #import "JourneyLeg.h"
@@ -26,10 +27,10 @@ static int ddLogLevel = LOG_LEVEL_VERBOSE;
 // ----------------------------------------------------------------------------
 
 @interface TravelBotSearchViewController ()
+<TravelBotJourneyViewControllerDelegate>
 
 @property (copy, nonatomic) NSString *requestUUID;
 @property (strong, nonatomic) NSDictionary *countryCodeToMethod;
-@property (strong, nonatomic) NSArray *searchResults;
 
 - (void)startSearch;
 - (void)stopSearch;
@@ -118,9 +119,10 @@ static int ddLogLevel = LOG_LEVEL_VERBOSE;
                                                   object:nil];
     
     // No guarantee we're on the main thread, so dismiss HUD on main thread.
-    [self performSelectorOnMainThread:@selector(stopSearch)
-                           withObject:nil
-                        waitUntilDone:NO];
+    dispatch_async(dispatch_get_main_queue(),
+    ^{
+        [self stopSearch];
+    });
     
     // -------------------------------------------------------------------------
     //  Get results from the notification object, then use Journey class to
@@ -133,20 +135,57 @@ static int ddLogLevel = LOG_LEVEL_VERBOSE;
         [journeys $push:journey];
     }];
     DDLogVerbose(@"TravelBotSearchViewController:onRequestCompletion. journeys: %@", journeys);
-    self.searchResults = [NSArray arrayWithArray:journeys];
-    
-    // This function is called by the notification center, hence no guarantee
-    // that we're on the main thread. In fact we're not, so reloadData delayed
-    // by ~5 seconds without using 'performSelectorOnMainThread'.
-    [self.tableView performSelectorOnMainThread:@selector(reloadData)
-                                     withObject:nil
-                                  waitUntilDone:NO];
     // -------------------------------------------------------------------------
     
+    // -------------------------------------------------------------------------
+    //  Initialize self.searchResults on the main thread and then reload on
+    //  the main thread.
+    //
+    //  The former is done to synchronize self.searchResults,
+    //  because the main menu view controller is allowed to set it to nil.
+    //
+    //  The latter is done because this function is called by the notification
+    //  center, and hence there is no guarantee that we're on the main thread.
+    // -------------------------------------------------------------------------
+    dispatch_async(dispatch_get_main_queue(),
+    ^{
+        self.searchResults = [NSArray arrayWithArray:journeys];
+        [self.tableView reloadData];
+    });
+    // -------------------------------------------------------------------------
+
     DDLogVerbose(@"TravelBotSearchViewController:onRequestCompletion exit.");
 }
 
-#pragma mark - Table view data source
+#pragma mark - Table view delegate and segues.
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    DDLogVerbose(@"TravelBotSearchViewController:didSelectRowAtIndexPath entry. indexPath: %@", indexPath);
+    Journey *journey = [self.searchResults $at:indexPath.row];
+    DDLogVerbose(@"TravelBotSearchViewController:didSelectRowAtIndexPath. selected journey: %@", journey);
+    [self performSegueWithIdentifier:@"resultsToJourney" sender:journey];
+    DDLogVerbose(@"TravelBotSearchViewController:didSelectRowAtIndexPath exit");
+}
+
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
+{
+    DDLogVerbose(@"TravelBotSearchViewController:prepareForSegue entry. sender: %@", sender);
+    
+    // -------------------------------------------------------------------------
+    //  Validate assumptions.
+    // -------------------------------------------------------------------------
+    assert($eql(segue.identifier, @"resultsToJourney"));
+    // -------------------------------------------------------------------------
+    
+    // Set delegate and journey up.
+    TravelBotJourneyViewController *controller = segue.destinationViewController;
+    controller.delegate = self;
+    controller.journey = sender;
+    
+    DDLogVerbose(@"TravelBotSearchViewController:prepareForSegue exit.");
+}
+
+#pragma mark - Table view data source.
 
 // -----------------------------------------------------------------------------
 //  Set up a custom header view here rather than in the storyboard.
@@ -273,8 +312,19 @@ static int ddLogLevel = LOG_LEVEL_VERBOSE;
     self.searchHeaderView.toValueLabel.text = self.toPlace.name;
     self.searchHeaderView.whenValueLabel.text = @"Now";
     // -------------------------------------------------------------------------
+
+    // -------------------------------------------------------------------------
+    // Only perform a search if there are no search results currently available.
+    // Calling view controllers must set the search results to nil if they
+    // want a fresh search to be executed.
+    // -------------------------------------------------------------------------
+    if (!self.searchResults)
+    {
+        DDLogVerbose(@"TravelBotSearchViewController:viewWillAppear. self.searchResults is nil.");
+        [self startSearch];
+    }
+    // -------------------------------------------------------------------------
     
-    [self startSearch];
     [super viewWillAppear:animated];
 }
 
@@ -356,4 +406,12 @@ static int ddLogLevel = LOG_LEVEL_VERBOSE;
     [self.delegate travelBotSearchViewControllerDidFinish:self];
     DDLogVerbose(@"TravelBotSearchViewController:backButton exit.");    
 }
+
+- (void)travelBotJourneyViewControllerDelegateDidFinish:(TravelBotJourneyViewController *)controller
+{
+    DDLogVerbose(@"TravelBotSearchViewController:travelBotJourneyViewControllerDelegateDidFinish entry.");
+    [self.navigationController popViewControllerAnimated:YES];
+    DDLogVerbose(@"TravelBotSearchViewController:travelBotJourneyViewControllerDelegateDidFinish exit.");
+}
+
 @end

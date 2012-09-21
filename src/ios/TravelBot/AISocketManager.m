@@ -22,7 +22,7 @@
 // ----------------------------------------------------------------------------
 //  Static variables or preprocessor defines.
 // ----------------------------------------------------------------------------
-static int ddLogLevel = LOG_LEVEL_VERBOSE;
+static int ddLogLevel = LOG_LEVEL_INFO;
 
 // Header is fixed size at 4-bytes. It is a big-endian unsigned integer that
 // specifies the size of the payload that immediately follows in bytes.

@@ -258,6 +258,7 @@ const int TAG_SEARCH_BUTTON_CELL = 300;
         assert(self.selectedToPlace != nil);
         controller.fromPlace = self.selectedFromPlace;
         controller.toPlace = self.selectedToPlace;
+        controller.searchResults = nil;
     }
 }
 
