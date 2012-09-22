@@ -240,6 +240,51 @@
 			};
 			name = Release;
 		};
+		01AA8226160E26F40050EC07 /* Ad-Hoc */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					SQLITE_ENABLE_COLUMN_METADATA,
+					SQLITE_ENABLE_FTS4,
+					SQLITE_ENABLE_RTREE,
+				);
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
+				SDKROOT = iphoneos;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = "Ad-Hoc";
+		};
+		01AA8227160E26F40050EC07 /* Ad-Hoc */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DSTROOT = /tmp/SQLite.dst;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "SQLite/SQLite-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					SQLITE_ENABLE_COLUMN_METADATA,
+					SQLITE_ENABLE_FTS4,
+					SQLITE_ENABLE_RTREE,
+					"SQLITE_THREADSAFE=0",
+					SQLITE_ENABLE_STAT3,
+				);
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				RUN_CLANG_STATIC_ANALYZER = NO;
+				SKIP_INSTALL = YES;
+			};
+			name = "Ad-Hoc";
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -248,6 +293,7 @@
 			buildConfigurations = (
 				01962C4615EAC1C0009CAEBA /* Debug */,
 				01962C4715EAC1C0009CAEBA /* Release */,
+				01AA8226160E26F40050EC07 /* Ad-Hoc */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -257,6 +303,7 @@
 			buildConfigurations = (
 				01962C4915EAC1C0009CAEBA /* Debug */,
 				01962C4A15EAC1C0009CAEBA /* Release */,
+				01AA8227160E26F40050EC07 /* Ad-Hoc */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

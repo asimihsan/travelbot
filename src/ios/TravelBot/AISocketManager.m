@@ -181,9 +181,6 @@ static AISocketManager *sharedInstance = nil;
                header_tag:TAG_CLOSE_HEADER
               payload_tag:TAG_CLOSE_PAYLOAD];
         [self.socket disconnectAfterWriting];
-        self.connectionState = CONNECTION_STATE_NOT_CONNECTED;
-        [self stopHeartbeatSend];
-        [self stopHeartbeatTimeout];
         DDLogVerbose(@"AISocketManager:disconnect() exit.");
         [self stopProcessingTask];
     });
@@ -479,7 +476,7 @@ static AISocketManager *sharedInstance = nil;
     dispatch_async(dispatch_get_main_queue(),
     ^{
         DDLogVerbose(@"AISocketManager:socketDidDisconnect entry.");
-        DDLogWarn(@"Socket failed with error: %@", error);
+        DDLogVerbose(@"Socket failed with error: %@", error);
         if ([self isConnected])
         {
             DDLogVerbose(@"Socket was connected to notify about socket failure.");
