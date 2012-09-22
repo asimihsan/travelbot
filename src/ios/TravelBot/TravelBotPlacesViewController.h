@@ -23,6 +23,8 @@
 @property (weak, nonatomic) IBOutlet UISearchDisplayController *tableSearchDisplayController;
 @property (copy, nonatomic) NSString *currentSearchString;
 
+- (void)updateSearchResults:(id)controller;
+
 @end
 
 @protocol TravelBotPlacesViewControllerDelegate <NSObject>

@@ -13,6 +13,7 @@
 #import "AIDatabaseManager.h"
 #import "ConciseKit/ConciseKit.h"
 #import "CocoaLumberJack/DDLog.h"
+#import "SVProgressHUD.h"
 
 // ----------------------------------------------------------------------------
 //  Static variables or preprocessor defines.
@@ -22,6 +23,7 @@ static int ddLogLevel = LOG_LEVEL_VERBOSE;
 @interface TravelBotPlacesViewController ()
 
 @property (assign, nonatomic) NSInteger numberOfRows;
+@property (assign, nonatomic) BOOL userStillTypingInSearch;
 
 @end
 
@@ -33,6 +35,7 @@ static int ddLogLevel = LOG_LEVEL_VERBOSE;
 @synthesize searchBar = _searchBar;
 @synthesize tableSearchDisplayController = _tableSearchDisplayController;
 @synthesize currentSearchString = _currentSearchString;
+@synthesize userStillTypingInSearch = _userStillTypingInSearch;
 
 - (id)initWithStyle:(UITableViewStyle)style
 {
@@ -101,15 +104,24 @@ static int ddLogLevel = LOG_LEVEL_VERBOSE;
     AIDatabaseManager *databaseManager = [AIDatabaseManager sharedInstance];
     if ($eql(tableView, self.tableView))
     {
-        DDLogVerbose(@"numberOfRows: main table");
+        DDLogVerbose(@"TravelBotPlacesViewController:numberOfRowsInSection. main table");
         return_value = [databaseManager getNumberOfPlaces:self.country.code
                                                  search:nil];
     }
     else
     {
-        DDLogVerbose(@"numberOfRows: tableSearchDisplayController. self.currentSearchString: %@", self.currentSearchString);
-        return_value = [databaseManager getNumberOfPlaces:self.country.code
-                                                   search:self.currentSearchString];
+        DDLogVerbose(@"TravelBotPlacesViewController:numberOfRowsInSection. tableSearchDisplayController. self.currentSearchString: %@", self.currentSearchString);
+        if (self.userStillTypingInSearch)
+        {
+            DDLogVerbose(@"User still typing in search, so return zero rows.");
+            return_value = [NSNumber numberWithInt:0];
+        }
+        else
+        {
+            DDLogVerbose(@"User no longer typing in search, so determine actually number of rows.");
+            return_value = [databaseManager getNumberOfPlaces:self.country.code
+                                                       search:self.currentSearchString];
+        }
     }
     DDLogVerbose(@"TravelBotPlacesViewController:numberOfRowsInSection. returning: %@", return_value);
     return return_value.integerValue;
@@ -164,7 +176,26 @@ static int ddLogLevel = LOG_LEVEL_VERBOSE;
 {
     DDLogVerbose(@"TravelBotPlacesViewController:shouldReloadTableForSearchString entry. searchString: %@", searchString);
     self.currentSearchString = searchString;
-    return YES;
+    self.userStillTypingInSearch = YES;
+    if (![SVProgressHUD isVisible])
+        [SVProgressHUD showWithStatus:@"Loading..."
+                             maskType:SVProgressHUDMaskTypeClear];
+    [NSObject cancelPreviousPerformRequestsWithTarget:self
+                                             selector:@selector(updateSearchResults:)
+                                               object:controller];
+    [self performSelector:@selector(updateSearchResults:)
+               withObject:controller
+               afterDelay:0.2];
+    return NO;
+}
+
+- (void)updateSearchResults:(id)controller
+{
+    DDLogVerbose(@"TravelBotPlacesViewController:updateSearchResults entry.");
+    self.userStillTypingInSearch = NO;
+    [((UISearchDisplayController *)controller).searchResultsTableView reloadData];
+    [SVProgressHUD dismiss];
+    DDLogVerbose(@"TravelBotPlacesViewController:updateSearchResults exit.");
 }
 
 #pragma mark - Table view delegate
