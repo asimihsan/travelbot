@@ -12,6 +12,7 @@
 #import "AISocketManager.h"
 #import "TravelBotSearchCell.h"
 #import "TravelBotJourneyViewController.h"
+#import "AIUtilities.h"
 
 #import "Journey.h"
 #import "JourneyLeg.h"
@@ -250,23 +251,8 @@ static int ddLogLevel = LOG_LEVEL_VERBOSE;
         // ---------------------------------------------------------------------
         //  Determine duration string.
         // ---------------------------------------------------------------------
-        NSTimeInterval duration = [lastArrivalTime timeIntervalSinceDate:firstDepartureTime];
-        div_t duration_hours_division = div(duration, 3600);
-        int duration_hours = duration_hours_division.quot;
-        div_t duration_minutes_division = div(duration_hours_division.rem, 60);
-        int duration_minutes = duration_minutes_division.quot;
-        //int duration_seconds = duration_minutes_division.rem; // unused
-        NSString *durationString;
-        if (duration_hours > 0)
-        {
-            durationString = [NSString stringWithFormat:@"%d hr %d min",
-                              duration_hours, duration_minutes];
-        }
-        else
-        {
-            durationString = [NSString stringWithFormat:@"%d min",
-                              duration_minutes];
-        }
+        NSString *durationString = [AIUtilities getDurationFromTwoDates:firstDepartureTime
+                                                     secondTimeInterval:lastArrivalTime];
         // ---------------------------------------------------------------------
 
         // ---------------------------------------------------------------------

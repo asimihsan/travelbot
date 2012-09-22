@@ -223,7 +223,8 @@ def get_journeys(from_location, to_location, journey_date=None, journey_time=Non
                                                                datetime = arrival_journey_legpoint_datetime)
 
                     journey_leg = JourneyLeg(departure = departure_journey_legpoint,
-                                             arrival = arrival_journey_legpoint)
+                                             arrival = arrival_journey_legpoint,
+                                             mode_of_transport = "bus")
                     journey_legs.append(journey_leg)
 
                 journey = Journey(legs = journey_legs)
@@ -280,7 +281,8 @@ def get_journeys(from_location, to_location, journey_date=None, journey_time=Non
                                                            datetime = arrival_journey_legpoint_datetime)
 
                 journey_leg = JourneyLeg(departure = departure_journey_legpoint,
-                                         arrival = arrival_journey_legpoint)
+                                         arrival = arrival_journey_legpoint,
+                                         mode_of_transport = "bus")
                 journey = Journey(legs = [journey_leg])
                 journeys.append(journey)
             # -------------------------------------------------------------

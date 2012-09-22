@@ -140,7 +140,7 @@ EXIT_LABEL:
 
 - (NSString *)description
 {
-    return $str(@"{Location. datetime=%@, location: %@}",
+    return $str(@"{JourneyLegPoint. datetime=%@, location: %@}",
                 self.datetime, self.location);
 }
 

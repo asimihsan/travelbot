@@ -51,9 +51,10 @@ class JourneyLegPoint(object):
                                     "datetime": self.datetime.isoformat("T")}}
 
 class JourneyLeg(object):
-    def __init__(self, departure, arrival):
+    def __init__(self, departure, arrival, mode_of_transport):
         self._departure = departure
         self._arrival = arrival
+        self._mode_of_transport = mode_of_transport
 
     @property
     def departure(self):
@@ -63,15 +64,21 @@ class JourneyLeg(object):
     def arrival(self):
         return self._arrival
 
+    @property
+    def mode_of_transport(self):
+        return self._mode_of_transport
+
     def __unicode__(self):
-        return "{JourneyLeg: departure=%s, arrival=%s}" % (self.departure, self.arrival)
+        return "{JourneyLeg: departure=%s, arrival=%s, mode_of_transport=%2}" % \
+                (self.departure, self.arrival, self.mode_of_transport)
 
     def __repr__(self):
         return unicode(self)
 
     def serialize_to_dict(self):
         return {"JourneyLeg": {"departure": self.departure.serialize_to_dict(),
-                               "arrival": self.arrival.serialize_to_dict()}}
+                               "arrival": self.arrival.serialize_to_dict(),
+                               "mode_of_transport": self.mode_of_transport}}
 
 class Journey(object):
     def __init__(self, legs):

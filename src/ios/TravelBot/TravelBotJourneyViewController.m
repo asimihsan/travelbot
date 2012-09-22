@@ -11,6 +11,7 @@
 #import "JourneyLeg.h"
 #import "TravelBotJourneyHeader.h"
 #import "TravelBotJourneyLegCell.h"
+#import "AIUtilities.h"
 
 #import "ConciseKit/ConciseKit.h"
 #import "CocoaLumberJack/DDLog.h"
@@ -75,23 +76,8 @@ static int ddLogLevel = LOG_LEVEL_VERBOSE;
     // -------------------------------------------------------------------------
     //  Determine duration string.
     // -------------------------------------------------------------------------
-    NSTimeInterval duration = [lastArrivalTime timeIntervalSinceDate:firstDepartureTime];
-    div_t duration_hours_division = div(duration, 3600);
-    int duration_hours = duration_hours_division.quot;
-    div_t duration_minutes_division = div(duration_hours_division.rem, 60);
-    int duration_minutes = duration_minutes_division.quot;
-    //int duration_seconds = duration_minutes_division.rem; // unused
-    NSString *durationString;
-    if (duration_hours > 0)
-    {
-        durationString = [NSString stringWithFormat:@"%d hr %d min",
-                          duration_hours, duration_minutes];
-    }
-    else
-    {
-        durationString = [NSString stringWithFormat:@"%d min",
-                          duration_minutes];
-    }
+    NSString *durationString = [AIUtilities getDurationFromTwoDates:firstDepartureTime
+                                                 secondTimeInterval:lastArrivalTime];
     // -------------------------------------------------------------------------
     
     self.journeyHeaderView.departLabel.text = departureString;
@@ -113,6 +99,11 @@ static int ddLogLevel = LOG_LEVEL_VERBOSE;
     // Dispose of any resources that can be recreated.
 }
 
+- (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation
+{
+    [self.tableView reloadData];
+}
+
 #pragma mark - Table view data source
 
 // -----------------------------------------------------------------------------
@@ -122,13 +113,6 @@ static int ddLogLevel = LOG_LEVEL_VERBOSE;
 {
     return self.journeyHeaderView;
 }
-
-/*
-- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    return 88.0;
-}
-*/
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
@@ -140,8 +124,30 @@ static int ddLogLevel = LOG_LEVEL_VERBOSE;
     return [self.journey getNumberOfLegs];
 }
 
+// -----------------------------------------------------------------------------
+//  heightForRowAtIndexPath is called before cellForRowAtIndexPath. This is
+//  because iOS needs to know the height of all cells in the table, regardless
+//  of whether they're displayed, in order to handle the scroll indication.
+//
+//  iOS assumes that calculating the height is cheaper than displaying the
+//  cell. Hence, the wrong solution is to call cellForRowAtIndexPath from
+//  heightForRowAtIndexPath in order to calculate height. One should have
+//  a cheaper height calculation method on hand.
+//
+//  !!AI For now we assume the number of journey legs is small and we can
+//  afford to create the cells in order to determine the height.
+// -----------------------------------------------------------------------------
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    DDLogVerbose(@"TravelBotJourneyViewController:heightForRowAtIndexPath entry. indexPath: %@", indexPath);
+    UITableViewCell *cell = [self tableView:tableView cellForRowAtIndexPath:indexPath];
+    return cell.frame.size.height;
+}
+
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    DDLogVerbose(@"TravelBotJourneyViewController:cellForRowAtIndexPath entry. indexPath: %@", indexPath);
+    
     // -------------------------------------------------------------------------
     //  Get a table cell. As we use Storyboard to set up the cell it will
     //  always be non-nil.
@@ -153,9 +159,14 @@ static int ddLogLevel = LOG_LEVEL_VERBOSE;
     assert(cell);
     // -------------------------------------------------------------------------
     
+    // -------------------------------------------------------------------------
+    //  Set up the cell.
+    // -------------------------------------------------------------------------
     JourneyLeg *leg = [self.journey getJourneyLegAt:indexPath.row];
     assert(leg);
-    cell.textLabel.text = [NSString stringWithFormat:@"%@", leg];
+    DDLogVerbose(@"Row %d has %@", indexPath.row, leg);
+    cell.leg = leg;
+    // -------------------------------------------------------------------------
     
     return cell;
 }

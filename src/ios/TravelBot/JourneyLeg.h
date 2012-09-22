@@ -14,8 +14,14 @@
 
 @property (strong, nonatomic) JourneyLegPoint *departure;
 @property (strong, nonatomic) JourneyLegPoint *arrival;
+@property (copy, nonatomic) NSString *mode_of_transport;
 
 - (id)init:(NSDictionary *)jsonDictionary;
 + (BOOL)validateJsonDictionary:(NSDictionary *)jsonDictionary;
+
+- (NSDate *)getDepartureDate;
+- (NSDate *)getArrivalDate;
+- (NSString *)getDeparturePointName;
+- (NSString *)getArrivalPointName;
 
 @end

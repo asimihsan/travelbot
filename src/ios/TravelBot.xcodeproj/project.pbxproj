@@ -46,6 +46,8 @@
 		01AA8215160CAA620050EC07 /* TravelBotJourneyViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 01AA8214160CAA620050EC07 /* TravelBotJourneyViewController.m */; };
 		01AA8219160CAB6C0050EC07 /* TravelBotJourneyLegCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 01AA8218160CAB6C0050EC07 /* TravelBotJourneyLegCell.m */; };
 		01AA821C160CABF80050EC07 /* TravelBotJourneyHeader.m in Sources */ = {isa = PBXBuildFile; fileRef = 01AA821B160CABF80050EC07 /* TravelBotJourneyHeader.m */; };
+		01AA821F160DE8240050EC07 /* bus_aiga.png in Resources */ = {isa = PBXBuildFile; fileRef = 01AA821D160DE8240050EC07 /* bus_aiga.png */; };
+		01AA8220160DE8240050EC07 /* train_aiga.png in Resources */ = {isa = PBXBuildFile; fileRef = 01AA821E160DE8240050EC07 /* train_aiga.png */; };
 		01AC82FE15ECE14C0072992A /* TravelBotCountriesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 01AC82FD15ECE14C0072992A /* TravelBotCountriesViewController.m */; };
 		01AC830115ECE2DA0072992A /* TravelBotPlacesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 01AC830015ECE2DA0072992A /* TravelBotPlacesViewController.m */; };
 		01AC830515ECE5760072992A /* si.png in Resources */ = {isa = PBXBuildFile; fileRef = 01AC830415ECE5760072992A /* si.png */; };
@@ -129,6 +131,8 @@
 		01AA8218160CAB6C0050EC07 /* TravelBotJourneyLegCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TravelBotJourneyLegCell.m; sourceTree = "<group>"; };
 		01AA821A160CABF80050EC07 /* TravelBotJourneyHeader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TravelBotJourneyHeader.h; sourceTree = "<group>"; };
 		01AA821B160CABF80050EC07 /* TravelBotJourneyHeader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TravelBotJourneyHeader.m; sourceTree = "<group>"; };
+		01AA821D160DE8240050EC07 /* bus_aiga.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = bus_aiga.png; path = resources/images/bus_aiga.png; sourceTree = "<group>"; };
+		01AA821E160DE8240050EC07 /* train_aiga.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = train_aiga.png; path = resources/images/train_aiga.png; sourceTree = "<group>"; };
 		01AC82FC15ECE14C0072992A /* TravelBotCountriesViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TravelBotCountriesViewController.h; sourceTree = "<group>"; };
 		01AC82FD15ECE14C0072992A /* TravelBotCountriesViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TravelBotCountriesViewController.m; sourceTree = "<group>"; };
 		01AC82FF15ECE2DA0072992A /* TravelBotPlacesViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TravelBotPlacesViewController.h; sourceTree = "<group>"; };
@@ -194,6 +198,8 @@
 		014D2BDF15ECCC55008205BE /* Images */ = {
 			isa = PBXGroup;
 			children = (
+				01AA821D160DE8240050EC07 /* bus_aiga.png */,
+				01AA821E160DE8240050EC07 /* train_aiga.png */,
 				0190A8C01604EC050098B8F8 /* es.png */,
 				01AC830415ECE5760072992A /* si.png */,
 				014D2BF715ECD8DB008205BE /* search_button_highlight.png */,
@@ -454,6 +460,8 @@
 				01AC830515ECE5760072992A /* si.png in Resources */,
 				0190A8C11604EC050098B8F8 /* es.png in Resources */,
 				01C6A777160B67A2006B3E19 /* Default-568h@2x.png in Resources */,
+				01AA821F160DE8240050EC07 /* bus_aiga.png in Resources */,
+				01AA8220160DE8240050EC07 /* train_aiga.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

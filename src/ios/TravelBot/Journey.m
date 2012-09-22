@@ -33,6 +33,13 @@ static int ddLogLevel = LOG_LEVEL_INFO;
 #pragma mark - Public API
 - (NSDate *)getFirstDepartureTime
 {
+    // -------------------------------------------------------------------------
+    //  Validate assumptions,.
+    // -------------------------------------------------------------------------
+    assert(self.legs);
+    assert([self.legs count] > 0);
+    // -------------------------------------------------------------------------
+    
     JourneyLeg *firstLeg = [self.legs $first];
     NSDate *firstDepartureTime = firstLeg.departure.datetime;
     return [firstDepartureTime copy];
@@ -40,6 +47,13 @@ static int ddLogLevel = LOG_LEVEL_INFO;
 
 - (NSDate *)getLastArrivalTime
 {
+    // -------------------------------------------------------------------------
+    //  Validate assumptions,.
+    // -------------------------------------------------------------------------
+    assert(self.legs);
+    assert([self.legs count] > 0);
+    // -------------------------------------------------------------------------
+    
     JourneyLeg *lastLeg = [self.legs $last];
     NSDate *lastArrivalTime = lastLeg.arrival.datetime;
     return [lastArrivalTime copy];

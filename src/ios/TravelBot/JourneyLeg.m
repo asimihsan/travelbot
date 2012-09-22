@@ -8,6 +8,7 @@
 
 #import "JourneyLeg.h"
 #import "JourneyLegPoint.h"
+#import "Location.h"
 
 #import "JSONKit/JSONKit.h"
 #import "ConciseKit/ConciseKit.h"
@@ -29,6 +30,28 @@ static int ddLogLevel = LOG_LEVEL_INFO;
 
 @synthesize departure = _departure;
 @synthesize arrival = _arrival;
+@synthesize mode_of_transport = _mode_of_transport;
+
+#pragma mark - Public API.
+- (NSDate *)getDepartureDate
+{
+    return [self.departure.datetime copy];
+}
+
+- (NSDate *)getArrivalDate
+{
+    return [self.arrival.datetime copy];
+}
+
+- (NSString *)getDeparturePointName
+{
+    return [self.departure.location.name copy];
+}
+
+- (NSString *)getArrivalPointName
+{
+    return [self.arrival.location.name copy];
+}
 
 - (id)init:(NSDictionary *)jsonDictionary
 {
@@ -55,6 +78,7 @@ static int ddLogLevel = LOG_LEVEL_INFO;
     NSDictionary *topLevelKey;
     NSDictionary *departure;
     NSDictionary *arrival;
+    NSString *mode_of_transport;
     // -------------------------------------------------------------------------
     
     topLevelKey = [jsonDictionary $for:@"JourneyLeg"];
@@ -85,6 +109,12 @@ static int ddLogLevel = LOG_LEVEL_INFO;
         DDLogVerbose(@"Second-level key 'arrival' not valid JourneyLegPoint.");
         goto EXIT_LABEL;
     }
+    mode_of_transport = [topLevelKey $for:@"mode_of_transport"];
+    if (!mode_of_transport)
+    {
+        DDLogVerbose(@"Second-level key 'mode_of_transport' not found.");
+        goto EXIT_LABEL;
+    }
     return_value = YES;
     
 EXIT_LABEL:
@@ -104,8 +134,12 @@ EXIT_LABEL:
     NSDictionary *arrivalDictionary = [topLevelKey $for:@"arrival"];
     JourneyLegPoint *arrival = [[JourneyLegPoint alloc] init:arrivalDictionary];
     self.arrival = arrival;
+    
+    NSString *mode_of_transport = [topLevelKey $for:@"mode_of_transport"];
+    self.mode_of_transport = mode_of_transport;
 }
 
+#pragma mark - NSObject overrides.
 - (BOOL)isEqual:(id)object
 {
     if (object == self)
@@ -118,6 +152,8 @@ EXIT_LABEL:
         return NO;
     if (!$eql(self.arrival, other.arrival))
         return NO;
+    if (!$eql(self.mode_of_transport, other.mode_of_transport))
+        return NO;
     return YES;
 }
 
@@ -128,13 +164,14 @@ EXIT_LABEL:
     NSUInteger result = 17;
     result = prime * result + self.departure.hash;
     result = prime * result + self.arrival.hash;
+    result = prime * result + self.mode_of_transport.hash;
     return result;
 }
 
 - (NSString *)description
 {
-    return $str(@"{JourneyLeg. departure=%@, arrival: %@}",
-                self.departure, self.arrival);
+    return $str(@"{JourneyLeg. departure=%@, arrival: %@, mode_of_transport: %@}",
+                self.departure, self.arrival, self.mode_of_transport);
 }
 
 @end

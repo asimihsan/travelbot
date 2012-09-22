@@ -6,9 +6,10 @@ The following covers the part of travelbot that fetches travel information.
 
 ## TODO
 
--   clicking on a search result displays a detailed view of the journey in a new view controller.
-    -   very un-iOS to slide in the details in the same view controller.
 -   from places view controller should be able to see nearby locations via a button. data is already there, but not in RTree index.
+-   use tabs. new tab for previous searches and favourite searches.
+    -   previous searches stores everything up to e.g. 100.
+    -   favourite searches are only favourited searches, no limit.
 -   start using preferences, even if read-only, to store major configuration.
     -   server hostname(s).
     -   method names for country codes.

@@ -42,4 +42,7 @@
 
 + (UIColor *)colorWithR:(CGFloat)red G:(CGFloat)green B:(CGFloat)blue A:(CGFloat)alpha;
 
++ (NSString *)getDurationFromTwoDates:(NSDate *)firstDate
+                   secondTimeInterval:(NSDate *)secondDate;
+
 @end

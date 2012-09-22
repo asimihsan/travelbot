@@ -382,8 +382,38 @@ static const short _base64DecodingTable[256] = {
     return return_value;
 }
 
-+ (UIColor *)colorWithR:(CGFloat)red G:(CGFloat)green B:(CGFloat)blue A:(CGFloat)alpha {
++ (UIColor *)colorWithR:(CGFloat)red G:(CGFloat)green B:(CGFloat)blue A:(CGFloat)alpha
+{
     return [UIColor colorWithRed:(red/255.0) green:(green/255.0) blue:(blue/255.0) alpha:alpha];
+}
+
+#pragma mark - Time utility functions.
++ (NSString *)getDurationFromTwoDates:(NSDate *)firstDate
+                   secondTimeInterval:(NSDate *)secondDate
+{
+    // -------------------------------------------------------------------------
+    //  Determine duration string.
+    // -------------------------------------------------------------------------
+    NSTimeInterval duration = [secondDate timeIntervalSinceDate:firstDate];
+    div_t duration_hours_division = div(duration, 3600);
+    int duration_hours = duration_hours_division.quot;
+    div_t duration_minutes_division = div(duration_hours_division.rem, 60);
+    int duration_minutes = duration_minutes_division.quot;
+    //int duration_seconds = duration_minutes_division.rem; // unused
+    NSString *durationString;
+    if (duration_hours > 0)
+    {
+        durationString = [NSString stringWithFormat:@"%d hr %d min",
+                          duration_hours, duration_minutes];
+    }
+    else
+    {
+        durationString = [NSString stringWithFormat:@"%d min",
+                          duration_minutes];
+    }
+    // -------------------------------------------------------------------------
+    
+    return durationString;
 }
 
 @end
