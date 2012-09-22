@@ -372,7 +372,6 @@ static AIDatabaseManager *sharedInstance = nil;
 - (void)initDatabaseManager
 {
     self.processingQueue = dispatch_queue_create("com.ai.AIDatabaseManager.processingQueue", NULL);
-    getPlaceWithCountryCodeCache = [NSMutableDictionary dictionaryWithCapacity:GET_PLACE_WITH_COUNTRY_CODE_CACHE_SIZE];
 }
 
 - (void)dealloc
@@ -440,6 +439,7 @@ static AIDatabaseManager *sharedInstance = nil;
             DDLogError(@"AIDatabaseManager:open: failed to open locations database.");
             self.locations_db = nil;
         }
+        getPlaceWithCountryCodeCache = [NSMutableDictionary dictionaryWithCapacity:GET_PLACE_WITH_COUNTRY_CODE_CACHE_SIZE];
         DDLogVerbose(@"AIDatabaseManager:open: locations database is open.");
         // ---------------------------------------------------------------------
         
@@ -476,6 +476,8 @@ static AIDatabaseManager *sharedInstance = nil;
                 DDLogError(@"AIDatabaseManager:close: Failed to close database.");
             }
             self.locations_db = nil;
+            [getPlaceWithCountryCodeCache removeAllObjects];
+            getPlaceWithCountryCodeCache = nil;
         }
         [self stopProcessingTask];
    });

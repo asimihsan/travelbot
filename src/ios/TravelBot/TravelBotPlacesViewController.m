@@ -121,6 +121,11 @@ static int ddLogLevel = LOG_LEVEL_VERBOSE;
             DDLogVerbose(@"User no longer typing in search, so determine actually number of rows.");
             return_value = [databaseManager getNumberOfPlaces:self.country.code
                                                        search:self.currentSearchString];
+            if (!$eql(self.currentSearchString, @""))
+            {
+                DDLogVerbose(@"TravelBotPlacesViewController:numberOfRowsInSection. some search string present.");
+                return_value = [NSNumber numberWithInt:(return_value.integerValue + 1)];
+            }
         }
     }
     DDLogVerbose(@"TravelBotPlacesViewController:numberOfRowsInSection. returning: %@", return_value);
@@ -159,10 +164,25 @@ static int ddLogLevel = LOG_LEVEL_VERBOSE;
     }
     else
     {
+        // ---------------------------------------------------------------------
+        // If we're in the search table view and there is a search string
+        // present then the first row will be that search string, because
+        // as a fail-safe we want the user to be able to use their input string
+        // as the place name.
+        // ---------------------------------------------------------------------
         DDLogVerbose(@"cellForRowAtIndexPath: tableSearchDisplayController.");
-        place = [databaseManager getPlaceWithCountryCode:self.country.code
-                                                  search:self.currentSearchString
-                                                   index:row];
+        if (!$eql(self.currentSearchString, @"") && (indexPath.row == 0))
+        {
+            place = self.currentSearchString;
+            cell.textLabel.font = [UIFont italicSystemFontOfSize:20.0];
+        }
+        else
+        {
+            place = [databaseManager getPlaceWithCountryCode:self.country.code
+                                                      search:self.currentSearchString
+                                                       index:row - 1];
+        }
+        // ---------------------------------------------------------------------
     }
     
     // Configure the cell...
@@ -214,7 +234,7 @@ static int ddLogLevel = LOG_LEVEL_VERBOSE;
     
     if ($eql(tableView, self.tableView))
     {
-        DDLogVerbose(@"didSelectRowAtIndexPath: main table");
+        DDLogVerbose(@"TravelBotPlacesViewController:didSelectRowAtIndexPath: main table");
         placeName = [databaseManager getPlaceWithCountryCode:self.country.code
                                                       search:nil
                                                        index:row];
@@ -222,10 +242,19 @@ static int ddLogLevel = LOG_LEVEL_VERBOSE;
     }
     else
     {
-        DDLogVerbose(@"didSelectRowAtIndexPath: tableSearchDisplayController.");
-        placeName = [databaseManager getPlaceWithCountryCode:self.country.code
-                                                      search:self.currentSearchString
-                                                       index:row];
+        DDLogVerbose(@"TravelBotPlacesViewController:didSelectRowAtIndexPath: tableSearchDisplayController.");
+        if (!$eql(self.currentSearchString, @"") && (indexPath.row == 0))
+        {
+            DDLogVerbose(@"TravelBotPlacesViewController:didSelectRowAtIndexPath. Selected first row with currentSearchString.");
+            placeName = self.currentSearchString;
+        }
+        else
+        {
+            DDLogVerbose(@"TravelBotPlacesViewController:didSelectRowAtIndexPath. Selected other row with database place.");
+            placeName = [databaseManager getPlaceWithCountryCode:self.country.code
+                                                          search:self.currentSearchString
+                                                           index:row - 1];
+        }
     }
     
     TravelBotPlace *selectedPlace = [[TravelBotPlace alloc] initWithName:placeName
