@@ -48,6 +48,7 @@
 		01AA821C160CABF80050EC07 /* TravelBotJourneyHeader.m in Sources */ = {isa = PBXBuildFile; fileRef = 01AA821B160CABF80050EC07 /* TravelBotJourneyHeader.m */; };
 		01AA821F160DE8240050EC07 /* bus_aiga.png in Resources */ = {isa = PBXBuildFile; fileRef = 01AA821D160DE8240050EC07 /* bus_aiga.png */; };
 		01AA8220160DE8240050EC07 /* train_aiga.png in Resources */ = {isa = PBXBuildFile; fileRef = 01AA821E160DE8240050EC07 /* train_aiga.png */; };
+		01AA8225160E22700050EC07 /* locations.sqlite.bz2 in Resources */ = {isa = PBXBuildFile; fileRef = 01AA8224160E22700050EC07 /* locations.sqlite.bz2 */; };
 		01AC82FE15ECE14C0072992A /* TravelBotCountriesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 01AC82FD15ECE14C0072992A /* TravelBotCountriesViewController.m */; };
 		01AC830115ECE2DA0072992A /* TravelBotPlacesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 01AC830015ECE2DA0072992A /* TravelBotPlacesViewController.m */; };
 		01AC830515ECE5760072992A /* si.png in Resources */ = {isa = PBXBuildFile; fileRef = 01AC830415ECE5760072992A /* si.png */; };
@@ -133,6 +134,7 @@
 		01AA821B160CABF80050EC07 /* TravelBotJourneyHeader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TravelBotJourneyHeader.m; sourceTree = "<group>"; };
 		01AA821D160DE8240050EC07 /* bus_aiga.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = bus_aiga.png; path = resources/images/bus_aiga.png; sourceTree = "<group>"; };
 		01AA821E160DE8240050EC07 /* train_aiga.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = train_aiga.png; path = resources/images/train_aiga.png; sourceTree = "<group>"; };
+		01AA8224160E22700050EC07 /* locations.sqlite.bz2 */ = {isa = PBXFileReference; lastKnownFileType = file; name = locations.sqlite.bz2; path = ../../backend/workers/slovenia/locations.sqlite.bz2; sourceTree = "<group>"; };
 		01AC82FC15ECE14C0072992A /* TravelBotCountriesViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TravelBotCountriesViewController.h; sourceTree = "<group>"; };
 		01AC82FD15ECE14C0072992A /* TravelBotCountriesViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TravelBotCountriesViewController.m; sourceTree = "<group>"; };
 		01AC82FF15ECE2DA0072992A /* TravelBotPlacesViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TravelBotPlacesViewController.h; sourceTree = "<group>"; };
@@ -190,6 +192,7 @@
 		014D2BDE15ECCC4F008205BE /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				01AA8224160E22700050EC07 /* locations.sqlite.bz2 */,
 				014D2BDF15ECCC55008205BE /* Images */,
 			);
 			name = Resources;
@@ -462,6 +465,7 @@
 				01C6A777160B67A2006B3E19 /* Default-568h@2x.png in Resources */,
 				01AA821F160DE8240050EC07 /* bus_aiga.png in Resources */,
 				01AA8220160DE8240050EC07 /* train_aiga.png in Resources */,
+				01AA8225160E22700050EC07 /* locations.sqlite.bz2 in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -588,6 +592,7 @@
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer: Asim Ihsan (FV9T6ELUJX)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -603,6 +608,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
+				PROVISIONING_PROFILE = "2F6F46B5-0B82-412F-8692-3BF74081277C";
 				RUN_CLANG_STATIC_ANALYZER = YES;
 				SDKROOT = iphoneos;
 			};
@@ -616,6 +622,7 @@
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer: Asim Ihsan (FV9T6ELUJX)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -625,6 +632,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
+				PROVISIONING_PROFILE = "2F6F46B5-0B82-412F-8692-3BF74081277C";
 				RUN_CLANG_STATIC_ANALYZER = YES;
 				SDKROOT = iphoneos;
 				VALIDATE_PRODUCT = YES;
@@ -703,6 +711,67 @@
 			};
 			name = Release;
 		};
+		01AA8221160E219E0050EC07 /* Ad-Hoc */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer: Asim Ihsan (FV9T6ELUJX)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
+				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
+				PROVISIONING_PROFILE = "2397B92A-40FA-4E98-9DF6-D9C4BD4B8628";
+				RUN_CLANG_STATIC_ANALYZER = YES;
+				SDKROOT = iphoneos;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = "Ad-Hoc";
+		};
+		01AA8222160E219E0050EC07 /* Ad-Hoc */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = EABBC4AF54824A1598C0BA05 /* Pods.xcconfig */;
+			buildSettings = {
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "TravelBot/TravelBot-Prefix.pch";
+				INFOPLIST_FILE = "TravelBot/TravelBot-Info.plist";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/libarchive\"",
+				);
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				RUN_CLANG_STATIC_ANALYZER = YES;
+				VALID_ARCHS = "armv7s armv7";
+				WRAPPER_EXTENSION = app;
+			};
+			name = "Ad-Hoc";
+		};
+		01AA8223160E219E0050EC07 /* Ad-Hoc */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/TravelBot.app/TravelBot";
+				FRAMEWORK_SEARCH_PATHS = (
+					"\"$(SDKROOT)/Developer/Library/Frameworks\"",
+					"\"$(DEVELOPER_LIBRARY_DIR)/Frameworks\"",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "TravelBot/TravelBot-Prefix.pch";
+				INFOPLIST_FILE = "TravelBotTests/TravelBotTests-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUNDLE_LOADER)";
+				WRAPPER_EXTENSION = octest;
+			};
+			name = "Ad-Hoc";
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -711,6 +780,7 @@
 			buildConfigurations = (
 				01962B9115EABA60009CAEBA /* Debug */,
 				01962B9215EABA60009CAEBA /* Release */,
+				01AA8221160E219E0050EC07 /* Ad-Hoc */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -720,6 +790,7 @@
 			buildConfigurations = (
 				01962B9415EABA60009CAEBA /* Debug */,
 				01962B9515EABA60009CAEBA /* Release */,
+				01AA8222160E219E0050EC07 /* Ad-Hoc */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -729,6 +800,7 @@
 			buildConfigurations = (
 				01962B9715EABA60009CAEBA /* Debug */,
 				01962B9815EABA60009CAEBA /* Release */,
+				01AA8223160E219E0050EC07 /* Ad-Hoc */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

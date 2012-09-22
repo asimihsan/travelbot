@@ -55,6 +55,14 @@ static AIDatabaseManager *sharedInstance = nil;
                update:(NSString *)update
             arguments:(NSDictionary *)arguments;
 
+- (BOOL)downloadDatabase:(NSString *)dbCompressedPath
+                  dbPath:(NSString *)dbPath
+                   error:(NSError **)error;
+- (BOOL)copyDatabase:(NSString *)dbBundlePath
+    dbCompressedPath:(NSString *)dbCompressedPath
+              dbPath:(NSString *)dbPath
+               error:(NSError **)error;
+
 @end
 
 @implementation AIDatabaseManager
@@ -393,6 +401,7 @@ static AIDatabaseManager *sharedInstance = nil;
         DDLogVerbose(@"AIDatabaseManager:open entry.");
         NSString *dbCompressedPath = [[$ documentPath] stringByAppendingPathComponent:LOCATIONS_DATABASE_COMPRESSED_NAME];
         NSString *dbPath = [[$ documentPath] stringByAppendingPathComponent:LOCATIONS_DATABASE_NAME];
+        NSString *dbBundlePath = [[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"locations.sqlite.bz2"];
         
         // ---------------------------------------------------------------------
         //  Maybe download and decompress the compressed database, if it
@@ -406,26 +415,21 @@ static AIDatabaseManager *sharedInstance = nil;
             DDLogVerbose(@"AIDatabaseManager:open. Compressed database does not exist at dbCompressedPath: %@",
                          dbCompressedPath);
             
-            // Download then decompress the locations database.
-            DDLogVerbose(@"AIDatabaseManager:open: downloading database from S3 bucket %@, key %@, to %@...",
-                         AWS_S3_BUCKET, AWS_LOCATIONS_DATABASE_S3_PATH, dbCompressedPath);
-            ASIS3ObjectRequest *request = [ASIS3ObjectRequest requestWithBucket:AWS_S3_BUCKET
-                                                                            key:AWS_LOCATIONS_DATABASE_S3_PATH];
-            [request setSecretAccessKey:AWS_SECRET_ACCESS_KEY];
-            [request setAccessKey:AWS_ACCESS_KEY_ID];
-            [request setDownloadDestinationPath:dbCompressedPath];
-            [request startSynchronous];
-            if (request.error)
+            // -----------------------------------------------------------------
+            // Copy compressed database from bundle resources.
+            // -----------------------------------------------------------------
+            NSError *error;
+            BOOL rc = [self copyDatabase:dbBundlePath
+                        dbCompressedPath:dbCompressedPath
+                                  dbPath:dbPath
+                                   error:&error];
+            if (!rc)
             {
-                DDLogError(@"AIDatabaseManager:open: error during database download: %@",
-                           [request.error localizedDescription]);
+                DDLogError(@"Copying database from bundle path failed. error: %@",
+                           [error localizedDescription]);
             }
-            else
-            {
-                DDLogVerbose(@"AIDatabaseManager:open: database downloaded. Decompressing...");
-                [AIUtilities bunzip2:dbCompressedPath
-                      outputFilepath:dbPath];
-            } // if (request.error) for database download
+            // -----------------------------------------------------------------
+            
         } // if compressed database doesn't already exist.
         // ---------------------------------------------------------------------
 
@@ -481,6 +485,63 @@ static AIDatabaseManager *sharedInstance = nil;
         }
         [self stopProcessingTask];
    });
+}
+
+- (BOOL)copyDatabase:(NSString *)dbBundlePath
+    dbCompressedPath:(NSString *)dbCompressedPath
+              dbPath:(NSString *)dbPath
+               error:(NSError **)error
+{
+    NSError *localError;
+    [[NSFileManager defaultManager] copyItemAtPath:dbBundlePath
+                                            toPath:dbCompressedPath
+                                             error:&localError];
+    if (localError)
+    {
+        DDLogError(@"AIDatabaseManager:open: error during database copy: %@",
+                   [localError localizedDescription]);
+        (*error) = [localError copy];
+        return NO;
+    }
+    else
+    {
+        DDLogVerbose(@"AIDatabaseManager:open: database copied. Decompressing...");
+        [AIUtilities bunzip2:dbCompressedPath
+              outputFilepath:dbPath];
+        return YES;
+    }
+}
+
+- (BOOL)downloadDatabase:(NSString *)dbCompressedPath
+                  dbPath:(NSString *)dbPath
+                   error:(NSError **)error
+{
+    // -------------------------------------------------------------------------
+    // Download then decompress the locations database.
+    // -------------------------------------------------------------------------
+    DDLogVerbose(@"AIDatabaseManager:open: downloading database from S3 bucket %@, key %@, to %@...",
+                 AWS_S3_BUCKET, AWS_LOCATIONS_DATABASE_S3_PATH, dbCompressedPath);
+    ASIS3ObjectRequest *request = [ASIS3ObjectRequest requestWithBucket:AWS_S3_BUCKET
+                                                                    key:AWS_LOCATIONS_DATABASE_S3_PATH];
+    [request setSecretAccessKey:AWS_SECRET_ACCESS_KEY];
+    [request setAccessKey:AWS_ACCESS_KEY_ID];
+    [request setDownloadDestinationPath:dbCompressedPath];
+    [request startSynchronous];
+    if (request.error)
+    {
+        DDLogError(@"AIDatabaseManager:open: error during database download: %@",
+                   [request.error localizedDescription]);
+        assert(error);
+        (*error) = request.error;
+        return NO;
+    }
+    else
+    {
+        DDLogVerbose(@"AIDatabaseManager:open: database downloaded. Decompressing...");
+        [AIUtilities bunzip2:dbCompressedPath
+              outputFilepath:dbPath];
+        return YES;
+    } // if (request.error) for database download
 }
 
 @end
