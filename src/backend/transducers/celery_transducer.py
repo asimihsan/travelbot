@@ -109,7 +109,7 @@ def handle_incoming_task(channel, method, properties, body):
         elif hasattr(result_value, "serialize_to_dict"):
             logger.debug("result_value has 'serialize_to_dict' method")
             result_value = result_value.serialize_to_dict()
-        result_value = base64.b64encode(bz2.compress(json.dumps(result_value)))
+        #result_value = base64.b64encode(bz2.compress(json.dumps(result_value)))
         result = {"status": 200,
                   "value": result_value}
     reply = {"version": task_version,
@@ -133,8 +133,7 @@ def handle_incoming_task(channel, method, properties, body):
     channel.queue_bind(exchange = 'tcpproxy',
                        queue = routing_key,
                        routing_key = routing_key)
-    publish_payload = json.dumps(reply)
-    #logger.debug("publishing: %s" % publish_payload)
+    publish_payload = bz2.compress(json.dumps(reply))
     channel.basic_publish(exchange = 'tcpproxy',
                           routing_key = routing_key,
                           body = publish_payload)

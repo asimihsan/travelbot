@@ -149,9 +149,9 @@ static AISocketManager *sharedInstance = nil;
         return;
     }
     
-    [self startConnectToHost:@"travelbot.asimihsan.com" port:8080];
+    //[self startConnectToHost:@"travelbot.asimihsan.com" port:8080];
     //[self startConnectToHost:@"192.168.1.72" port:8080];
-    //[self startConnectToHost:@"127.0.0.1" port:8080];
+    [self startConnectToHost:@"127.0.0.1" port:8080];
     DDLogVerbose(@"AISocketManager:connect() exit.");
 }
 
@@ -560,33 +560,23 @@ static AISocketManager *sharedInstance = nil;
     {
         // !!AI move this out to a caller-specified block callback
         DDLogVerbose(@"AISocketManager:handleResponseBody: Is not a control response. Must be JSON encoded.");
-        DDLogVerbose(@"AISocketManager:handleResponseBody: response.length: %i", response.length);
-        
-        NSDictionary *json_decoded_1 = [response objectFromJSONString];
-        NSDictionary *result = [json_decoded_1 $for:@"result"];
+        DDLogVerbose(@"AISocketManager:handleResponseBody: data.length: %d", data.length);
+
+        DDLogVerbose(@"AISocketManager:handleResponseBody: BZIP2 decompressing response...");
+        NSData *response_decompressed = [AIUtilities bunzip2:data];
+        DDLogVerbose(@"AISocketManager:handleResponseBody: response_decompressed.length: %d", response_decompressed.length);
+        NSDictionary *json_decoded = [response_decompressed objectFromJSONData];
+        NSDictionary *result = [json_decoded $for:@"result"];
         NSNumber *status = [result $for:@"status"];
-        DDLogVerbose(@"status: %@", status);
+        DDLogVerbose(@"AISocketManager:handleResponseBody: status: %@", status);
         
-        NSString *value = [result $for:@"value"];
+        NSArray *value = [result $for:@"value"];
+        DDLogVerbose(@"AISocketManager:handleResponseBody: value.count: %d", value.count);
         
-        DDLogVerbose(@"base64 decoding response...");
-        NSData *response_base64_decoded = [AIUtilities decodeBase64WithString:value];
-        
-        DDLogVerbose(@"BZIP2 decompressing response...");
-        NSData *response_decompressed = [AIUtilities bunzip2:response_base64_decoded];
-        
-        DDLogVerbose(@"JSON decoding response - encode to UTF-8...");
-        NSString *response_decompressed_string = [[NSString alloc] initWithData:response_decompressed
-                                                                       encoding:NSUTF8StringEncoding];
-        DDLogVerbose(@"JSON decoding response - decode as JSON...");
-        NSArray *response_json_decoded = [response_decompressed_string objectFromJSONString];
-        DDLogVerbose(@"response_json_decoded.count: %d", response_json_decoded.count);
-        
-        NSString *uuid = [json_decoded_1 $for:@"tag"];
-        DDLogVerbose(@"posting notification under name: %@", uuid);
+        NSString *uuid = [json_decoded $for:@"tag"];
+        DDLogVerbose(@"AISocketManager:handleResponseBody: posting notification under name: %@", uuid);
         [[NSNotificationCenter defaultCenter] postNotificationName:uuid
-                                                            object:response_json_decoded];
-        
+                                                            object:value];
     }
     
     DDLogVerbose(@"AISocketManager:handleResponseBody exit.");
@@ -596,7 +586,7 @@ static AISocketManager *sharedInstance = nil;
 {
     DDLogVerbose(@"AISocketManager:maybeHandleControlResponse entry.");
     BOOL return_value = YES;
-    if ([response isEqualToString:@"ping"])
+    if ($eql(response, @"ping"))
     {
         DDLogVerbose(@"AISocketManager:maybeHandleControlResponse: server is pinging us, will respond with 'pong'");
         [self writeString:@"pong"
@@ -605,13 +595,13 @@ static AISocketManager *sharedInstance = nil;
               payload_tag:TAG_PONG_PAYLOAD];
         goto EXIT_LABEL;
     }
-    else if ([response isEqualToString:@"pong"])
+    else if ($eql(response, @"pong"))
     {
         DDLogVerbose(@"AISocketManager:maybeHandleControlResponse: server responds 'pong' to our ping.");
         [self stopHeartbeatTimeout];        
         goto EXIT_LABEL;
     }
-    else if ([response isEqualToString:@"close"])
+    else if ($eql(response, @"close"))
     {
         DDLogVerbose(@"AISocketManager:maybeHandleControlResponse: server requests we close the connection.");
         [self disconnect];
