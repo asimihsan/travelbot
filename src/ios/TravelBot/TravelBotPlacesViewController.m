@@ -174,7 +174,6 @@ static int ddLogLevel = LOG_LEVEL_VERBOSE;
         if (!$eql(self.currentSearchString, @"") && (indexPath.row == 0))
         {
             place = self.currentSearchString;
-            cell.textLabel.font = [UIFont italicSystemFontOfSize:20.0];
         }
         else
         {
