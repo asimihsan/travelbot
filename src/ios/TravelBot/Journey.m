@@ -82,6 +82,24 @@ static int ddLogLevel = LOG_LEVEL_INFO;
     return return_value;
 }
 
+- (NSArray *)getModesOfTransportForChanges
+{
+    // -------------------------------------------------------------------------
+    //  Validate assumptions.
+    // -------------------------------------------------------------------------
+    if (!self.legs)
+        DDLogError(@"Journey:getNumberOfChanges. self.legs is nil.");
+    assert(self.legs);
+    // -------------------------------------------------------------------------
+    
+    NSArray *return_value = [self.legs $map:^(JourneyLeg *leg)
+    {
+        return leg.mode_of_transport;
+    }];
+    
+    return return_value;
+}
+
 - (NSInteger)getNumberOfLegs
 {
     // -------------------------------------------------------------------------

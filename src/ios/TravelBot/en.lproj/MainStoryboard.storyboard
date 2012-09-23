@@ -342,11 +342,11 @@
                             </connections>
                         </view>
                         <prototypes>
-                            <tableViewCell contentMode="scaleToFill" selectionStyle="blue" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="SearchCell" rowHeight="88" id="PMc-Uv-0J4" customClass="TravelBotSearchCell">
-                                <rect key="frame" x="0.0" y="124" width="320" height="90"/>
+                            <tableViewCell contentMode="scaleToFill" selectionStyle="blue" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="SearchCell" rowHeight="95" id="PMc-Uv-0J4" customClass="TravelBotSearchCell">
+                                <rect key="frame" x="0.0" y="124" width="320" height="97"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
-                                    <rect key="frame" x="10" y="1" width="280" height="87"/>
+                                    <rect key="frame" x="10" y="1" width="280" height="94"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="Depart" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="GWZ-Yl-NTb">
@@ -358,20 +358,6 @@
                                         </label>
                                         <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="00:00" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="NmA-KQ-hBo" userLabel="Label - departValue">
                                             <rect key="frame" x="20" y="23" width="42" height="21"/>
-                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                            <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
-                                            <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
-                                            <color key="highlightedColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                        </label>
-                                        <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="Changes" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="2Y9-EM-Y0B">
-                                            <rect key="frame" x="20" y="45" width="53" height="21"/>
-                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                            <fontDescription key="fontDescription" type="system" pointSize="13"/>
-                                            <color key="textColor" red="0.40000000600000002" green="0.40000000600000002" blue="0.40000000600000002" alpha="1" colorSpace="calibratedRGB"/>
-                                            <color key="highlightedColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                        </label>
-                                        <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="0" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="dGg-kd-8zj" userLabel="Label - changesValue">
-                                            <rect key="frame" x="20" y="64" width="42" height="21"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                             <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
                                             <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
@@ -405,14 +391,38 @@
                                             <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                             <color key="highlightedColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                         </label>
+                                        <imageView userInteractionEnabled="NO" contentMode="scaleToFill" id="Pae-4o-053" userLabel="Image - leg 1">
+                                            <rect key="frame" x="20" y="49" width="24" height="30"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        </imageView>
+                                        <imageView userInteractionEnabled="NO" contentMode="scaleToFill" id="e5T-Ps-ij9" userLabel="Image - leg 2">
+                                            <rect key="frame" x="62" y="49" width="24" height="30"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        </imageView>
+                                        <imageView userInteractionEnabled="NO" contentMode="scaleToFill" id="R2B-dn-00L" userLabel="Image - leg 3">
+                                            <rect key="frame" x="106" y="49" width="24" height="30"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        </imageView>
+                                        <imageView userInteractionEnabled="NO" contentMode="scaleToFill" id="W6f-pN-Iz5" userLabel="Image - leg 4">
+                                            <rect key="frame" x="150" y="49" width="24" height="30"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        </imageView>
+                                        <imageView userInteractionEnabled="NO" contentMode="scaleToFill" id="M4k-Bx-vI1" userLabel="Image - leg 5">
+                                            <rect key="frame" x="194" y="49" width="24" height="30"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        </imageView>
                                     </subviews>
                                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                 </view>
                                 <connections>
                                     <outlet property="arriveValue" destination="tQB-ob-Z1r" id="782-ch-m9B"/>
-                                    <outlet property="changesValue" destination="dGg-kd-8zj" id="3WA-mx-kZp"/>
                                     <outlet property="departValue" destination="NmA-KQ-hBo" id="eg9-ah-rHw"/>
                                     <outlet property="durationValue" destination="NIr-Oo-a1Y" id="Oqc-gj-D10"/>
+                                    <outlet property="legImage1" destination="Pae-4o-053" id="aWh-7g-kHL"/>
+                                    <outlet property="legImage2" destination="e5T-Ps-ij9" id="udH-sh-MMG"/>
+                                    <outlet property="legImage3" destination="R2B-dn-00L" id="9mL-Il-cEu"/>
+                                    <outlet property="legImage4" destination="W6f-pN-Iz5" id="HQx-bH-neS"/>
+                                    <outlet property="legImage5" destination="M4k-Bx-vI1" id="506-4T-DLc"/>
                                 </connections>
                             </tableViewCell>
                         </prototypes>
@@ -649,9 +659,13 @@
             <source key="sourceIdentifier" type="project" relativePath="./Classes/TravelBotSearchCell.h"/>
             <relationships>
                 <relationship kind="outlet" name="arriveValue" candidateClass="UILabel"/>
-                <relationship kind="outlet" name="changesValue" candidateClass="UILabel"/>
                 <relationship kind="outlet" name="departValue" candidateClass="UILabel"/>
                 <relationship kind="outlet" name="durationValue" candidateClass="UILabel"/>
+                <relationship kind="outlet" name="legImage1" candidateClass="UIImageView"/>
+                <relationship kind="outlet" name="legImage2" candidateClass="UIImageView"/>
+                <relationship kind="outlet" name="legImage3" candidateClass="UIImageView"/>
+                <relationship kind="outlet" name="legImage4" candidateClass="UIImageView"/>
+                <relationship kind="outlet" name="legImage5" candidateClass="UIImageView"/>
             </relationships>
         </class>
         <class className="TravelBotSearchHeader" superclassName="UIView">

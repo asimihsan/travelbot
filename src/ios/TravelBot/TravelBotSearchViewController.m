@@ -36,7 +36,6 @@ static int ddLogLevel = LOG_LEVEL_VERBOSE;
 - (void)startSearch;
 - (void)stopSearch;
 - (void)onRequestCompletion:(NSNotification *)notification;
-- (TravelBotSearchCell *)setupCell:(TravelBotSearchCell *)cell;
 - (void)onSocketClosed;
 - (void)showNetworkFailureError;
 
@@ -221,67 +220,21 @@ static int ddLogLevel = LOG_LEVEL_VERBOSE;
     if (!cell)
         DDLogError(@"TravelBotSearchViewController:cellForRowAtIndexPath. cell is nil.");
     assert(cell);
-    /*
-    if (!cell)
-    {
-        // This is unnecessary in Storyboard; the cell is always non-nil as
-        // it's already init'd from the NIB.
-        DDLogVerbose(@"TravelBotSearchViewController:cellForRowAtIndexPath. cell is nil, create a new one.");
-        cell = [[TravelBotSearchCell alloc] initWithStyle:UITableViewCellStyleDefault
-                                          reuseIdentifier:cellIdentifier];
-        cell = [self setupCell:cell];
-    }
-    */
     if (self.searchResults)
     {
         DDLogVerbose(@"cellForRowAtIndexPath. search results are present.");
-        
-        // ---------------------------------------------------------------------
-        //  Determine departure and arrival strings.
-        // ---------------------------------------------------------------------
         Journey *journey = [self.searchResults $at:indexPath.row];
-        NSDate *firstDepartureTime = [journey getFirstDepartureTime];
-        NSDate *lastArrivalTime = [journey getLastArrivalTime];
-        NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-        dateFormatter.dateFormat = @"HH:mm";
-        NSString *departureString = [dateFormatter stringFromDate:firstDepartureTime];
-        NSString *arrivalString = [dateFormatter stringFromDate:lastArrivalTime];
-        // ---------------------------------------------------------------------
-        
-        // ---------------------------------------------------------------------
-        //  Determine duration string.
-        // ---------------------------------------------------------------------
-        NSString *durationString = [AIUtilities getDurationFromTwoDates:firstDepartureTime
-                                                     secondTimeInterval:lastArrivalTime];
-        // ---------------------------------------------------------------------
-
-        // ---------------------------------------------------------------------
-        //  Determine changes string.
-        // ---------------------------------------------------------------------
-        NSString *changesString = [NSString stringWithFormat:@"%d",
-                                   [journey getNumberOfChanges]];
-        // ---------------------------------------------------------------------
-        
-        cell.departValue.text = departureString;
-        cell.arriveValue.text = arrivalString;
-        cell.durationValue.text = durationString;
-        cell.changesValue.text = changesString;
-    }
+        cell.journey = journey;
+    } // if (self.searchResults)
+    // ---------------------------------------------------------------------
+    
     DDLogVerbose(@"cellForRowAtIndexPath. returning: %@.", cell);
-    return cell;
-}
-
-- (TravelBotSearchCell *)setupCell:(TravelBotSearchCell *)cell
-{
-    DDLogVerbose(@"TravelBotSearchViewController::setupCell entry. cell: %@", cell);
-    [cell.textLabel setFont:[UIFont fontWithName:@"Helvetica" size:7.0]];
-    cell.backgroundColor = [UIColor redColor];
     return cell;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    return 88.0;
+    return 95.0;
 }
 
 #pragma mark - View lifecycle.
