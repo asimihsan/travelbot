@@ -6,13 +6,17 @@ The following covers the part of travelbot that fetches travel information.
 
 ## TODO
 
+-   bug fix. unicode characters are not ignored in full text search. ICU and SQLite?
+-   fix list of places to only include places supported by travel providers.
+    -   still need geonames to do geolocation, keep it in its own table.
+    -   need list of places per provider.
+    -   needs a bit more thought, focus on Slovenia for now.
 -   fix no results.
     -   say "sorry, no results found"
     -   suggest list of websites to check.
 -   sort journeys by shortest journey, amount of changes, latest vs. earliest, mode of transport.
 -   maps?
     -   show as-the-crow-flies journeys.
--   fix list of places such that we only include places, or their synonyms, that are in the list of places supported by the travel provider. if synonym present then use the synonym instead.
 -   specify departure time.
 -   from places view controller should be able to see nearby locations via a button. data is already there, but not in RTree index.
 -   use tabs. new tab for previous searches and favourite searches.

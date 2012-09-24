@@ -149,9 +149,9 @@ static AISocketManager *sharedInstance = nil;
         return;
     }
     
-    //[self startConnectToHost:@"travelbot.asimihsan.com" port:8080];
+    [self startConnectToHost:@"travelbot.asimihsan.com" port:8080];
     //[self startConnectToHost:@"192.168.1.72" port:8080];
-    [self startConnectToHost:@"127.0.0.1" port:8080];
+    //[self startConnectToHost:@"127.0.0.1" port:8080];
     DDLogVerbose(@"AISocketManager:connect() exit.");
 }
 
