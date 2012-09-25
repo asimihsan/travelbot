@@ -342,6 +342,13 @@ static AIDatabaseManager *sharedInstance = nil;
                                              selector: @selector(notification:)
                                                  name: UIApplicationWillResignActiveNotification
                                                object: nil];
+    
+    // Listen for application memory warnings.
+    [[NSNotificationCenter defaultCenter] addObserver: self
+                                             selector: @selector(notification:)
+                                                 name: UIApplicationDidReceiveMemoryWarningNotification
+                                               object: nil];
+
 }
 
 - (void)notification:(NSNotification *)notification
@@ -356,6 +363,11 @@ static AIDatabaseManager *sharedInstance = nil;
     {
         DDLogVerbose(@"application will resign active notification.");
         [self close];
+    }
+    else if ($eql(notification.name, UIApplicationDidReceiveMemoryWarningNotification))
+    {
+        DDLogVerbose(@"application did receive memory notification");
+        sqlite3_db_release_memory([self.locations_db sqliteHandle]);
     }
     DDLogVerbose(@"AIDatabaseManager:notification exit.");
 }
