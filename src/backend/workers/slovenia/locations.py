@@ -168,17 +168,19 @@ class LocationsDatabase(object):
         #   Reference: http://www.sqlite.org/fts3.html, particularly section 6
         #   ('FTS4 Options')
         #   -    Do not store the content of the indexed names in this table.
-        #        Instead use 'content' to link to an external content source.
+        #        Instead use 'content' as an empty string to not store any
+        #        content in the FTS table. This means one is only allowed to
+        #        SELECT on rowid.
         #   -    Disable FTS4 matchinfo() features using 'matchinfo', because
         #        we don't need them.
         #   -    Our use case is prefix searching, so use the 'prefix'
         #        parameter. Note that any prefix index is better than none
         #        so don't go overboard.
         # ---------------------------------------------------------------------
-        self.cursor.execute("""CREATE VIRTUAL TABLE locations_by_name USING fts4(content="locations",
-                                                                                 matchinfo="fts3",
-                                                                                 prefix="1,2,4,6,8",
-                                                                                 name);""")
+        self.cursor.execute("""CREATE VIRTUAL TABLE locations_by_asciiname USING fts4(content="",
+                                                                                      matchinfo="fts3",
+                                                                                      prefix="1,3",
+                                                                                      asciiname);""")
         # ---------------------------------------------------------------------
         return self
 
@@ -186,14 +188,14 @@ class LocationsDatabase(object):
         logger = logging.getLogger("%s.LocationsDatabase.__exit__" % APP_NAME)
         logger.debug("entry.")
 
-        # ---------------------------------------------------------------------
-        #   -   Rebuild builds the FTS4 table in one go because we've specified a content option
-        #       when creating it.
-        # ---------------------------------------------------------------------
         logger.debug("optimizing...")
-        self.cursor.execute("INSERT INTO locations_by_name(locations_by_name) VALUES('rebuild');")
-        self.cursor.execute("INSERT INTO locations_by_name(locations_by_name) VALUES('optimize');")
-        self.cursor.execute("CREATE INDEX locations_idx ON locations(country_code, name);")
+
+        # 'rebuild' is used to rebuild external content FTS tables. However, we are using
+        # contentless FTS tables so this command is invalid.
+        #self.cursor.execute("INSERT INTO locations_by_asciiname(locations_by_asciiname) VALUES('rebuild');")
+
+        self.cursor.execute("INSERT INTO locations_by_asciiname(locations_by_asciiname) VALUES('optimize');")
+        self.cursor.execute("CREATE INDEX locations_idx ON locations(country_code, asciiname);")
         self.cursor.execute("VACUUM")
         self.cursor.execute("ANALYZE")
         # ---------------------------------------------------------------------
@@ -210,6 +212,8 @@ class LocationsDatabase(object):
                                                             :longitude,
                                                             :country_code);""",
                             elements)
+        self.cursor.execute("""INSERT INTO locations_by_asciiname (docid, asciiname) VALUES(:geonameid, :asciiname)""",
+                            elements)
 
 def convert_line_to_elements(line):
     """Parse out a line from the Geonames database into a dictionary.
@@ -223,7 +227,7 @@ def convert_line_to_elements(line):
     line = unicode(line, "UTF-8")
     elems = line.strip().split("\t")
     country_code = elems[8]
-    return_value = {"geonameid": elems[0],
+    return_value = {"geonameid": int(elems[0]),
                     "name": elems[1],
                     "asciiname": elems[2],
                     "alternatenames": elems[3],

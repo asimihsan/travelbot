@@ -97,19 +97,22 @@ static AIDatabaseManager *sharedInstance = nil;
     NSInteger startIndex = (index - CACHE_HALF > 0) ? (index - CACHE_HALF) : 0;
     NSNumber *startIndexArgument = [NSNumber numberWithInteger:startIndex];
     NSNumber *cacheSizeArgument = [NSNumber numberWithInteger:GET_PLACE_WITH_COUNTRY_CODE_CACHE_SIZE];
+    NSString *decomposedSearch;
+    if (search)
+        decomposedSearch = [search decomposedStringWithCanonicalMapping];
     
     if (search)
     {
         DDLogVerbose(@"AIDatabaseManager:getPlaceWithCountryCode. search present.");
         selectQuery = @"SELECT locations.name \
-                        FROM locations, locations_by_name \
+                        FROM locations, locations_by_asciiname \
                         WHERE locations.country_code = :country_code AND \
-                              locations_by_name.name MATCH :searchTermFTS AND \
-                              locations_by_name.name LIKE :searchTermLike AND \
-                              locations.geonameid = locations_by_name.rowid \
+                              locations_by_asciiname.asciiname MATCH :searchTermFTS AND \
+                              locations.asciiname LIKE :searchTermLike AND \
+                              locations.geonameid = locations_by_asciiname.docid \
                         ORDER BY locations.name ASC LIMIT :limit OFFSET :offset;";
-        NSString *searchTermFTS = [NSString stringWithFormat:@"%@*", search];
-        NSString *searchTermLike = [NSString stringWithFormat:@"%@%%", search];
+        NSString *searchTermFTS = [NSString stringWithFormat:@"%@*", decomposedSearch];
+        NSString *searchTermLike = [NSString stringWithFormat:@"%@%%", decomposedSearch];
         arguments = $dict(startIndexArgument, @"offset",
                           cacheSizeArgument, @"limit",
                           countryCode, @"country_code",
@@ -136,7 +139,7 @@ static AIDatabaseManager *sharedInstance = nil;
     NSNumber *indexArgument = [NSNumber numberWithInteger:index];
     if (search)
         cacheKey = [NSString stringWithFormat:@"%@_%@_%@",
-                    countryCode, search, indexArgument];
+                    countryCode, decomposedSearch, indexArgument];
     else
         cacheKey = [NSString stringWithFormat:@"%@_%@", countryCode, indexArgument];
     NSString *queryResult = [getPlaceWithCountryCodeCache $for:cacheKey];
@@ -154,12 +157,17 @@ static AIDatabaseManager *sharedInstance = nil;
                                  query:selectQuery
                              arguments:arguments];
         DDLogVerbose(@"AIDatabaseManager:getPlaceWithCountryCode. resultSet: %@", resultSet);
+        if (!resultSet)
+        {
+            DDLogError(@"AIDatabaseManager:getPlaceWithCountryCode. error. code: %d, message: %@",
+                       [self.locations_db lastErrorCode], [self.locations_db lastErrorMessage]);
+        }
         const NSInteger MAX = startIndex + GET_PLACE_WITH_COUNTRY_CODE_CACHE_SIZE;
         for (NSInteger i = startIndex; i < MAX; i++)
         {
             if (search)
                 cacheKey = [NSString stringWithFormat:@"%@_%@_%d",
-                            countryCode, search, i];
+                            countryCode, decomposedSearch, i];
             else
                 cacheKey = [NSString stringWithFormat:@"%@_%d", countryCode, i];
             [resultSet next];
@@ -198,17 +206,20 @@ static AIDatabaseManager *sharedInstance = nil;
     // -------------------------------------------------------------------------
     NSString *selectQuery;
     NSDictionary *arguments;
+    NSString *decomposedSearch;
+    if (search)
+        decomposedSearch = [search decomposedStringWithCanonicalMapping];
     if (search)
     {
         DDLogVerbose(@"AIDatabaseManager:getNumberOfPlaces. search specified.");
         selectQuery = @"SELECT COUNT(locations.name) \
-                        FROM locations, locations_by_name \
+                        FROM locations, locations_by_asciiname \
                         WHERE locations.country_code = :country_code AND \
-                              locations_by_name.name MATCH :searchTermFTS AND \
-                              locations_by_name.name LIKE :searchTermLike AND \
-                              locations.geonameid = locations_by_name.rowid;";
-        NSString *searchTermFTS = [NSString stringWithFormat:@"%@*", search];
-        NSString *searchTermLike = [NSString stringWithFormat:@"%@%%", search];
+                              locations_by_asciiname.asciiname MATCH :searchTermFTS AND \
+                              locations.asciiname LIKE :searchTermLike AND \
+                              locations.geonameid = locations_by_asciiname.docid;";
+        NSString *searchTermFTS = [NSString stringWithFormat:@"%@*", decomposedSearch];
+        NSString *searchTermLike = [NSString stringWithFormat:@"%@%%", decomposedSearch];
         arguments = $dict(countryCode, @"country_code",
                           searchTermFTS, @"searchTermFTS",
                           searchTermLike, @"searchTermLike");
@@ -225,6 +236,11 @@ static AIDatabaseManager *sharedInstance = nil;
                                           query:selectQuery
                                       arguments:arguments];
     DDLogVerbose(@"AIDatabaseManager:getNumberOfPlaces. resultSet: %@", resultSet);
+    if (!resultSet)
+    {
+        DDLogError(@"AIDatabaseManager:getNumberOfPlaces. error. code: %d, message: %@",
+                   [self.locations_db lastErrorCode], [self.locations_db lastErrorMessage]);
+    }
     if ([resultSet next])
     {
         DDLogVerbose(@"AIDatabaseManager:getNumberOfPlaces: there is a result.");
