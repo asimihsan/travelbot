@@ -205,6 +205,13 @@ EXIT_LABEL:
     self.legs = [NSArray arrayWithArray:legsObjectArray];
 }
 
+- (NSComparisonResult)compareByFirstDepartureTime:(Journey *)other
+{
+    NSDate *thisFirstDepartureTime = [self getFirstDepartureTime];
+    NSDate *otherFirstDepartureTime = [other getFirstDepartureTime];
+    return [thisFirstDepartureTime compare:otherFirstDepartureTime];
+}
+
 - (BOOL)isEqual:(id)object
 {
     if (object == self)

@@ -366,8 +366,13 @@ static AIDatabaseManager *sharedInstance = nil;
     }
     else if ($eql(notification.name, UIApplicationDidReceiveMemoryWarningNotification))
     {
-        DDLogVerbose(@"application did receive memory notification");
-        sqlite3_db_release_memory([self.locations_db sqliteHandle]);
+        [self startProcessingTask];
+        dispatch_async(self.processingQueue,
+        ^{
+            DDLogVerbose(@"application did receive memory notification");
+            sqlite3_db_release_memory([self.locations_db sqliteHandle]);
+            [self stopProcessingTask];
+        });
     }
     DDLogVerbose(@"AIDatabaseManager:notification exit.");
 }

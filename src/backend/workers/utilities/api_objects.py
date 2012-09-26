@@ -51,10 +51,15 @@ class JourneyLegPoint(object):
                                     "datetime": self.datetime.isoformat("T")}}
 
 class JourneyLeg(object):
-    def __init__(self, departure, arrival, mode_of_transport):
+    def __init__(self,
+                 departure,
+                 arrival,
+                 mode_of_transport,
+                 transport_identifier=None):
         self._departure = departure
         self._arrival = arrival
         self._mode_of_transport = mode_of_transport
+        self._transport_identifier = transport_identifier
 
     @property
     def departure(self):
@@ -68,17 +73,24 @@ class JourneyLeg(object):
     def mode_of_transport(self):
         return self._mode_of_transport
 
+    @property
+    def transport_identifier(self):
+        return self._transport_identifier
+
     def __unicode__(self):
-        return "{JourneyLeg: departure=%s, arrival=%s, mode_of_transport=%2}" % \
-                (self.departure, self.arrival, self.mode_of_transport)
+        return "{JourneyLeg: departure=%s, arrival=%s, mode_of_transport=%s, transport_identifier=%s}" % \
+                (self.departure, self.arrival, self.mode_of_transport, self.transport_identifer)
 
     def __repr__(self):
         return unicode(self)
 
     def serialize_to_dict(self):
-        return {"JourneyLeg": {"departure": self.departure.serialize_to_dict(),
-                               "arrival": self.arrival.serialize_to_dict(),
-                               "mode_of_transport": self.mode_of_transport}}
+        return_value = {"JourneyLeg": {"departure": self.departure.serialize_to_dict(),
+                                       "arrival": self.arrival.serialize_to_dict(),
+                                       "mode_of_transport": self.mode_of_transport}}
+        if self.transport_identifier:
+            return_value["JourneyLeg"]["transport_identifier"] = self.transport_identifier
+        return return_value
 
 class Journey(object):
     def __init__(self, legs):

@@ -1,5 +1,6 @@
 from selenium import webdriver
 from selenium.webdriver.support.wait import WebDriverWait
+from selenium.webdriver.support.ui import Select
 from selenium.webdriver.firefox.firefox_profile import FirefoxProfile
 import lxml.html
 import pyvirtualdisplay
@@ -58,6 +59,11 @@ class Browser(object):
         element = self.get_element_by_xpath(xpath)
         element.clear()
         element.send_keys(contents)
+
+    def select_option_by_xpath(self, xpath, label):
+        element = self.get_element_by_xpath(xpath)
+        select = Select(element)
+        select.select_by_visible_text(label)
 
     def switch_to_frame(self, frame):
         self.selenium.switch_to_frame(frame)

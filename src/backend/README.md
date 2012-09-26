@@ -6,7 +6,7 @@ The following covers the part of travelbot that fetches travel information.
 
 ## TODO
 
--   do Slovenia train locations and journeys.
+-   do Croatia bus + train, locations + journeys.
 -   fix list of places to only include places supported by travel providers.
     -   still need geonames to do geolocation, keep it in its own table.
     -   need list of places per provider.

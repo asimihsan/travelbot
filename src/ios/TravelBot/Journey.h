@@ -14,6 +14,7 @@
 
 - (id)init:(NSDictionary *)jsonDictionary;
 + (BOOL)validateJsonDictionary:(NSDictionary *)jsonDictionary;
+- (NSComparisonResult)compareByFirstDepartureTime:(Journey *)other;
 
 - (NSDate *)getFirstDepartureTime;
 - (NSDate *)getLastArrivalTime;

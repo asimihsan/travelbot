@@ -35,7 +35,7 @@ from workers.celery import celery
 APP_NAME = "backend.workers.slovenia.bus_ap"
 ROOT_URI = "http://www.ap-ljubljana.si/eng/"
 
-BUS_LOCATIONS_FILEPATH = os.path.join(CURRENT_DIR, "bus_locations.txt")
+BUS_LOCATIONS_FILEPATH = os.path.join(CURRENT_DIR, "bus_ap_locations.txt")
 # -----------------------------------------------------------------------------
 
 # -----------------------------------------------------------------------------

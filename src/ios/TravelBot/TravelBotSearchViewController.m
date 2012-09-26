@@ -30,7 +30,7 @@ static int ddLogLevel = LOG_LEVEL_VERBOSE;
 @interface TravelBotSearchViewController ()
 <TravelBotJourneyViewControllerDelegate>
 
-@property (copy, nonatomic) NSString *requestUUID;
+@property (strong, nonatomic) NSMutableSet *requestUUIDs;
 @property (strong, nonatomic) NSDictionary *countryCodeToMethod;
 
 - (void)startSearch;
@@ -47,7 +47,8 @@ static int ddLogLevel = LOG_LEVEL_VERBOSE;
 @synthesize toPlace = _toPlace;
 @synthesize searchHeaderView = _searchHeaderView;
 @synthesize countryCodeToMethod = _countryCodeToMethod;
-@synthesize requestUUID = _requestUUID;
+@synthesize requestUUIDs = _requestUUIDs;
+@synthesize searchResults = _searchResults;
 
 #pragma mark - Searching.
 - (void)startSearch
@@ -58,8 +59,8 @@ static int ddLogLevel = LOG_LEVEL_VERBOSE;
     //  Validate assumptions.
     // -------------------------------------------------------------------------
     assert($eql(self.fromPlace.country, self.toPlace.country));
-    NSString *method = [self.countryCodeToMethod $for:self.fromPlace.country.code];
-    assert(method);
+    NSArray *methods = [self.countryCodeToMethod $for:self.fromPlace.country.code];
+    assert(methods);
     
     AISocketManager *socketManager = [AISocketManager sharedInstance];
     if (![socketManager isConnected])
@@ -72,57 +73,62 @@ static int ddLogLevel = LOG_LEVEL_VERBOSE;
     
     [SVProgressHUD showWithStatus:@"Searching..."
                          maskType:SVProgressHUDMaskTypeNone];
+    self.searchResults = nil;
     
     // -------------------------------------------------------------------------
     //  Make a request to the socket manager to search for journeys using
     //  the appropriate workers, depending on the country.
     // -------------------------------------------------------------------------
-
-    NSDictionary *kwargs = $dict(self.fromPlace.name, @"from_location",
-                                 self.toPlace.name, @"to_location");
-    NSDictionary *request = $dict(@"1.0", @"version",
-                                  @"task", @"type",
-                                  method, @"method",
-                                  kwargs, @"kwargs");
-    self.requestUUID = [socketManager writeDictionary:request];
-    DDLogVerbose(@"TravelBotSearchViewController:startSearch. request_uuid: %@, request: %@",
-                 self.requestUUID, request);
+    for (NSString *method in methods)
+    {
+        DDLogVerbose(@"TravelBotSearchViewController:startSearch. sending request for method: %@", method);
+        NSDictionary *kwargs = $dict(self.fromPlace.name, @"from_location",
+                                     self.toPlace.name, @"to_location");
+        NSDictionary *request = $dict(@"1.0", @"version",
+                                      @"task", @"type",
+                                      method, @"method",
+                                      kwargs, @"kwargs");
+        NSString *requestUUID = [socketManager writeDictionary:request];
+        DDLogVerbose(@"TravelBotSearchViewController:startSearch. request_uuid: %@, request: %@",
+                     requestUUID, request);
+        [self.requestUUIDs addObject:requestUUID];
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(onRequestCompletion:)
+                                                     name:requestUUID
+                                                   object:nil];
+    }
     // -------------------------------------------------------------------------
     
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(onRequestCompletion:)
-                                                 name:self.requestUUID
-                                               object:nil];
     DDLogVerbose(@"TravelBotSearchViewController:startSearch exit.");
 }
 
 - (void)stopSearch
 {
+    DDLogVerbose(@"TravelBotSearchViewController:stopSearch entry.");
     [SVProgressHUD dismiss];
     
     // If we've started a search a requestUUID exists. Remove ourselves as an
     // observer for the result, as we don't care any more.
-    if (self.requestUUID)
+    if (self.requestUUIDs)
     {
-        [[NSNotificationCenter defaultCenter] removeObserver:self
-                                                        name:self.requestUUID
-                                                      object:nil];
-        self.requestUUID = nil;
-    }
+        DDLogVerbose(@"TravelBotSearchViewController:stopSearch. self.requestUUIDs is not nil.");
+        for (NSString *requestUUID in self.requestUUIDs)
+        {
+            DDLogVerbose(@"TravelBotSearchViewController:stopSearch. Cancelling notification for requestUUID: %@", requestUUID);
+            [[NSNotificationCenter defaultCenter] removeObserver:self
+                                                            name:requestUUID
+                                                          object:nil];
+        } // for each requestUUID
+        self.requestUUIDs = nil;
+    } // if self.requestUUIDs
 }
 
 - (void)onRequestCompletion:(NSNotification *)notification
 {
-    DDLogVerbose(@"TravelBotSearchViewController:onRequestCompletion entry.");
+    DDLogVerbose(@"TravelBotSearchViewController:onRequestCompletion entry. notification.name: %@", notification.name);
     [[NSNotificationCenter defaultCenter] removeObserver:self
                                                     name:notification.name
                                                   object:nil];
-    
-    // No guarantee we're on the main thread, so dismiss HUD on main thread.
-    dispatch_async(dispatch_get_main_queue(),
-    ^{
-        [self stopSearch];
-    });
     
     // -------------------------------------------------------------------------
     //  Get results from the notification object, then use Journey class to
@@ -130,14 +136,19 @@ static int ddLogLevel = LOG_LEVEL_VERBOSE;
     // -------------------------------------------------------------------------
     NSArray *result = notification.object;
     NSMutableArray *journeys = [[NSMutableArray alloc] init];
-    [result $each:^(NSDictionary *jsonDictionary) {
+    for (NSDictionary *jsonDictionary in result)
+    {
         Journey *journey = [[Journey alloc] init:jsonDictionary];
         [journeys $push:journey];
-    }];
+    }
     DDLogVerbose(@"TravelBotSearchViewController:onRequestCompletion. journeys: %@", journeys);
     // -------------------------------------------------------------------------
     
     // -------------------------------------------------------------------------
+    //  If there are no more outstanding searches then this search request is
+    //  finished. This is determined by checking if there are any UUIDs left
+    //  in self.requestUUIDs.
+    //
     //  Initialize self.searchResults on the main thread and then reload on
     //  the main thread.
     //
@@ -149,8 +160,20 @@ static int ddLogLevel = LOG_LEVEL_VERBOSE;
     // -------------------------------------------------------------------------
     dispatch_async(dispatch_get_main_queue(),
     ^{
-        self.searchResults = [NSArray arrayWithArray:journeys];
-        [self.tableView reloadData];
+        if (!self.searchResults)
+        {
+            DDLogVerbose(@"TravelBotSearchViewController:onRequestCompletion. self.searchResults is nil.");
+            self.searchResults = [[NSMutableArray alloc] init];
+        }
+        [self.searchResults addObjectsFromArray:journeys];
+        [self.requestUUIDs removeObject:notification.name];
+        if ([self.requestUUIDs count] == 0)
+        {
+            DDLogVerbose(@"TravelBotSearchViewController:onRequestCompletion. No more requestUUIDs outstanding.");
+            [self stopSearch];
+            [self.searchResults sortUsingSelector:@selector(compareByFirstDepartureTime:)];
+            [self.tableView reloadData];
+        }
     });
     // -------------------------------------------------------------------------
 
@@ -284,8 +307,11 @@ static int ddLogLevel = LOG_LEVEL_VERBOSE;
     //
     //  TODO move this to the plist or some other config store.
     // -------------------------------------------------------------------------
-    self.countryCodeToMethod = $dict(@"slovenia.bus_ap.get_journeys", @"SI");
+    self.countryCodeToMethod = $dict($arr(@"slovenia.bus_ap.get_journeys",
+                                          @"slovenia.train_zelenice.get_journeys"), @"SI");
     // -------------------------------------------------------------------------
+    
+    self.requestUUIDs = [[NSMutableSet alloc] init];
     
     // -------------------------------------------------------------------------
     //  Update to the notification that the server socket is closed.
