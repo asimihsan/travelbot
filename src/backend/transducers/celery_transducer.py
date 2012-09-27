@@ -102,16 +102,21 @@ def handle_incoming_task(channel, method, properties, body):
         task_result = method_callable.apply_async(args = task_args,
                                                   kwargs = task_kwargs,
                                                   task_id = task_id)
-        result_value = task_result.get()
-        if type(result_value) == types.ListType:
-            logger.debug("result_value is a list")
-            result_value = [elem.serialize_to_dict() for elem in result_value if hasattr(elem, "serialize_to_dict")]
-        elif hasattr(result_value, "serialize_to_dict"):
-            logger.debug("result_value has 'serialize_to_dict' method")
-            result_value = result_value.serialize_to_dict()
-        #result_value = base64.b64encode(bz2.compress(json.dumps(result_value)))
-        result = {"status": 200,
-                  "value": result_value}
+        try:
+            result_value = task_result.get()
+        except:
+            logger.exception("request with task_id %s resulted in unhandled exception." % task_id)
+            result = {"status": 500}
+        else:
+            if type(result_value) == types.ListType:
+                logger.debug("result_value is a list")
+                result_value = [elem.serialize_to_dict() for elem in result_value if hasattr(elem, "serialize_to_dict")]
+            elif hasattr(result_value, "serialize_to_dict"):
+                logger.debug("result_value has 'serialize_to_dict' method")
+                result_value = result_value.serialize_to_dict()
+            #result_value = base64.b64encode(bz2.compress(json.dumps(result_value)))
+            result = {"status": 200,
+                      "value": result_value}
     reply = {"version": task_version,
              "_id": task_id,
              "tag": task_tag,
