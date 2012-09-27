@@ -177,7 +177,7 @@ def get_journeys(from_location, to_location, journey_date=None, journey_time=Non
 
             journey_leg = JourneyLeg(departure = departure_journey_legpoint,
                                      arrival = arrival_journey_legpoint,
-                                     mode_of_transport = "train",
+                                     mode_of_transport = "bus",
                                      transport_identifier = transport_identifier)
             journey_legs.append(journey_leg)
 

@@ -6,6 +6,9 @@ The following covers the part of travelbot that fetches travel information.
 
 ## TODO
 
+-   use tabs. new tab for previous searches and favourite searches.
+    -   previous searches stores everything up to e.g. 100.
+    -   favourite searches are only favourited searches, no limit.
 -   fix list of places to only include places supported by travel providers.
     -   still need geonames to do geolocation, keep it in its own table.
     -   need list of places per provider.
@@ -18,9 +21,6 @@ The following covers the part of travelbot that fetches travel information.
 -   maps?
     -   show as-the-crow-flies journeys.
 -   from places view controller should be able to see nearby locations via a button. data is already there, but not in RTree index.
--   use tabs. new tab for previous searches and favourite searches.
-    -   previous searches stores everything up to e.g. 100.
-    -   favourite searches are only favourited searches, no limit.
 -   improve table views of places and searches of places.
     -   do not show results for first letter. it's too slow, could cache but why bother. first letter will never show useful results.
     -   show indexed sections depending on depth of search. zero-letter search is A-Z, then second-letter search for e.g. "L" is "LA-LZ", but only for matching records, etc. Be careful of spaces (e.g. "A ") and accented letters. (this might be a bad idea).

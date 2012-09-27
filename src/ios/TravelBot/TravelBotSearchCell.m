@@ -68,49 +68,31 @@ static int ddLogLevel = LOG_LEVEL_VERBOSE;
     self.departValue.text = departureString;
     self.arriveValue.text = arrivalString;
     self.durationValue.text = durationString;
-    [modesOfTransportForChanges $eachWithIndex:^(NSString *modeOfTransport, NSUInteger i)
-     {
-         UIImageView *imageView;
-         switch (i)
-         {
-             case 0:
-                 imageView = self.legImage1;
-                 break;
-                 
-             case 1:
-                 imageView = self.legImage2;
-                 break;
-                 
-             case 2:
-                 imageView = self.legImage3;
-                 break;
-                 
-             case 3:
-                 imageView = self.legImage4;
-                 break;
-                 
-             case 4:
-                 imageView = self.legImage5;
-                 break;
-                 
-             default:
-                 imageView = nil;
-                 break;
-         }; // switch statement on leg number
-         if (imageView)
-         {
-             NSString *imageName;
-             if ($eql(modeOfTransport, @"bus"))
-             {
-                 imageName = @"bus_aiga.png";
-             }
-             else if ($eql(modeOfTransport, @"train"))
-             {
-                 imageName = @"train_aiga.png";
-             } // what modeOfTransport is.
-             imageView.image = [UIImage imageNamed:imageName];
-         } // if (imageView)
-     }]; // loop over modes of transport.
+    NSArray *images = $arr(self.legImage1, self.legImage2, self.legImage3, self.legImage4, self.legImage5);
+    NSInteger i;
+    for (i = 0; i < modesOfTransportForChanges.count; i++)
+    {
+        UIImageView *imageView = [images $at:i];
+        NSString *modeOfTransport = [modesOfTransportForChanges $at:i];
+        NSString *imageName;
+        if ($eql(modeOfTransport, @"bus"))
+        {
+            imageName = @"bus_aiga.png";
+        }
+        else if ($eql(modeOfTransport, @"train"))
+        {
+            imageName = @"train_aiga.png";
+        } // what modeOfTransport is.
+        imageView.image = [UIImage imageNamed:imageName];
+
+    } // loop over modes of transport
+    
+    // Clear the rest of the images.
+    for (; i < images.count; i++)
+    {
+        UIImageView *imageView = [images $at:i];
+        imageView.image = nil;
+    }
     // -------------------------------------------------------------------------
 } // - (void)setJourney:(Journey *)journey
 
