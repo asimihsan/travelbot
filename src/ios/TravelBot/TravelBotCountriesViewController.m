@@ -9,6 +9,7 @@
 #import "TravelBotCountriesViewController.h"
 #import "TravelBotCountryCell.h"
 #import "TravelBotCountry.h"
+#import "AIConfigManager.h"
 #import "ConciseKit/ConciseKit.h"
 #import "CocoaLumberJack/DDLog.h"
 
@@ -51,16 +52,19 @@ static int ddLogLevel = LOG_LEVEL_VERBOSE;
 {
     // Note that [NSMutableArray copy] returns an immutable version of the array.
     DDLogVerbose(@"TravelBotCountriesViewController:updateCountries entry.");
+    AIConfigManager *configManager = [AIConfigManager sharedInstance];
+    NSArray *countryConfigs = [configManager getCountries];
     NSMutableArray *countries = $marrnew;
-    [countries $push:[[TravelBotCountry alloc] initWithName:@"Slovenia"
-                                                      image:@"si.png"
-                                                       code:@"SI"]];
-    /*
-    [countries $push:[[TravelBotCountry alloc] initWithName:@"Spain"
-                                                      image:@"es.png"
-                                                       code:@"ES"]];
-     */
-
+    for (NSDictionary *countryConfig in countryConfigs)
+    {
+        NSString *name = [countryConfig $for:@"Name"];
+        NSString *image = [countryConfig $for:@"Image"];
+        NSString *code = [countryConfig $for:@"Code"];
+        TravelBotCountry *country = [[TravelBotCountry alloc] initWithName:name
+                                                                     image:image
+                                                                      code:code];
+        [countries $push:country];
+    }
     self.countries = [countries copy];
 }
 

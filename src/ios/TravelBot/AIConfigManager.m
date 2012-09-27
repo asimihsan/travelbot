@@ -32,6 +32,12 @@ static int ddLogLevel = LOG_LEVEL_VERBOSE;
 static AIConfigManager *sharedInstance = nil;
 
 #pragma mark - Public API
+- (NSArray *)getCountries
+{
+    NSArray *countries = [self.config $for:@"Countries"];
+    return [countries copy];
+}
+
 - (NSDictionary *)getCountryCodeToMethods
 {
     NSDictionary *countryCodeToMethods = [self.config $for:@"CountryCodeToMethods"];

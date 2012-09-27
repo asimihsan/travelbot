@@ -12,6 +12,9 @@
 
 + (AIConfigManager *)sharedInstance;
 
+// Countries.
+- (NSArray *)getCountries;
+
 // Task names for country codes.
 - (NSDictionary *)getCountryCodeToMethods;
 
