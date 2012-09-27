@@ -73,4 +73,7 @@ class Browser(object):
         return lxml.html.document_fromstring(self.selenium.page_source,
                                              parser = parser)
 
+    def get_cookies(self):
+        cookies = self.selenium.get_cookies()
+        return dict([(cookie["name"], cookie["value"]) for cookie in cookies])
 

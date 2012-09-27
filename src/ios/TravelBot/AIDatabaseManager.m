@@ -99,11 +99,9 @@ static AIDatabaseManager *sharedInstance = nil;
     NSNumber *cacheSizeArgument = [NSNumber numberWithInteger:GET_PLACE_WITH_COUNTRY_CODE_CACHE_SIZE];
     NSString *decomposedSearch;
     if (search)
-        decomposedSearch = [search decomposedStringWithCanonicalMapping];
-    
-    if (search)
     {
         DDLogVerbose(@"AIDatabaseManager:getPlaceWithCountryCode. search present.");
+        decomposedSearch = [search decomposedStringWithCanonicalMapping];
         selectQuery = @"SELECT locations.name \
                         FROM locations, locations_by_asciiname \
                         WHERE locations.country_code = :country_code AND \
@@ -208,10 +206,9 @@ static AIDatabaseManager *sharedInstance = nil;
     NSDictionary *arguments;
     NSString *decomposedSearch;
     if (search)
-        decomposedSearch = [search decomposedStringWithCanonicalMapping];
-    if (search)
     {
         DDLogVerbose(@"AIDatabaseManager:getNumberOfPlaces. search specified.");
+        decomposedSearch = [search decomposedStringWithCanonicalMapping];
         selectQuery = @"SELECT COUNT(locations.name) \
                         FROM locations, locations_by_asciiname \
                         WHERE locations.country_code = :country_code AND \

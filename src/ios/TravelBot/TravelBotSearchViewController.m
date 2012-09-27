@@ -10,6 +10,7 @@
 #import "TravelBotSearchHeader.h"
 #import "TravelBotPlace.h"
 #import "AISocketManager.h"
+#import "AIConfigManager.h"
 #import "TravelBotSearchCell.h"
 #import "TravelBotJourneyViewController.h"
 #import "AIUtilities.h"
@@ -31,7 +32,7 @@ static int ddLogLevel = LOG_LEVEL_VERBOSE;
 <TravelBotJourneyViewControllerDelegate>
 
 @property (strong, nonatomic) NSMutableSet *requestUUIDs;
-@property (strong, nonatomic) NSDictionary *countryCodeToMethod;
+@property (strong, nonatomic) NSDictionary *countryCodeToMethods;
 
 - (void)startSearch;
 - (void)stopSearch;
@@ -46,7 +47,7 @@ static int ddLogLevel = LOG_LEVEL_VERBOSE;
 @synthesize fromPlace = _fromPlace;
 @synthesize toPlace = _toPlace;
 @synthesize searchHeaderView = _searchHeaderView;
-@synthesize countryCodeToMethod = _countryCodeToMethod;
+@synthesize countryCodeToMethods = _countryCodeToMethods;
 @synthesize requestUUIDs = _requestUUIDs;
 @synthesize searchResults = _searchResults;
 
@@ -59,7 +60,7 @@ static int ddLogLevel = LOG_LEVEL_VERBOSE;
     //  Validate assumptions.
     // -------------------------------------------------------------------------
     assert($eql(self.fromPlace.country, self.toPlace.country));
-    NSArray *methods = [self.countryCodeToMethod $for:self.fromPlace.country.code];
+    NSArray *methods = [self.countryCodeToMethods $for:self.fromPlace.country.code];
     assert(methods);
     
     AISocketManager *socketManager = [AISocketManager sharedInstance];
@@ -304,11 +305,10 @@ static int ddLogLevel = LOG_LEVEL_VERBOSE;
     // -------------------------------------------------------------------------
     //  This is an important run-time constant. This maps country codes onto
     //  methods that are used in socket calls.
-    //
-    //  TODO move this to the plist or some other config store.
     // -------------------------------------------------------------------------
-    self.countryCodeToMethod = $dict($arr(@"slovenia.bus_ap.get_journeys",
-                                          @"slovenia.train_zelenice.get_journeys"), @"SI");
+    AIConfigManager *configManager = [AIConfigManager sharedInstance];
+    self.countryCodeToMethods = [configManager getCountryCodeToMethods];
+    DDLogVerbose(@"TravelBotSearchViewController:viewDidLoad. self.countryCodeToMethods: %@", self.countryCodeToMethods);
     // -------------------------------------------------------------------------
     
     self.requestUUIDs = [[NSMutableSet alloc] init];

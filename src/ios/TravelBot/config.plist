@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CountryCodeToMethods</key>
+	<dict>
+		<key>SI</key>
+		<array>
+			<string>slovenia.bus_ap.get_journeys</string>
+			<string>slovenia.train_zelenice.get_journeys</string>
+		</array>
+	</dict>
+	<key>Socket</key>
+	<dict>
+		<key>ServerPort</key>
+		<integer>8080</integer>
+		<key>ServerHostname</key>
+		<string>127.0.0.1</string>
+	</dict>
+</dict>
+</plist>

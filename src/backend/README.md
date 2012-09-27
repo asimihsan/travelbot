@@ -6,17 +6,14 @@ The following covers the part of travelbot that fetches travel information.
 
 ## TODO
 
--   do Croatia bus + train, locations + journeys.
 -   fix list of places to only include places supported by travel providers.
     -   still need geonames to do geolocation, keep it in its own table.
     -   need list of places per provider.
-    -   needs a bit more thought, focus on Slovenia for now.
 -   fix no results.
     -   say "sorry, no results found"
     -   suggest list of websites to check.
+-   start using a timeout on searches, after e.g. 60 seconds say "search timed out, try again."
 -   specify departure time / date.
--   do Spain bus locations/ journeys. probably will be more than one provider, but start with one.
--   do Spain train locations/ journey. will be two providers.
 -   sort journeys by shortest journey, amount of changes, latest vs. earliest, mode of transport.
 -   maps?
     -   show as-the-crow-flies journeys.
@@ -24,9 +21,6 @@ The following covers the part of travelbot that fetches travel information.
 -   use tabs. new tab for previous searches and favourite searches.
     -   previous searches stores everything up to e.g. 100.
     -   favourite searches are only favourited searches, no limit.
--   start using preferences, even if read-only, to store major configuration.
-    -   server hostname(s).
-    -   method names for country codes.
 -   improve table views of places and searches of places.
     -   do not show results for first letter. it's too slow, could cache but why bother. first letter will never show useful results.
     -   show indexed sections depending on depth of search. zero-letter search is A-Z, then second-letter search for e.g. "L" is "LA-LZ", but only for matching records, etc. Be careful of spaces (e.g. "A ") and accented letters. (this might be a bad idea).
@@ -34,10 +28,7 @@ The following covers the part of travelbot that fetches travel information.
 -   App comes with a copy of the location database. if server says it's outdated it'll try to update on Wi-Fi.
 -   enable SSL.
     -   verify server certificate.
--   Celery worker for Slovenia train times. CUT.
--   Celery worker for Slovenia bus and train times, with synonyms for common places. CUT.
 -   Celery worker for Slovenia holidays (http://www.timeanddate.com/holidays/slovenia/)
--   Celery worker for Spain.
 -	Load holidays using local data.
 -   Show warning on search results if today is a holiday.
 

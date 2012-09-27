@@ -9,6 +9,7 @@
 //  - https://github.com/robbiehanson/CocoaAsyncSocket/wiki/Intro_GCDAsyncSocket
 
 #import "AISocketManager.h"
+#import "AIConfigManager.h"
 #import "AIUtilities.h"
 #import "JSONKit/JSONKit.h"
 #import "ConciseKit/ConciseKit.h"
@@ -149,9 +150,11 @@ static AISocketManager *sharedInstance = nil;
         return;
     }
     
-    //[self startConnectToHost:@"travelbot.asimihsan.com" port:8080];
-    //[self startConnectToHost:@"192.168.1.72" port:8080];
-    [self startConnectToHost:@"127.0.0.1" port:8080];
+    AIConfigManager *configManager = [AIConfigManager sharedInstance];
+    NSString *hostname = [configManager getSocketServerHostname];
+    NSInteger port = [configManager getSocketServerPort];
+    DDLogInfo(@"AISocketManager:connect. connecting to %@:%d", hostname, port);
+    [self startConnectToHost:hostname port:port];
     DDLogVerbose(@"AISocketManager:connect() exit.");
 }
 

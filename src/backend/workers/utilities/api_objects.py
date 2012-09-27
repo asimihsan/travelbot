@@ -79,7 +79,7 @@ class JourneyLeg(object):
 
     def __unicode__(self):
         return "{JourneyLeg: departure=%s, arrival=%s, mode_of_transport=%s, transport_identifier=%s}" % \
-                (self.departure, self.arrival, self.mode_of_transport, self.transport_identifer)
+                (self.departure, self.arrival, self.mode_of_transport, self.transport_identifier)
 
     def __repr__(self):
         return unicode(self)

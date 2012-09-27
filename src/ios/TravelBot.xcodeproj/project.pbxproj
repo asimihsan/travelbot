@@ -54,6 +54,8 @@
 		01AC830515ECE5760072992A /* si.png in Resources */ = {isa = PBXBuildFile; fileRef = 01AC830415ECE5760072992A /* si.png */; };
 		01AC830C15ECE7B90072992A /* TravelBotCountryCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 01AC830B15ECE7B90072992A /* TravelBotCountryCell.m */; };
 		01C6A777160B67A2006B3E19 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 01C6A776160B67A1006B3E19 /* Default-568h@2x.png */; };
+		01DBA7871614F27200B3DF55 /* config.plist in Resources */ = {isa = PBXBuildFile; fileRef = 01DBA7861614F27200B3DF55 /* config.plist */; };
+		01DBA78B1614F45C00B3DF55 /* AIConfigManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 01DBA78A1614F45C00B3DF55 /* AIConfigManager.m */; };
 		8478498E553A465784C5EDA4 /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A293237B22E44B69AC333154 /* libPods.a */; };
 /* End PBXBuildFile section */
 
@@ -143,6 +145,9 @@
 		01AC830A15ECE7B90072992A /* TravelBotCountryCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TravelBotCountryCell.h; sourceTree = "<group>"; };
 		01AC830B15ECE7B90072992A /* TravelBotCountryCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TravelBotCountryCell.m; sourceTree = "<group>"; };
 		01C6A776160B67A1006B3E19 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
+		01DBA7861614F27200B3DF55 /* config.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = config.plist; sourceTree = "<group>"; };
+		01DBA7891614F45C00B3DF55 /* AIConfigManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AIConfigManager.h; sourceTree = "<group>"; };
+		01DBA78A1614F45C00B3DF55 /* AIConfigManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AIConfigManager.m; sourceTree = "<group>"; };
 		A293237B22E44B69AC333154 /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		EABBC4AF54824A1598C0BA05 /* Pods.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.xcconfig; path = Pods/Pods.xcconfig; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
@@ -192,6 +197,7 @@
 		014D2BDE15ECCC4F008205BE /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				01DBA7861614F27200B3DF55 /* config.plist */,
 				01AA8224160E22700050EC07 /* locations.sqlite.bz2 */,
 				014D2BDF15ECCC55008205BE /* Images */,
 			);
@@ -348,6 +354,8 @@
 				01962BA815EABBC4009CAEBA /* AISocketManager.m */,
 				0160497215ED119000579B45 /* AIDatabaseManager.h */,
 				0160497315ED119000579B45 /* AIDatabaseManager.m */,
+				01DBA7891614F45C00B3DF55 /* AIConfigManager.h */,
+				01DBA78A1614F45C00B3DF55 /* AIConfigManager.m */,
 			);
 			name = Managers;
 			sourceTree = "<group>";
@@ -466,6 +474,7 @@
 				01AA821F160DE8240050EC07 /* bus_aiga.png in Resources */,
 				01AA8220160DE8240050EC07 /* train_aiga.png in Resources */,
 				01AA8225160E22700050EC07 /* locations.sqlite.bz2 in Resources */,
+				01DBA7871614F27200B3DF55 /* config.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -535,6 +544,7 @@
 				01AA8215160CAA620050EC07 /* TravelBotJourneyViewController.m in Sources */,
 				01AA8219160CAB6C0050EC07 /* TravelBotJourneyLegCell.m in Sources */,
 				01AA821C160CABF80050EC07 /* TravelBotJourneyHeader.m in Sources */,
+				01DBA78B1614F45C00B3DF55 /* AIConfigManager.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
