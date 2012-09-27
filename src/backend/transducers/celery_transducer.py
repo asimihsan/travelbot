@@ -83,9 +83,9 @@ def handle_incoming_task(channel, method, properties, body):
                 is_valid = False
                 error_reason = "Requested method %s in module_path %s is not callable." % (method_string, module_path)
         except ImportError:
-            logger.exception("ImportError when attempting import of %s" % import_path)
+            logger.exception("ImportError when attempting import of %s" % task_method)
             is_valid = False
-            error_reason = "ImportError when attempting import of %s" % import_path
+            error_reason = "ImportError when attempting import of %s" % task_method
     if not is_valid:
         logger.error("validation failed.")
         result = {"status": 400,

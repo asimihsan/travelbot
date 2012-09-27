@@ -56,6 +56,7 @@
 		01C6A777160B67A2006B3E19 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 01C6A776160B67A1006B3E19 /* Default-568h@2x.png */; };
 		01DBA7871614F27200B3DF55 /* config.plist in Resources */ = {isa = PBXBuildFile; fileRef = 01DBA7861614F27200B3DF55 /* config.plist */; };
 		01DBA78B1614F45C00B3DF55 /* AIConfigManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 01DBA78A1614F45C00B3DF55 /* AIConfigManager.m */; };
+		01DBA78D1614FD1400B3DF55 /* hr.png in Resources */ = {isa = PBXBuildFile; fileRef = 01DBA78C1614FD1400B3DF55 /* hr.png */; };
 		8478498E553A465784C5EDA4 /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A293237B22E44B69AC333154 /* libPods.a */; };
 /* End PBXBuildFile section */
 
@@ -148,6 +149,7 @@
 		01DBA7861614F27200B3DF55 /* config.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = config.plist; sourceTree = "<group>"; };
 		01DBA7891614F45C00B3DF55 /* AIConfigManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AIConfigManager.h; sourceTree = "<group>"; };
 		01DBA78A1614F45C00B3DF55 /* AIConfigManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AIConfigManager.m; sourceTree = "<group>"; };
+		01DBA78C1614FD1400B3DF55 /* hr.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = hr.png; path = resources/images/hr.png; sourceTree = "<group>"; };
 		A293237B22E44B69AC333154 /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		EABBC4AF54824A1598C0BA05 /* Pods.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.xcconfig; path = Pods/Pods.xcconfig; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
@@ -207,6 +209,7 @@
 		014D2BDF15ECCC55008205BE /* Images */ = {
 			isa = PBXGroup;
 			children = (
+				01DBA78C1614FD1400B3DF55 /* hr.png */,
 				01AA821D160DE8240050EC07 /* bus_aiga.png */,
 				01AA821E160DE8240050EC07 /* train_aiga.png */,
 				0190A8C01604EC050098B8F8 /* es.png */,
@@ -475,6 +478,7 @@
 				01AA8220160DE8240050EC07 /* train_aiga.png in Resources */,
 				01AA8225160E22700050EC07 /* locations.sqlite.bz2 in Resources */,
 				01DBA7871614F27200B3DF55 /* config.plist in Resources */,
+				01DBA78D1614FD1400B3DF55 /* hr.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

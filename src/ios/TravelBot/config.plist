@@ -6,6 +6,14 @@
 	<array>
 		<dict>
 			<key>Code</key>
+			<string>HR</string>
+			<key>Name</key>
+			<string>Croatia</string>
+			<key>Image</key>
+			<string>hr.png</string>
+		</dict>
+		<dict>
+			<key>Code</key>
 			<string>SI</string>
 			<key>Name</key>
 			<string>Slovenia</string>
@@ -15,6 +23,11 @@
 	</array>
 	<key>CountryCodeToMethods</key>
 	<dict>
+		<key>HR</key>
+		<array>
+			<string>croatia.bus_croatiabus.get_journeys</string>
+			<string>croatia.train_hznet.get_journeys</string>
+		</array>
 		<key>SI</key>
 		<array>
 			<string>slovenia.bus_ap.get_journeys</string>
