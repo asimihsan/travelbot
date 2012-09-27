@@ -17,6 +17,7 @@ import json
 import string
 import time
 import lxml.html
+import pytz
 
 # -----------------------------------------------------------------------------
 #   Relative imports.
@@ -91,7 +92,8 @@ def get_journeys(from_location, to_location, journey_date=None, journey_time=Non
                  (from_location, to_location, journey_date, journey_time))
     journeys = []
     if journey_date is None:
-        now = datetime.datetime.now()
+        tz = pytz.timezone(pytz.country_timezones["hr"][0])
+        now = datetime.datetime.now(tz)
         journey_date = datetime.date(day = now.day,
                                      month = now.month,
                                      year = now.year)

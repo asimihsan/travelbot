@@ -1,12 +1,19 @@
 Cython==0.16
 Django==1.4
+EasyProcess==0.1.4
 Fabric==1.4.3
+PyVirtualDisplay==0.1.0
 South==0.7.6
+Unidecode==0.04.9
 amqplib==1.0.2
 anyjson==0.3.3
+## FIXME: could not find svn URL in dependency_links for this package:
+apsw==3.7.14-r1
+argparse==1.2.1
 billiard==2.7.3.12
 boto==2.5.2
 celery==3.0.6
+decorator==3.3.3
 django-adminplus==0.1.7
 django-appconf==0.5
 django-celery==3.0.4
@@ -16,12 +23,14 @@ django-debug-toolbar==0.9.4
 django-nose==1.1
 django-ses==0.4.1
 django-social-auth==0.7.4
-gevent==0.13.7
+entrypoint2==0.0.6
+gevent==0.13.8
 greenlet==0.4.0
 gunicorn==0.14.6
 httplib2==0.7.4
 ipdb==0.7
 ipython==0.13
+jsonpickle==0.4.0
 kombu==2.4.0
 lxml==2.3.5
 markdown2==2.0.1
@@ -34,7 +43,7 @@ psycopg2==2.4.5
 py-bcrypt==0.2
 pycrypto==2.6
 python-dateutil==1.5
-python-gnupg==0.3.1
+python-gnupg==0.3.0
 python-openid==2.2.5
 pytz==2012d
 requests==0.13.6
