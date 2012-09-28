@@ -40,6 +40,10 @@ class JourneyLegPoint(object):
     def datetime(self):
         return self._datetime
 
+    @datetime.setter
+    def datetime(self, value):
+        self._datetime = value
+
     def __unicode__(self):
         return "{JourneyLegPoint: location=%s, datetime=%s}" % (self.location, self.datetime)
 

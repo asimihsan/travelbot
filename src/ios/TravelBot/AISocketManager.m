@@ -575,6 +575,7 @@ static AISocketManager *sharedInstance = nil;
         
         NSArray *value = [result $for:@"value"];
         DDLogVerbose(@"AISocketManager:handleResponseBody: value.count: %d", value.count);
+        DDLogVerbose(@"AISocketManager:handleResponseBody: value: %@", value);
         
         NSString *uuid = [json_decoded $for:@"tag"];
         DDLogVerbose(@"AISocketManager:handleResponseBody: posting notification under name: %@", uuid);
