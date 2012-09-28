@@ -6,6 +6,7 @@ The following covers the part of travelbot that fetches travel information.
 
 ## TODO
 
+-   bug fix - croatia train negative duration.
 -   use tabs. new tab for previous searches and favourite searches.
     -   previous searches stores everything up to e.g. 100.
     -   favourite searches are only favourited searches, no limit.

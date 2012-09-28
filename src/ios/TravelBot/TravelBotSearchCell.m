@@ -43,7 +43,7 @@ static int ddLogLevel = LOG_LEVEL_VERBOSE;
     // -------------------------------------------------------------------------
     NSDate *firstDepartureTime = [journey getFirstDepartureTime];
     NSDate *lastArrivalTime = [journey getLastArrivalTime];
-    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    NSDateFormatter *dateFormatter = [AIUtilities getThreadLocalNSDateFormatter];
     dateFormatter.dateFormat = @"HH:mm";
     NSString *departureString = [dateFormatter stringFromDate:firstDepartureTime];
     NSString *arrivalString = [dateFormatter stringFromDate:lastArrivalTime];

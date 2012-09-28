@@ -14,12 +14,6 @@
 #import "AIUtilities.h"
 
 // -----------------------------------------------------------------------------
-//  Module-level variables.
-// -----------------------------------------------------------------------------
-static NSDateFormatter *dateFormatter;
-// -----------------------------------------------------------------------------
-
-// -----------------------------------------------------------------------------
 //  Constants.
 // -----------------------------------------------------------------------------
 static int ddLogLevel = LOG_LEVEL_VERBOSE;
@@ -60,8 +54,7 @@ static int ddLogLevel = LOG_LEVEL_VERBOSE;
 #pragma mark - Class methods to help height calculations.
 + (NSString *)getPointTime:(JourneyLeg *)journeyLeg
 {
-    if (!dateFormatter)
-        dateFormatter = [[NSDateFormatter alloc] init];
+    NSDateFormatter *dateFormatter = [AIUtilities getThreadLocalNSDateFormatter];
     NSDate *departureDate = [journeyLeg getDepartureDate];
     dateFormatter.dateFormat = @"HH:mm";
     NSString *departureString = [dateFormatter stringFromDate:departureDate];
@@ -83,8 +76,7 @@ static int ddLogLevel = LOG_LEVEL_VERBOSE;
 
 + (NSString *)getArrivalFooter:(JourneyLeg *)journeyLeg
 {
-    if (!dateFormatter)
-        dateFormatter = [[NSDateFormatter alloc] init];
+    NSDateFormatter *dateFormatter = [AIUtilities getThreadLocalNSDateFormatter];
     NSDate *departureDate = [journeyLeg getDepartureDate];
     NSDate *arrivalDate = [journeyLeg getArrivalDate];
     NSString *durationString = [AIUtilities getDurationFromTwoDates:departureDate
@@ -153,11 +145,19 @@ static int ddLogLevel = LOG_LEVEL_VERBOSE;
     CGRect pointDescriptionFrame = self.pointDescription.frame;
     CGRect arrivalFooterFrame = self.arrivalFooter.frame;
     
+    // point description
     pointDescriptionFrame.origin.y = pointNameFrame.origin.y +
                                      pointNameFrame.size.height +
                                      labelPadding;
     self.pointDescription.frame = pointDescriptionFrame;
     
+    // arrival footer
+    arrivalFooterFrame.origin.y = pointDescriptionFrame.origin.y +
+                                  pointDescriptionFrame.size.height +
+                                  labelPadding;
+    self.arrivalFooter.frame = arrivalFooterFrame;
+    
+    // cell frame
     CGRect cellFrame = self.frame;
     cellFrame.size.height = arrivalFooterFrame.origin.y +
                             arrivalFooterFrame.size.height +

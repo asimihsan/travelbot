@@ -8,6 +8,7 @@
 
 #import "JourneyLegPoint.h"
 #import "Location.h"
+#import "AIUtilities.h"
 
 #import "JSONKit/JSONKit.h"
 #import "ConciseKit/ConciseKit.h"
@@ -56,7 +57,7 @@ static int ddLogLevel = LOG_LEVEL_INFO;
     NSDictionary *topLevelKey;
     NSString *datetimeString;
     NSDate *datetime;
-    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    NSDateFormatter *dateFormatter = [AIUtilities getThreadLocalNSDateFormatter];
     dateFormatter.dateFormat = @"yyyy-MM-dd'T'HH:mm:ss";
     NSDictionary *location;
     // -------------------------------------------------------------------------
@@ -103,7 +104,7 @@ EXIT_LABEL:
     NSDictionary *topLevelKey = [jsonDictionary $for:@"JourneyLegPoint"];
     
     NSString *datetimeString = [topLevelKey $for:@"datetime"];
-    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    NSDateFormatter *dateFormatter = [AIUtilities getThreadLocalNSDateFormatter];
     dateFormatter.dateFormat = @"yyyy-MM-dd'T'HH:mm:ss";
     self.datetime = [dateFormatter dateFromString:datetimeString];
     

@@ -45,4 +45,6 @@
 + (NSString *)getDurationFromTwoDates:(NSDate *)firstDate
                    secondTimeInterval:(NSDate *)secondDate;
 
++ (NSDateFormatter *)getThreadLocalNSDateFormatter;
+
 @end

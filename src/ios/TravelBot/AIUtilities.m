@@ -7,6 +7,7 @@
 //
 
 #import "AIUtilities.h"
+#import "ConciseKit.h"
 #import "bzlib.h"
 #import "CocoaLumberJack/DDLog.h"
 
@@ -414,6 +415,24 @@ static const short _base64DecodingTable[256] = {
     // -------------------------------------------------------------------------
     
     return durationString;
+}
+
+// -----------------------------------------------------------------------------
+//  [NSDateFormatter alloc] is expensive but NSDateFormatter is not thread
+//  safe. This function will return a NSDateFormatter allocated in
+//  thread-local-storage.
+// -----------------------------------------------------------------------------
++ (NSDateFormatter *)getThreadLocalNSDateFormatter
+{
+    static NSString *key = @"dateFormatter";
+    NSMutableDictionary *dictionary = [[NSThread currentThread] threadDictionary];
+    NSDateFormatter *dateFormatter = [dictionary $for:key];
+    if (!dateFormatter)
+    {
+        dateFormatter = [[NSDateFormatter alloc] init];
+        [dictionary $obj:dateFormatter for:key];
+    }
+    return dateFormatter;
 }
 
 @end
