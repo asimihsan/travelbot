@@ -15,6 +15,7 @@ import tempfile
 import ipdb
 import bz2
 import re
+import unidecode
 
 # -----------------------------------------------------------------------------
 #   Relative imports.
@@ -23,8 +24,6 @@ CURRENT_DIR = os.path.abspath(os.path.join(__file__, os.pardir))
 WORKERS_DIR = os.path.abspath(os.path.join(CURRENT_DIR, os.pardir))
 assert(os.path.isdir(WORKERS_DIR))
 sys.path.append(WORKERS_DIR)
-from utilities.browser import BrowserManager
-from utilities.api_objects import Location, JourneyLegPoint, JourneyLeg, Journey
 
 BACKEND_DIR = os.path.abspath(os.path.join(WORKERS_DIR, os.pardir))
 assert(os.path.isdir(BACKEND_DIR))
@@ -50,6 +49,10 @@ DATABASE_FILENAME = "locations.sqlite"
 DATABASE_FILEPATH = os.path.join(CURRENT_DIR, DATABASE_FILENAME)
 DATABASE_COMPRESSED_FILENAME = "locations.sqlite.bz2"
 DATABASE_COMPRESSED_FILEPATH = os.path.join(CURRENT_DIR, DATABASE_COMPRESSED_FILENAME)
+
+RE_LOCATIONS_TEXT = re.compile(".*locations.txt$")
+DIRECTORY_PATH_TO_COUNTRY_CODE = {"slovenia": "SI",
+                                  "croatia": "HR"}
 # -----------------------------------------------------------------------------
 
 # -----------------------------------------------------------------------------
@@ -78,7 +81,56 @@ def get():
     logger.debug("entry.")
 
 @celery.task
-def update():
+def update_provider():
+    """Update the database that is a list of names that each provider will accept
+    as an input for a location."""
+    logger = logging.getLogger("%s.update_provider" % APP_NAME)
+
+    with ProviderDatabase() as database:
+        for root, dirs, files in os.walk(WORKERS_DIR):
+            matching_names = (name for name in files if RE_LOCATIONS_TEXT.match(name))
+            for name in matching_names:
+                fullpath = os.path.join(root, name)
+                logger.debug("location text file found: %s" % fullpath)
+                country_code = None
+                for (directory_elem, associated_country_code) in DIRECTORY_PATH_TO_COUNTRY_CODE.items():
+                    if directory_elem in fullpath:
+                        country_code = associated_country_code
+                        break
+                logger.debug("country_code: %s" % country_code)
+                assert(country_code is not None)
+                f = codecs.open(fullpath, "r", "utf-8-sig")
+                try:
+                    for line in f:
+                        name = line.strip()
+                        asciiname = unidecode.unidecode(name)
+                        elements = {"name": name,
+                                    "asciiname": asciiname,
+                                    "country_code": country_code}
+                        database.insert_place(elements)
+                finally:
+                    f.close()
+
+    # -------------------------------------------------------------------------
+    #   Compress the location data.
+    # -------------------------------------------------------------------------
+    if os.path.isfile(DATABASE_COMPRESSED_FILEPATH):
+        logger.info("deleting old compressed database at: %s" % DATABASE_COMPRESSED_FILEPATH)
+        os.remove(DATABASE_COMPRESSED_FILEPATH)
+    logger.debug("Compress locations database...")
+    with bz2.BZ2File(DATABASE_COMPRESSED_FILEPATH, "w") as bz2_out:
+        with open(DATABASE_FILEPATH, "rb") as f_in:
+            while True:
+                chunk = f_in.read(4096)
+                if len(chunk) == 0:
+                    break
+                bz2_out.write(chunk)
+
+@celery.task
+def update_geonames():
+    """Update the database that is the geonames list of canonical places in a given
+    country."""
+
     logger = logging.getLogger("%s.update" % APP_NAME)
     logger.debug("entry.")
 
@@ -86,7 +138,7 @@ def update():
     #   Find all region data in AWS S3 and add them to a local SQLite
     #   dataabase.
     # -------------------------------------------------------------------------
-    with BotoS3Connection() as conn, LocationsDatabase() as database:
+    with BotoS3Connection() as conn, GeonamesDatabase() as database:
         bucket = conn.get_bucket(AWS_S3_BUCKET_NAME)
         logger.debug("bucket: %s" % bucket)
         geonames_keys = bucket.list(prefix = AWS_S3_KEY_NAME)
@@ -147,22 +199,62 @@ class BotoS3Connection(object):
         logger.debug("entry.")
         self.conn.close()
 
-class LocationsDatabase(object):
+class ProviderDatabase(object):
+    """See LocationsDatabase for more information."""
     def __enter__(self):
-        logger = logging.getLogger("%s.LocationsDatabase.__enter__" % APP_NAME)
+        logger = logging.getLogger("%s.ProviderDatabase.__enter__" % APP_NAME)
         logger.debug("entry.")
-        if os.path.isfile(DATABASE_FILEPATH):
-            logger.info("deleting existing location database: %s" % DATABASE_FILEPATH)
-            os.remove(DATABASE_FILEPATH)
         self.connection = apsw.Connection(DATABASE_FILEPATH)
         self.cursor = self.connection.cursor()
-        self.cursor.execute("""CREATE TABLE locations(geonameid INTEGER PRIMARY KEY,
-                                                      name TEXT,
-                                                      asciiname TEXT,
-                                                      alternatenames TEXT,
-                                                      latitude REAL,
-                                                      longitude REAL,
-                                                      country_code TEXT);""")
+        self.cursor.execute("DROP TABLE IF EXISTS provider;")
+        self.cursor.execute("""CREATE TABLE provider(name TEXT,
+                                                     asciiname TEXT,
+                                                     country_code TEXT);""")
+        self.cursor.execute("DROP TABLE IF EXISTS provider_by_asciiname;")
+        self.cursor.execute("""CREATE VIRTUAL TABLE provider_by_asciiname USING fts4(content="",
+                                                                                     matchinfo="fts3",
+                                                                                     prefix="1,3",
+                                                                                     asciiname);""")
+        # ---------------------------------------------------------------------
+        return self
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        logger = logging.getLogger("%s.ProviderDatabase.__exit__" % APP_NAME)
+        logger.debug("entry.")
+
+        logger.debug("optimizing...")
+        self.cursor.execute("INSERT INTO provider_by_asciiname(provider_by_asciiname) VALUES('optimize');")
+        self.cursor.execute("CREATE INDEX provider_idx ON provider(country_code, asciiname);")
+        self.cursor.execute("VACUUM")
+        self.cursor.execute("ANALYZE")
+        # ---------------------------------------------------------------------
+
+        self.cursor.close()
+        self.connection.close()
+
+    def insert_place(self, elements):
+        self.cursor.execute("""INSERT INTO provider VALUES(:name,
+                                                           :asciiname,
+                                                           :country_code);""",
+                            elements)
+        elements["rowid"] = self.connection.last_insert_rowid()
+        self.cursor.execute("""INSERT INTO provider_by_asciiname (docid, asciiname) VALUES(:rowid, :asciiname)""",
+                            elements)
+
+class GeonamesDatabase(object):
+    def __enter__(self):
+        logger = logging.getLogger("%s.GeonamesDatabase.__enter__" % APP_NAME)
+        logger.debug("entry.")
+        self.connection = apsw.Connection(DATABASE_FILEPATH)
+        self.cursor = self.connection.cursor()
+        self.cursor.execute("DROP TABLE IF EXISTS geonames;")
+        self.cursor.execute("""CREATE TABLE geonames(geonameid INTEGER PRIMARY KEY,
+                                                     name TEXT,
+                                                     asciiname TEXT,
+                                                     alternatenames TEXT,
+                                                     latitude REAL,
+                                                     longitude REAL,
+                                                     country_code TEXT);""")
 
         # ---------------------------------------------------------------------
         #   Reference: http://www.sqlite.org/fts3.html, particularly section 6
@@ -177,25 +269,26 @@ class LocationsDatabase(object):
         #        parameter. Note that any prefix index is better than none
         #        so don't go overboard.
         # ---------------------------------------------------------------------
-        self.cursor.execute("""CREATE VIRTUAL TABLE locations_by_asciiname USING fts4(content="",
-                                                                                      matchinfo="fts3",
-                                                                                      prefix="1,3",
-                                                                                      asciiname);""")
+        self.cursor.execute("DROP TABLE IF EXISTS geonames_by_asciiname;")
+        self.cursor.execute("""CREATE VIRTUAL TABLE geonames_by_asciiname USING fts4(content="",
+                                                                                     matchinfo="fts3",
+                                                                                     prefix="1,3",
+                                                                                     asciiname);""")
         # ---------------------------------------------------------------------
         return self
 
     def __exit__(self, exc_type, exc_value, traceback):
-        logger = logging.getLogger("%s.LocationsDatabase.__exit__" % APP_NAME)
+        logger = logging.getLogger("%s.GeonamesDatabase.__exit__" % APP_NAME)
         logger.debug("entry.")
 
         logger.debug("optimizing...")
 
         # 'rebuild' is used to rebuild external content FTS tables. However, we are using
         # contentless FTS tables so this command is invalid.
-        #self.cursor.execute("INSERT INTO locations_by_asciiname(locations_by_asciiname) VALUES('rebuild');")
+        #self.cursor.execute("INSERT INTO geonames_by_asciiname(locations_by_asciiname) VALUES('rebuild');")
 
-        self.cursor.execute("INSERT INTO locations_by_asciiname(locations_by_asciiname) VALUES('optimize');")
-        self.cursor.execute("CREATE INDEX locations_idx ON locations(country_code, asciiname);")
+        self.cursor.execute("INSERT INTO geonames_by_asciiname(geonames_by_asciiname) VALUES('optimize');")
+        self.cursor.execute("CREATE INDEX geonames_idx ON geonames(country_code, asciiname);")
         self.cursor.execute("VACUUM")
         self.cursor.execute("ANALYZE")
         # ---------------------------------------------------------------------
@@ -204,15 +297,15 @@ class LocationsDatabase(object):
         self.connection.close()
 
     def insert_place(self, elements):
-        self.cursor.execute("""INSERT INTO locations VALUES(:geonameid,
-                                                            :name,
-                                                            :asciiname,
-                                                            :alternatenames,
-                                                            :latitude,
-                                                            :longitude,
-                                                            :country_code);""",
+        self.cursor.execute("""INSERT INTO geonames VALUES(:geonameid,
+                                                           :name,
+                                                           :asciiname,
+                                                           :alternatenames,
+                                                           :latitude,
+                                                           :longitude,
+                                                           :country_code);""",
                             elements)
-        self.cursor.execute("""INSERT INTO locations_by_asciiname (docid, asciiname) VALUES(:geonameid, :asciiname)""",
+        self.cursor.execute("""INSERT INTO geonames_by_asciiname (docid, asciiname) VALUES(:geonameid, :asciiname)""",
                             elements)
 
 def convert_line_to_elements(line):
@@ -249,5 +342,7 @@ def convert_line_to_elements(line):
     return return_value
 
 if __name__ == "__main__":
-    update()
+    #update_geonames()
+    update_provider()
+
 

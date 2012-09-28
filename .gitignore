@@ -19,3 +19,6 @@ src/tcpproxy/priv/ssl/server_crt.crt
 src/tcpproxy/priv/ssl/server_crt.pem
 src/tcpproxy/priv/ssl/server_key.pem
 10000002.pem
+src/backend/workers/locations/locations.sqlite
+src/backend/workers/locations/locations.sqlite.backup
+src/backend/workers/locations/locations.sqlite.bz2

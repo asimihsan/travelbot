@@ -21,16 +21,6 @@
 //  Constants.
 // ----------------------------------------------------------------------------
 static int ddLogLevel = LOG_LEVEL_VERBOSE;
-
-// Tag of the UITableViewCell that contains country label view.
-const int TAG_COUNTRY_CELL = 100;
-
-// Tags of UITableViewCells that contain from/to.
-const int TAG_WHERE_FROM_CELL = 200;
-const int TAG_WHERE_TO_CELL = 201;
-
-// Tag of the UITableViewCell that contains the search button.
-const int TAG_SEARCH_BUTTON_CELL = 300;
 // ----------------------------------------------------------------------------
 
 @interface TravelBotMainMenuViewController ()

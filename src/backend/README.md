@@ -6,12 +6,12 @@ The following covers the part of travelbot that fetches travel information.
 
 ## TODO
 
--   use tabs. new tab for previous searches and favourite searches.
-    -   previous searches stores everything up to e.g. 100.
-    -   favourite searches are only favourited searches, no limit.
 -   fix list of places to only include places supported by travel providers.
     -   still need geonames to do geolocation, keep it in its own table.
     -   need list of places per provider.
+-   use tabs. new tab for previous searches and favourite searches.
+    -   previous searches stores everything up to e.g. 100.
+    -   favourite searches are only favourited searches, no limit.
 -   fix no results.
     -   say "sorry, no results found"
     -   suggest list of websites to check.

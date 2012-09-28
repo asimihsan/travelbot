@@ -102,13 +102,22 @@ static AIDatabaseManager *sharedInstance = nil;
     {
         DDLogVerbose(@"AIDatabaseManager:getPlaceWithCountryCode. search present.");
         decomposedSearch = [search decomposedStringWithCanonicalMapping];
-        selectQuery = @"SELECT locations.name \
-                        FROM locations, locations_by_asciiname \
-                        WHERE locations.country_code = :country_code AND \
-                              locations_by_asciiname.asciiname MATCH :searchTermFTS AND \
-                              locations.asciiname LIKE :searchTermLike AND \
-                              locations.geonameid = locations_by_asciiname.docid \
-                        ORDER BY locations.name ASC LIMIT :limit OFFSET :offset;";
+        selectQuery = @"SELECT provider.name \
+                        FROM provider, provider_by_asciiname \
+                        WHERE provider.country_code = :country_code AND \
+                        provider_by_asciiname.asciiname MATCH :searchTermFTS AND \
+                        provider.asciiname LIKE :searchTermLike AND \
+                        provider.rowid = provider_by_asciiname.docid \
+                        ORDER BY provider.name ASC LIMIT :limit OFFSET :offset;";
+        /*
+        selectQuery = @"SELECT geonames.name \
+                        FROM geonames, geonames_by_asciiname \
+                        WHERE geonames.country_code = :country_code AND \
+                              geonames_by_asciiname.asciiname MATCH :searchTermFTS AND \
+                              geonames.asciiname LIKE :searchTermLike AND \
+                              geonames.geonameid = locations_by_asciiname.docid \
+                        ORDER BY geonames.name ASC LIMIT :limit OFFSET :offset;";
+        */
         NSString *searchTermFTS = [NSString stringWithFormat:@"%@*", decomposedSearch];
         NSString *searchTermLike = [NSString stringWithFormat:@"%@%%", decomposedSearch];
         arguments = $dict(startIndexArgument, @"offset",
@@ -120,9 +129,14 @@ static AIDatabaseManager *sharedInstance = nil;
     else
     {
         DDLogVerbose(@"AIDatabaseManager:getPlaceWithCountryCode. search not present.");
-        selectQuery = @"SELECT name FROM locations \
+        selectQuery = @"SELECT name FROM provider \
                         WHERE country_code = :country_code \
                         ORDER BY name ASC LIMIT :limit OFFSET :offset";
+        /*
+        selectQuery = @"SELECT name FROM geonames \
+                        WHERE country_code = :country_code \
+                        ORDER BY name ASC LIMIT :limit OFFSET :offset";
+        */
         arguments = $dict(startIndexArgument, @"offset",
                           cacheSizeArgument, @"limit",
                           countryCode, @"country_code");
@@ -209,12 +223,20 @@ static AIDatabaseManager *sharedInstance = nil;
     {
         DDLogVerbose(@"AIDatabaseManager:getNumberOfPlaces. search specified.");
         decomposedSearch = [search decomposedStringWithCanonicalMapping];
-        selectQuery = @"SELECT COUNT(locations.name) \
-                        FROM locations, locations_by_asciiname \
-                        WHERE locations.country_code = :country_code AND \
-                              locations_by_asciiname.asciiname MATCH :searchTermFTS AND \
-                              locations.asciiname LIKE :searchTermLike AND \
-                              locations.geonameid = locations_by_asciiname.docid;";
+        selectQuery = @"SELECT COUNT(provider.name) \
+                        FROM provider, provider_by_asciiname \
+                        WHERE provider.country_code = :country_code AND \
+                        provider_by_asciiname.asciiname MATCH :searchTermFTS AND \
+                        provider.asciiname LIKE :searchTermLike AND \
+                        provider.rowid = provider_by_asciiname.docid;";
+        /*
+        selectQuery = @"SELECT COUNT(geonames.name) \
+                        FROM geonames, geonames_by_asciiname \
+                        WHERE geonames.country_code = :country_code AND \
+                              geonames_by_asciiname.asciiname MATCH :searchTermFTS AND \
+                              geonames.asciiname LIKE :searchTermLike AND \
+                              geonames.geonameid = geonames_by_asciiname.docid;";
+        */
         NSString *searchTermFTS = [NSString stringWithFormat:@"%@*", decomposedSearch];
         NSString *searchTermLike = [NSString stringWithFormat:@"%@%%", decomposedSearch];
         arguments = $dict(countryCode, @"country_code",
@@ -224,7 +246,10 @@ static AIDatabaseManager *sharedInstance = nil;
     else
     {
         DDLogVerbose(@"AIDatabaseManager:getNumberOfPlaces. search not specified.");
+        selectQuery = @"SELECT COUNT(*) FROM provider WHERE country_code = :country_code;";
+        /*
         selectQuery = @"SELECT COUNT(*) FROM locations WHERE country_code = :country_code;";
+        */
         arguments = $dict(countryCode, @"country_code");
     }
     // -------------------------------------------------------------------------
