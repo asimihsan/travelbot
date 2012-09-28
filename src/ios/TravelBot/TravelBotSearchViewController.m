@@ -36,6 +36,8 @@ static int ddLogLevel = LOG_LEVEL_VERBOSE;
 
 - (void)startSearch;
 - (void)stopSearch;
+- (void)showSearchSpinner;
+- (void)dismissSearchSpinner;
 - (void)onRequestCompletion:(NSNotification *)notification;
 - (void)onSocketClosed;
 - (void)showNetworkFailureError;
@@ -73,8 +75,7 @@ static int ddLogLevel = LOG_LEVEL_VERBOSE;
     }
     // -------------------------------------------------------------------------
     
-    [SVProgressHUD showWithStatus:@"Searching..."
-                         maskType:SVProgressHUDMaskTypeNone];
+    [self showSearchSpinner];
     self.tableView.userInteractionEnabled = NO;
     self.searchResults = nil;
     
@@ -108,7 +109,7 @@ static int ddLogLevel = LOG_LEVEL_VERBOSE;
 - (void)stopSearch
 {
     DDLogVerbose(@"TravelBotSearchViewController:stopSearch entry.");
-    [SVProgressHUD dismiss];
+    [self dismissSearchSpinner];
     self.tableView.userInteractionEnabled = YES;
     
     // If we've started a search a requestUUID exists. Remove ourselves as an
@@ -134,6 +135,17 @@ static int ddLogLevel = LOG_LEVEL_VERBOSE;
 - (BOOL)isSearching
 {
     return [self.requestUUIDs count] != 0;
+}
+
+- (void)showSearchSpinner
+{
+    [SVProgressHUD showWithStatus:@"Searching..."
+                         maskType:SVProgressHUDMaskTypeNone];
+}
+
+- (void)dismissSearchSpinner
+{
+    [SVProgressHUD dismiss];
 }
 
 - (void)onRequestCompletion:(NSNotification *)notification
@@ -290,13 +302,20 @@ static int ddLogLevel = LOG_LEVEL_VERBOSE;
 
     // -------------------------------------------------------------------------
     // Only perform a search if there are no search results currently available.
+    // and we are not currently performing a search.
+    //
     // Calling view controllers must set the search results to nil if they
     // want a fresh search to be executed.
     // -------------------------------------------------------------------------
-    if (!self.searchResults)
+    if (!self.searchResults && ![self isSearching])
     {
-        DDLogVerbose(@"TravelBotSearchViewController:viewWillAppear. self.searchResults is nil.");
+        DDLogVerbose(@"TravelBotSearchViewController:viewWillAppear. self.searchResults is nil and not searching.");
         [self startSearch];
+    }
+    else if ([self isSearching])
+    {
+        DDLogVerbose(@"TravelBotSearchViewController:viewWillAppear. still searching.");
+        [self showSearchSpinner];
     }
     // -------------------------------------------------------------------------
     
@@ -305,8 +324,7 @@ static int ddLogLevel = LOG_LEVEL_VERBOSE;
 
 - (void)viewWillDisappear:(BOOL)animated
 {
-    DDLogVerbose(@"TravelBotSearchViewController:viewWillDisappear entry.");
-    [self stopSearch];
+    [self dismissSearchSpinner];
     [super viewWillDisappear:animated];
 }
 
@@ -344,6 +362,9 @@ static int ddLogLevel = LOG_LEVEL_VERBOSE;
     [self setToPlace:nil];
     [self setFromPlace:nil];
     [self setSearchHeaderView:nil];
+    [self setCountryCodeToMethods:nil];
+    [self setRequestUUIDs:nil];
+    [self setSearchResults:nil];
     
     [[NSNotificationCenter defaultCenter] removeObserver:self
                                               forKeyPath:NOTIFICATION_SOCKET_CLOSED];

@@ -18,6 +18,7 @@
 		015AD14516160A3B00D7CF50 /* star@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 015AD14316160A3B00D7CF50 /* star@2x.png */; };
 		015AD14916160B5B00D7CF50 /* gear.png in Resources */ = {isa = PBXBuildFile; fileRef = 015AD14716160B5B00D7CF50 /* gear.png */; };
 		015AD14A16160B5B00D7CF50 /* gear@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 015AD14816160B5B00D7CF50 /* gear@2x.png */; };
+		015AD14D16160CE800D7CF50 /* TravelBotFavoritesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 015AD14C16160CE800D7CF50 /* TravelBotFavoritesViewController.m */; };
 		0160496D15ECEF8600579B45 /* TravelBotCountry.m in Sources */ = {isa = PBXBuildFile; fileRef = 0160496C15ECEF8600579B45 /* TravelBotCountry.m */; };
 		0160497115ED0BA600579B45 /* TravelBotSearchViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0160497015ED0BA600579B45 /* TravelBotSearchViewController.m */; };
 		0160497415ED119000579B45 /* AIDatabaseManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 0160497315ED119000579B45 /* AIDatabaseManager.m */; };
@@ -91,6 +92,8 @@
 		015AD14316160A3B00D7CF50 /* star@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "star@2x.png"; path = "resources/images/star@2x.png"; sourceTree = "<group>"; };
 		015AD14716160B5B00D7CF50 /* gear.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = gear.png; path = resources/images/gear.png; sourceTree = "<group>"; };
 		015AD14816160B5B00D7CF50 /* gear@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "gear@2x.png"; path = "resources/images/gear@2x.png"; sourceTree = "<group>"; };
+		015AD14B16160CE800D7CF50 /* TravelBotFavoritesViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TravelBotFavoritesViewController.h; sourceTree = "<group>"; };
+		015AD14C16160CE800D7CF50 /* TravelBotFavoritesViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TravelBotFavoritesViewController.m; sourceTree = "<group>"; };
 		0160496B15ECEF8600579B45 /* TravelBotCountry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TravelBotCountry.h; sourceTree = "<group>"; };
 		0160496C15ECEF8600579B45 /* TravelBotCountry.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TravelBotCountry.m; sourceTree = "<group>"; };
 		0160496F15ED0BA600579B45 /* TravelBotSearchViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TravelBotSearchViewController.h; sourceTree = "<group>"; };
@@ -348,16 +351,18 @@
 		01AC82FA15ECE1250072992A /* ViewControllers */ = {
 			isa = PBXGroup;
 			children = (
-				014D2BDB15ECC7F4008205BE /* TravelBotMainMenuViewController.h */,
-				014D2BDC15ECC7F4008205BE /* TravelBotMainMenuViewController.m */,
 				01AC82FC15ECE14C0072992A /* TravelBotCountriesViewController.h */,
 				01AC82FD15ECE14C0072992A /* TravelBotCountriesViewController.m */,
+				015AD14B16160CE800D7CF50 /* TravelBotFavoritesViewController.h */,
+				015AD14C16160CE800D7CF50 /* TravelBotFavoritesViewController.m */,
+				01AA8213160CAA620050EC07 /* TravelBotJourneyViewController.h */,
+				01AA8214160CAA620050EC07 /* TravelBotJourneyViewController.m */,
+				014D2BDB15ECC7F4008205BE /* TravelBotMainMenuViewController.h */,
+				014D2BDC15ECC7F4008205BE /* TravelBotMainMenuViewController.m */,
 				01AC82FF15ECE2DA0072992A /* TravelBotPlacesViewController.h */,
 				01AC830015ECE2DA0072992A /* TravelBotPlacesViewController.m */,
 				0160496F15ED0BA600579B45 /* TravelBotSearchViewController.h */,
 				0160497015ED0BA600579B45 /* TravelBotSearchViewController.m */,
-				01AA8213160CAA620050EC07 /* TravelBotJourneyViewController.h */,
-				01AA8214160CAA620050EC07 /* TravelBotJourneyViewController.m */,
 			);
 			name = ViewControllers;
 			sourceTree = "<group>";
@@ -365,12 +370,12 @@
 		01AC830215ECE2EF0072992A /* Managers */ = {
 			isa = PBXGroup;
 			children = (
-				01962BA715EABBC4009CAEBA /* AISocketManager.h */,
-				01962BA815EABBC4009CAEBA /* AISocketManager.m */,
-				0160497215ED119000579B45 /* AIDatabaseManager.h */,
-				0160497315ED119000579B45 /* AIDatabaseManager.m */,
 				01DBA7891614F45C00B3DF55 /* AIConfigManager.h */,
 				01DBA78A1614F45C00B3DF55 /* AIConfigManager.m */,
+				0160497215ED119000579B45 /* AIDatabaseManager.h */,
+				0160497315ED119000579B45 /* AIDatabaseManager.m */,
+				01962BA715EABBC4009CAEBA /* AISocketManager.h */,
+				01962BA815EABBC4009CAEBA /* AISocketManager.m */,
 			);
 			name = Managers;
 			sourceTree = "<group>";
@@ -392,14 +397,14 @@
 			children = (
 				01AC830A15ECE7B90072992A /* TravelBotCountryCell.h */,
 				01AC830B15ECE7B90072992A /* TravelBotCountryCell.m */,
+				01AA821A160CABF80050EC07 /* TravelBotJourneyHeader.h */,
+				01AA821B160CABF80050EC07 /* TravelBotJourneyHeader.m */,
+				01AA8217160CAB6C0050EC07 /* TravelBotJourneyLegCell.h */,
+				01AA8218160CAB6C0050EC07 /* TravelBotJourneyLegCell.m */,
 				0190A8B916022E560098B8F8 /* TravelBotSearchCell.h */,
 				0190A8BA16022E560098B8F8 /* TravelBotSearchCell.m */,
 				0190A8BD16023AC30098B8F8 /* TravelBotSearchHeader.h */,
 				0190A8BE16023AC30098B8F8 /* TravelBotSearchHeader.m */,
-				01AA8217160CAB6C0050EC07 /* TravelBotJourneyLegCell.h */,
-				01AA8218160CAB6C0050EC07 /* TravelBotJourneyLegCell.m */,
-				01AA821A160CABF80050EC07 /* TravelBotJourneyHeader.h */,
-				01AA821B160CABF80050EC07 /* TravelBotJourneyHeader.m */,
 			);
 			name = Views;
 			sourceTree = "<group>";
@@ -565,6 +570,7 @@
 				01AA8219160CAB6C0050EC07 /* TravelBotJourneyLegCell.m in Sources */,
 				01AA821C160CABF80050EC07 /* TravelBotJourneyHeader.m in Sources */,
 				01DBA78B1614F45C00B3DF55 /* AIConfigManager.m in Sources */,
+				015AD14D16160CE800D7CF50 /* TravelBotFavoritesViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
