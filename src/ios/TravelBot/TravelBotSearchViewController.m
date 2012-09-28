@@ -39,6 +39,7 @@ static int ddLogLevel = LOG_LEVEL_VERBOSE;
 - (void)onRequestCompletion:(NSNotification *)notification;
 - (void)onSocketClosed;
 - (void)showNetworkFailureError;
+- (BOOL)isSearching;
 
 @end
 
@@ -74,6 +75,7 @@ static int ddLogLevel = LOG_LEVEL_VERBOSE;
     
     [SVProgressHUD showWithStatus:@"Searching..."
                          maskType:SVProgressHUDMaskTypeNone];
+    self.tableView.userInteractionEnabled = NO;
     self.searchResults = nil;
     
     // -------------------------------------------------------------------------
@@ -107,6 +109,7 @@ static int ddLogLevel = LOG_LEVEL_VERBOSE;
 {
     DDLogVerbose(@"TravelBotSearchViewController:stopSearch entry.");
     [SVProgressHUD dismiss];
+    self.tableView.userInteractionEnabled = YES;
     
     // If we've started a search a requestUUID exists. Remove ourselves as an
     // observer for the result, as we don't care any more.
@@ -122,6 +125,15 @@ static int ddLogLevel = LOG_LEVEL_VERBOSE;
         } // for each requestUUID
         self.requestUUIDs = nil;
     } // if self.requestUUIDs
+}
+
+// -----------------------------------------------------------------------------
+//  Assume that we're on the main thread, as we implicitly use this to
+//  synchronise over the variables used to track searching.
+// -----------------------------------------------------------------------------
+- (BOOL)isSearching
+{
+    return [self.requestUUIDs count] != 0;
 }
 
 - (void)onRequestCompletion:(NSNotification *)notification
@@ -167,13 +179,13 @@ static int ddLogLevel = LOG_LEVEL_VERBOSE;
             self.searchResults = [[NSMutableArray alloc] init];
         }
         [self.searchResults addObjectsFromArray:journeys];
+        [self.searchResults sortUsingSelector:@selector(compareByFirstDepartureTime:)];
+        [self.tableView reloadData];
         [self.requestUUIDs removeObject:notification.name];
-        if ([self.requestUUIDs count] == 0)
+        if (![self isSearching])
         {
-            DDLogVerbose(@"TravelBotSearchViewController:onRequestCompletion. No more requestUUIDs outstanding.");
+            DDLogVerbose(@"TravelBotSearchViewController:onRequestCompletion. Not searching any more.");
             [self stopSearch];
-            [self.searchResults sortUsingSelector:@selector(compareByFirstDepartureTime:)];
-            [self.tableView reloadData];
         }
     });
     // -------------------------------------------------------------------------
