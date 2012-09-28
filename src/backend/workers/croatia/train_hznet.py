@@ -18,6 +18,7 @@ import string
 import time
 import lxml.html
 import pytz
+import Levenshtein
 
 # -----------------------------------------------------------------------------
 #   Relative imports.
@@ -145,6 +146,7 @@ def get_journeys(from_location, to_location, journey_date=None, journey_time=Non
             #   for that line. Each block of rows with matching "vlak"'s are
             #   a journey leg.
             # -----------------------------------------------------------------
+            logger.debug("HTTP GET for link: %s" % link.attrib["href"])
             request = requests.get(link.attrib["href"], cookies=cookies)
             if request.status_code != 200:
                 logger.error("Failed for link: %s." % link)
@@ -206,18 +208,14 @@ def get_journeys(from_location, to_location, journey_date=None, journey_time=Non
                                                                         minute = departure_time.minute)
                 departure_journey_legpoint = JourneyLegPoint(location = departure_location,
                                                              datetime = departure_journey_legpoint_datetime)
-
-                if arrival_time < departure_time:
-                    logger.debug("arrival_time %s < departure_time %s, so assume arrives the next day." % (arrival_time, departure_time))
-                    arrival_day = journey_date.day + 1
-                else:
-                    logger.debug("arrival_time %s >= departure_time %s, so assume arrives the same day." % (arrival_time, departure_time))
-                    arrival_day = journey_date.day
                 arrival_journey_legpoint_datetime = datetime.datetime(year = journey_date.year,
                                                                       month = journey_date.month,
-                                                                      day = arrival_day,
+                                                                      day = journey_date.day,
                                                                       hour = arrival_time.hour,
                                                                       minute = arrival_time.minute)
+                if arrival_time < departure_time:
+                    logger.debug("arrival_time %s < departure_time %s, so assume arrives the next day." % (arrival_time, departure_time))
+                    arrival_journey_legpoint_datetime += datetime.timedelta(days=1)
                 arrival_journey_legpoint = JourneyLegPoint(location = arrival_location,
                                                            datetime = arrival_journey_legpoint_datetime)
 
@@ -227,9 +225,26 @@ def get_journeys(from_location, to_location, journey_date=None, journey_time=Non
                                          transport_identifier = transport_identifier)
                 journey_legs.append(journey_leg)
 
-                journey = Journey(legs = journey_legs)
-                journeys.append(journey)
-            # -------------------------------------------------------------
+            # -------------------------------------------------------------------------
+            #   We have a Journey with zero or more JourneyLegs. HZNet is
+            #   a bit insane and will happily return results that have
+            #   nothing to do with the departure or arrival point. Hence, as
+            #   a sanity check confirm the edit distance between the actual
+            #   from/to locations and the requested from/to locations isn't
+            #   too small.
+            # -------------------------------------------------------------------------
+            journey = Journey(legs = journey_legs)
+            departure_name = journey.legs[0].departure.location.name
+            if Levenshtein.jaro_winkler(departure_name, from_location) < 0.85:
+                logger.warning("departure_name %s too different from from_location %s, so not valid journey." % (departure_name, from_location))
+                continue
+            arrival_name = journey.legs[-1].arrival.location.name
+            if Levenshtein.jaro_winkler(arrival_name, to_location) < 0.85:
+                logger.warning("arrival_name %s too different from to_location %s, so not valid journey." % (arrival_name, to_location))
+                continue
+            # -------------------------------------------------------------------------
+
+            journeys.append(journey)
 
     logger.debug("returning.")
     return journeys
@@ -244,8 +259,13 @@ def write_locations_to_file():
 def main():
     #write_locations_to_file()
 
+    # HZet can't route to Pula, so it pretends it can and gives you
+    # a random result!
     journeys = get_journeys(from_location="Zagreb gl. kol.",
-                            to_location="Split")
+                            to_location="Pula")
+
+    #journeys = get_journeys(from_location="Zagreb gl. kol.",
+    #                        to_location="Split")
     pprint.pprint(journeys)
 
 if __name__ == "__main__":
