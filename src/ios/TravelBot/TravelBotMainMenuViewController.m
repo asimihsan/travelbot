@@ -268,7 +268,13 @@ const int TAG_SEARCH_BUTTON_CELL = 300;
     DDLogVerbose(@"TravelBotMainMenuViewController:travelBotCountriesViewControllerDidFinish entry. country: %@", country);
     if (country)
     {
-        DDLogVerbose(@"setting country.");
+        DDLogVerbose(@"TravelBotMainMenuViewController:travelBotCountriesViewControllerDidFinish. setting country.");
+        if (!$eql(self.selectedCountry, country))
+        {
+            DDLogVerbose(@"TravelBotMainMenuViewController:travelBotCountriesViewControllerDidFinish. country changed.");
+            self.selectedFromPlace = nil;
+            self.selectedToPlace = nil;
+        }
         self.selectedCountry = country;
     }
     [self.navigationController popViewControllerAnimated:YES];
