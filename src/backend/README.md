@@ -6,15 +6,14 @@ The following covers the part of travelbot that fetches travel information.
 
 ## TODO
 
--   fix list of places to only include places supported by travel providers.
-    -   still need geonames to do geolocation, keep it in its own table.
-    -   need list of places per provider.
 -   use tabs. new tab for previous searches and favourite searches.
     -   previous searches stores everything up to e.g. 100.
     -   favourite searches are only favourited searches, no limit.
 -   fix no results.
     -   say "sorry, no results found"
     -   suggest list of websites to check.
+-   each result needs a more information button in the top-right
+    -   click it, shows you which webpage has more info.
 -   start using a timeout on searches, after e.g. 60 seconds say "search timed out, try again."
 -   specify departure time / date.
 -   sort journeys by shortest journey, amount of changes, latest vs. earliest, mode of transport.

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="2.0" toolsVersion="2840" systemVersion="12C54" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" initialViewController="Bdq-rn-vv1">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="2.0" toolsVersion="2840" systemVersion="12C54" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" initialViewController="AXM-1N-TCO">
     <dependencies>
         <deployment defaultVersion="1536" identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="1926"/>
@@ -50,7 +50,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="ac7-Xc-EZ4" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-143" y="4"/>
+            <point key="canvasLocation" x="1254" y="2"/>
         </scene>
         <!--Travel Bot Places View Controller-->
         <scene sceneID="ijw-EC-sRA">
@@ -111,7 +111,7 @@
                     </connections>
                 </searchDisplayController>
             </objects>
-            <point key="canvasLocation" x="283" y="4"/>
+            <point key="canvasLocation" x="1254" y="-596"/>
         </scene>
         <!--Travel Bot Main Menu View Controller - Search-->
         <scene sceneID="nGO-RK-OXe">
@@ -259,9 +259,7 @@
                         </connections>
                     </tableView>
                     <toolbarItems/>
-                    <navigationItem key="navigationItem" title="Search" id="gcN-UP-Tt8">
-                        <barButtonItem key="rightBarButtonItem" title="Settings" id="7XB-ZQ-Gn9"/>
-                    </navigationItem>
+                    <navigationItem key="navigationItem" title="Search" id="gcN-UP-Tt8"/>
                     <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
                     <connections>
                         <outlet property="countryLabel" destination="jOE-VR-QKF" id="a7C-53-U7T"/>
@@ -277,7 +275,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="qg4-hh-Lik" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="283" y="606"/>
+            <point key="canvasLocation" x="809" y="606"/>
         </scene>
         <!--Travel Bot Search View Controller - Results-->
         <scene sceneID="pC6-ey-Luz">
@@ -446,7 +444,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="gTm-B2-toO" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="728" y="606"/>
+            <point key="canvasLocation" x="1254" y="606"/>
         </scene>
         <!--Travel Bot Journey View Controller - Journey-->
         <scene sceneID="rjX-Pe-T5c">
@@ -574,12 +572,13 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="TrL-kA-9Cw" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1168" y="606"/>
+            <point key="canvasLocation" x="1694" y="606"/>
         </scene>
-        <!--Navigation Controller-->
+        <!--Navigation Controller - Search-->
         <scene sceneID="1XE-EJ-zaW">
             <objects>
-                <navigationController id="Bdq-rn-vv1" sceneMemberID="viewController">
+                <navigationController title="Search" id="Bdq-rn-vv1" sceneMemberID="viewController">
+                    <tabBarItem key="tabBarItem" systemItem="search" id="iVx-TZ-WlP"/>
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="85c-MZ-xf9">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
@@ -592,12 +591,218 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="IoC-nC-eF7" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-143" y="606"/>
+            <point key="canvasLocation" x="353" y="606"/>
+        </scene>
+        <!--Tab Bar Controller-->
+        <scene sceneID="BcM-vz-AIl">
+            <objects>
+                <tabBarController id="AXM-1N-TCO" sceneMemberID="viewController">
+                    <toolbarItems/>
+                    <nil key="simulatedBottomBarMetrics"/>
+                    <tabBar key="tabBar" contentMode="scaleToFill" id="X8B-6k-mCs">
+                        <autoresizingMask key="autoresizingMask"/>
+                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                    </tabBar>
+                    <connections>
+                        <segue destination="Bdq-rn-vv1" kind="relationship" relationship="viewControllers" id="XHE-ie-TsS"/>
+                        <segue destination="Egs-A3-Wxw" kind="relationship" relationship="viewControllers" id="NAz-7I-UDm"/>
+                        <segue destination="G81-H2-IAa" kind="relationship" relationship="viewControllers" id="5WU-LA-sDO"/>
+                    </connections>
+                </tabBarController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="iLX-pN-Ahp" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-99" y="606"/>
+        </scene>
+        <!--Navigation Controller - Favorites-->
+        <scene sceneID="C2w-pu-Q0k">
+            <objects>
+                <navigationController id="Egs-A3-Wxw" sceneMemberID="viewController">
+                    <tabBarItem key="tabBarItem" title="Favorites" image="star.png" id="oeN-x9-DsH"/>
+                    <toolbarItems/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="ELd-EQ-WIy">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <connections>
+                        <segue destination="caX-Nf-GhH" kind="relationship" relationship="rootViewController" id="PZk-3Q-e9n"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="ZLg-wq-LqU" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="353" y="1195"/>
+        </scene>
+        <!--Table View Controller-->
+        <scene sceneID="u73-Aa-S6Y">
+            <objects>
+                <tableViewController id="caX-Nf-GhH" sceneMemberID="viewController">
+                    <tableView key="view" opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="bFq-Bg-KM7">
+                        <rect key="frame" x="0.0" y="64" width="320" height="367"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <prototypes>
+                            <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" id="sjV-RF-fMR">
+                                <rect key="frame" x="0.0" y="22" width="320" height="44"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
+                                    <rect key="frame" x="0.0" y="0.0" width="320" height="43"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                </view>
+                            </tableViewCell>
+                        </prototypes>
+                        <connections>
+                            <outlet property="dataSource" destination="caX-Nf-GhH" id="Fvn-dV-tAn"/>
+                            <outlet property="delegate" destination="caX-Nf-GhH" id="Vs6-4H-Vzt"/>
+                        </connections>
+                    </tableView>
+                    <navigationItem key="navigationItem" id="cah-75-1UB"/>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="b9Z-TL-mAS" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="802" y="1195"/>
+        </scene>
+        <!--Table View Controller-->
+        <scene sceneID="4qn-OR-gaq">
+            <objects>
+                <tableViewController id="TOd-Ib-J1y" sceneMemberID="viewController">
+                    <tableView key="view" opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="vAA-rc-Of1">
+                        <rect key="frame" x="0.0" y="64" width="320" height="367"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <prototypes>
+                            <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" id="OIO-zs-01N">
+                                <rect key="frame" x="0.0" y="22" width="320" height="44"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
+                                    <rect key="frame" x="0.0" y="0.0" width="320" height="43"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                </view>
+                            </tableViewCell>
+                        </prototypes>
+                        <connections>
+                            <outlet property="dataSource" destination="TOd-Ib-J1y" id="D6k-Zo-Pp3"/>
+                            <outlet property="delegate" destination="TOd-Ib-J1y" id="JI7-2Y-ul4"/>
+                        </connections>
+                    </tableView>
+                    <navigationItem key="navigationItem" id="p7V-xb-jtN"/>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="ruO-3z-MkZ" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="809" y="1785"/>
+        </scene>
+        <!--Navigation Controller - Settings-->
+        <scene sceneID="pFP-Rj-RmW">
+            <objects>
+                <navigationController id="G81-H2-IAa" sceneMemberID="viewController">
+                    <tabBarItem key="tabBarItem" title="Settings" image="gear.png" id="zBC-7q-Axy"/>
+                    <toolbarItems/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="AwB-Wu-SRZ">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <connections>
+                        <segue destination="TOd-Ib-J1y" kind="relationship" relationship="rootViewController" id="WqG-tn-g3c"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="cmi-vc-Zxv" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="353" y="1785"/>
         </scene>
     </scenes>
     <resources>
+        <image name="gear.png" width="30" height="30"/>
         <image name="search_button_highlight.png" width="300" height="44"/>
+        <image name="star.png" width="30" height="30"/>
     </resources>
+    <classes>
+        <class className="TravelBotCountriesViewController" superclassName="UITableViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/TravelBotCountriesViewController.h"/>
+        </class>
+        <class className="TravelBotCountryCell" superclassName="UITableViewCell">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/TravelBotCountryCell.h"/>
+            <relationships>
+                <relationship kind="outlet" name="image" candidateClass="UIImageView"/>
+                <relationship kind="outlet" name="label" candidateClass="UILabel"/>
+            </relationships>
+        </class>
+        <class className="TravelBotJourneyHeader" superclassName="UIView">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/TravelBotJourneyHeader.h"/>
+            <relationships>
+                <relationship kind="outlet" name="arriveValueLabel" candidateClass="UILabel"/>
+                <relationship kind="outlet" name="departLabel" candidateClass="UILabel"/>
+                <relationship kind="outlet" name="durationValueLabel" candidateClass="UILabel"/>
+            </relationships>
+        </class>
+        <class className="TravelBotJourneyLegCell" superclassName="UITableViewCell">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/TravelBotJourneyLegCell.h"/>
+            <relationships>
+                <relationship kind="outlet" name="arrivalFooter" candidateClass="UILabel"/>
+                <relationship kind="outlet" name="modeOfTransportImage" candidateClass="UIImageView"/>
+                <relationship kind="outlet" name="pointDescription" candidateClass="UILabel"/>
+                <relationship kind="outlet" name="pointName" candidateClass="UILabel"/>
+                <relationship kind="outlet" name="pointTime" candidateClass="UILabel"/>
+            </relationships>
+        </class>
+        <class className="TravelBotJourneyViewController" superclassName="UITableViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/TravelBotJourneyViewController.h"/>
+            <relationships>
+                <relationship kind="action" name="backButton:"/>
+                <relationship kind="outlet" name="journeyHeaderView" candidateClass="TravelBotJourneyHeader"/>
+            </relationships>
+        </class>
+        <class className="TravelBotMainMenuViewController" superclassName="UITableViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/TravelBotMainMenuViewController.h"/>
+            <relationships>
+                <relationship kind="action" name="searchButtonAction:"/>
+                <relationship kind="outlet" name="countryLabel" candidateClass="UILabel"/>
+                <relationship kind="outlet" name="fromLabel" candidateClass="UILabel"/>
+                <relationship kind="outlet" name="fromLabelContainerCell" candidateClass="UITableViewCell"/>
+                <relationship kind="outlet" name="searchButton" candidateClass="UIButton"/>
+                <relationship kind="outlet" name="searchButtonContainerCell" candidateClass="UITableViewCell"/>
+                <relationship kind="outlet" name="serverStatusLabel" candidateClass="UITableViewCell"/>
+                <relationship kind="outlet" name="toLabel" candidateClass="UILabel"/>
+                <relationship kind="outlet" name="toLabelContainerCell" candidateClass="UITableViewCell"/>
+            </relationships>
+        </class>
+        <class className="TravelBotPlacesViewController" superclassName="UITableViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/TravelBotPlacesViewController.h"/>
+            <relationships>
+                <relationship kind="outlet" name="searchBar" candidateClass="UISearchBar"/>
+                <relationship kind="outlet" name="tableSearchDisplayController" candidateClass="UISearchDisplayController"/>
+            </relationships>
+        </class>
+        <class className="TravelBotSearchCell" superclassName="UITableViewCell">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/TravelBotSearchCell.h"/>
+            <relationships>
+                <relationship kind="outlet" name="arriveValue" candidateClass="UILabel"/>
+                <relationship kind="outlet" name="departValue" candidateClass="UILabel"/>
+                <relationship kind="outlet" name="durationValue" candidateClass="UILabel"/>
+                <relationship kind="outlet" name="legImage1" candidateClass="UIImageView"/>
+                <relationship kind="outlet" name="legImage2" candidateClass="UIImageView"/>
+                <relationship kind="outlet" name="legImage3" candidateClass="UIImageView"/>
+                <relationship kind="outlet" name="legImage4" candidateClass="UIImageView"/>
+                <relationship kind="outlet" name="legImage5" candidateClass="UIImageView"/>
+            </relationships>
+        </class>
+        <class className="TravelBotSearchHeader" superclassName="UIView">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/TravelBotSearchHeader.h"/>
+            <relationships>
+                <relationship kind="outlet" name="fromValueLabel" candidateClass="UILabel"/>
+                <relationship kind="outlet" name="toValueLabel" candidateClass="UILabel"/>
+                <relationship kind="outlet" name="whenValueLabel" candidateClass="UILabel"/>
+            </relationships>
+        </class>
+        <class className="TravelBotSearchViewController" superclassName="UITableViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/TravelBotSearchViewController.h"/>
+            <relationships>
+                <relationship kind="action" name="backButton:"/>
+                <relationship kind="outlet" name="searchHeaderView" candidateClass="TravelBotSearchHeader"/>
+            </relationships>
+        </class>
+    </classes>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
         <simulatedStatusBarMetrics key="statusBar"/>
         <simulatedOrientationMetrics key="orientation"/>
