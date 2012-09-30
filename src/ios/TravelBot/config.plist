@@ -39,7 +39,7 @@
 		<key>ServerPort</key>
 		<integer>8080</integer>
 		<key>ServerHostname</key>
-		<string>127.0.0.1</string>
+		<string>travelbot.asimihsan.com</string>
 	</dict>
 </dict>
 </plist>

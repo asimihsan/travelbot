@@ -29,7 +29,6 @@ static int ddLogLevel = LOG_LEVEL_VERBOSE;
  TravelBotSearchViewControllerDelegate>
 
 - (BOOL)isCountrySelected;
-- (void)updateServerStatusLabel;
 
 @end
 
@@ -45,7 +44,6 @@ static int ddLogLevel = LOG_LEVEL_VERBOSE;
 @synthesize toLabel = _toLabel;
 @synthesize searchButtonContainerCell = _searchButtonContainerCell;
 @synthesize searchButton = _searchButton;
-@synthesize serverStatusLabel = _serverStatusLabel;
 
 - (id)initWithStyle:(UITableViewStyle)style
 {
@@ -116,12 +114,6 @@ static int ddLogLevel = LOG_LEVEL_VERBOSE;
         self.searchButton.enabled = NO;
     }
     // -------------------------------------------------------------------------
-
-    // -------------------------------------------------------------------------
-    //  Server status cell.
-    // -------------------------------------------------------------------------
-    [self updateServerStatusLabel];
-    // -------------------------------------------------------------------------
     
     // -------------------------------------------------------------------------
     //  Always set up the search button container cell to be transparent.
@@ -132,58 +124,10 @@ static int ddLogLevel = LOG_LEVEL_VERBOSE;
     // -------------------------------------------------------------------------
 }
 
-// -----------------------------------------------------------------------------
-//  Update the server status label on the main menu. As this may get called
-//  via the notification center we may not be on the main thread, so use
-//  GCD to execute this on the main thread.
-// -----------------------------------------------------------------------------
-- (void)updateServerStatusLabel
-{
-    dispatch_async(dispatch_get_main_queue(), ^{
-        DDLogVerbose(@"TravelBotMainMenuViewController:updateServerStatusLabel entry.");
-        self.serverStatusLabel.textLabel.text = @"Server status";
-        AISocketManager *socketManager = [AISocketManager sharedInstance];
-        if ([socketManager isConnected])
-        {
-            DDLogVerbose(@"TravelBotMainMenuViewController:updateServerStatusLabel. is connected.");
-            self.serverStatusLabel.detailTextLabel.text = @"Connected";
-            self.serverStatusLabel.detailTextLabel.textColor = [AIUtilities colorWithR:50.0
-                                                                                     G:205.0
-                                                                                     B:50.0
-                                                                                     A:1.0];
-
-        }
-        else
-        {
-            DDLogVerbose(@"TravelBotMainMenuViewController:updateServerStatusLabel. is not connected.");            
-            self.serverStatusLabel.detailTextLabel.text = @"Not connected";
-            self.serverStatusLabel.detailTextLabel.textColor = [AIUtilities colorWithR:178.0
-                                                                                     G:34.0
-                                                                                     B:34.0
-                                                                                     A:1.0];
-        }
-        DDLogVerbose(@"TravelBotMainMenuViewContrlller:updateServerStatusLabel exit.");
-    });
-}
-
 - (void)viewDidLoad
 {
     DDLogVerbose(@"TravelBotMainMenuViewController:viewDidLoad entry.");
-    [super viewDidLoad];
-    
-    // -------------------------------------------------------------------------
-    //  Update to the notification that the server socket is opened or closed.
-    //  Use this to update the server status label.
-    // -------------------------------------------------------------------------
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(updateServerStatusLabel)
-                                                 name:NOTIFICATION_SOCKET_OPENED
-                                               object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(updateServerStatusLabel)
-                                                 name:NOTIFICATION_SOCKET_CLOSED
-                                               object:nil];
-    // -------------------------------------------------------------------------
+    [super viewDidLoad];    
 }
 
 - (void)viewDidUnload
@@ -197,12 +141,6 @@ static int ddLogLevel = LOG_LEVEL_VERBOSE;
     [self setSearchButtonContainerCell:nil];
     [self setFromLabelContainerCell:nil];
     [self setToLabelContainerCell:nil];
-    [self setServerStatusLabel:nil];
-    
-    [[NSNotificationCenter defaultCenter] removeObserver:self
-                                              forKeyPath:NOTIFICATION_SOCKET_OPENED];
-    [[NSNotificationCenter defaultCenter] removeObserver:self
-                                              forKeyPath:NOTIFICATION_SOCKET_CLOSED];
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
@@ -316,15 +254,15 @@ static int ddLogLevel = LOG_LEVEL_VERBOSE;
     AISocketManager *socketManager = [AISocketManager sharedInstance];
     if ([socketManager isConnected])
     {
-        DDLogVerbose(@"Socket is connected.");
+        DDLogVerbose(@"TravelBotMainMenuViewController:searchButtonAction. Socket is connected.");
         [self performSegueWithIdentifier:@"search" sender:self];
     }
     else
     {
-        DDLogVerbose(@"Socket is not connected.");
+        DDLogVerbose(@"TravelBotMainMenuViewController:searchButtonAction. Socket is not connected.");
         UIAlertView *alert = [[UIAlertView alloc]
                               initWithTitle: @"Search failed."
-                              message: @"Unable to establish network connection to server."
+                              message: @"Unable to establish network connection to server. See 'Settings'."
                               delegate:nil
                               cancelButtonTitle:@"OK"
                               otherButtonTitles:nil];

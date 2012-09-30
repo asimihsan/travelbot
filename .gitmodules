@@ -1,0 +1,3 @@
+[submodule "src/ios/JASidePanels"]
+	path = src/ios/JASidePanels
+	url = https://github.com/gotosleep/JASidePanels.git

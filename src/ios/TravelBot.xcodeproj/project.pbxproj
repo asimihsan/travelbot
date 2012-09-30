@@ -9,6 +9,14 @@
 /* Begin PBXBuildFile section */
 		011B689A15EB8A5C00057B6F /* libarc.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 011B689915EB8A5C00057B6F /* libarc.a */; };
 		011B68FD15EB8D0200057B6F /* libarc.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 011B68FC15EB8D0200057B6F /* libarc.a */; };
+		0135F96716171D2B00ADAFC7 /* TravelBotSidePanelViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0135F96616171D2B00ADAFC7 /* TravelBotSidePanelViewController.m */; };
+		0135F96F161724B200ADAFC7 /* JASidePanelController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0135F96E161724B200ADAFC7 /* JASidePanelController.m */; };
+		0135F97216187E7E00ADAFC7 /* TravelBotSettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0135F97116187E7E00ADAFC7 /* TravelBotSettingsViewController.m */; };
+		0135F975161883A300ADAFC7 /* TravelBotLeftPanelViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0135F974161883A300ADAFC7 /* TravelBotLeftPanelViewController.m */; };
+		0135F9781618853500ADAFC7 /* magnifying_glass.png in Resources */ = {isa = PBXBuildFile; fileRef = 0135F9761618853400ADAFC7 /* magnifying_glass.png */; };
+		0135F9791618853500ADAFC7 /* magnifying_glass@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 0135F9771618853500ADAFC7 /* magnifying_glass@2x.png */; };
+		0135F97C161887B900ADAFC7 /* UIViewController+JASidePanel.m in Sources */ = {isa = PBXBuildFile; fileRef = 0135F97B161887B900ADAFC7 /* UIViewController+JASidePanel.m */; };
+		0135F97F16188AC700ADAFC7 /* AIStoryBoardManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 0135F97E16188AC700ADAFC7 /* AIStoryBoardManager.m */; };
 		014D2BDD15ECC7F4008205BE /* TravelBotMainMenuViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 014D2BDC15ECC7F4008205BE /* TravelBotMainMenuViewController.m */; };
 		014D2BFB15ECD8DB008205BE /* search_button_highlight.png in Resources */ = {isa = PBXBuildFile; fileRef = 014D2BF715ECD8DB008205BE /* search_button_highlight.png */; };
 		014D2BFC15ECD8DB008205BE /* search_button-highlight@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 014D2BF815ECD8DB008205BE /* search_button-highlight@2x.png */; };
@@ -82,6 +90,20 @@
 		011B68FA15EB8D0200057B6F /* archive_entry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = archive_entry.h; sourceTree = "<group>"; };
 		011B68FB15EB8D0200057B6F /* bzlib.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bzlib.h; sourceTree = "<group>"; };
 		011B68FC15EB8D0200057B6F /* libarc.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libarc.a; sourceTree = "<group>"; };
+		0135F96516171D2B00ADAFC7 /* TravelBotSidePanelViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TravelBotSidePanelViewController.h; sourceTree = "<group>"; };
+		0135F96616171D2B00ADAFC7 /* TravelBotSidePanelViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TravelBotSidePanelViewController.m; sourceTree = "<group>"; };
+		0135F96D161724B200ADAFC7 /* JASidePanelController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JASidePanelController.h; path = JASidePanels/JASidePanels/Source/JASidePanelController.h; sourceTree = SOURCE_ROOT; };
+		0135F96E161724B200ADAFC7 /* JASidePanelController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = JASidePanelController.m; path = JASidePanels/JASidePanels/Source/JASidePanelController.m; sourceTree = SOURCE_ROOT; };
+		0135F97016187E7E00ADAFC7 /* TravelBotSettingsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TravelBotSettingsViewController.h; sourceTree = "<group>"; };
+		0135F97116187E7E00ADAFC7 /* TravelBotSettingsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TravelBotSettingsViewController.m; sourceTree = "<group>"; };
+		0135F973161883A300ADAFC7 /* TravelBotLeftPanelViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TravelBotLeftPanelViewController.h; sourceTree = "<group>"; };
+		0135F974161883A300ADAFC7 /* TravelBotLeftPanelViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TravelBotLeftPanelViewController.m; sourceTree = "<group>"; };
+		0135F9761618853400ADAFC7 /* magnifying_glass.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = magnifying_glass.png; path = resources/images/magnifying_glass.png; sourceTree = "<group>"; };
+		0135F9771618853500ADAFC7 /* magnifying_glass@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "magnifying_glass@2x.png"; path = "resources/images/magnifying_glass@2x.png"; sourceTree = "<group>"; };
+		0135F97A161887B900ADAFC7 /* UIViewController+JASidePanel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UIViewController+JASidePanel.h"; path = "JASidePanels/JASidePanels/Source/UIViewController+JASidePanel.h"; sourceTree = SOURCE_ROOT; };
+		0135F97B161887B900ADAFC7 /* UIViewController+JASidePanel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "UIViewController+JASidePanel.m"; path = "JASidePanels/JASidePanels/Source/UIViewController+JASidePanel.m"; sourceTree = SOURCE_ROOT; };
+		0135F97D16188AC700ADAFC7 /* AIStoryBoardManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AIStoryBoardManager.h; sourceTree = "<group>"; };
+		0135F97E16188AC700ADAFC7 /* AIStoryBoardManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AIStoryBoardManager.m; sourceTree = "<group>"; };
 		014D2BDB15ECC7F4008205BE /* TravelBotMainMenuViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TravelBotMainMenuViewController.h; sourceTree = "<group>"; };
 		014D2BDC15ECC7F4008205BE /* TravelBotMainMenuViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TravelBotMainMenuViewController.m; sourceTree = "<group>"; };
 		014D2BF715ECD8DB008205BE /* search_button_highlight.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = search_button_highlight.png; path = resources/images/search_button_highlight.png; sourceTree = "<group>"; };
@@ -225,6 +247,8 @@
 				015AD14716160B5B00D7CF50 /* gear.png */,
 				015AD14816160B5B00D7CF50 /* gear@2x.png */,
 				01DBA78C1614FD1400B3DF55 /* hr.png */,
+				0135F9761618853400ADAFC7 /* magnifying_glass.png */,
+				0135F9771618853500ADAFC7 /* magnifying_glass@2x.png */,
 				014D2BF815ECD8DB008205BE /* search_button-highlight@2x.png */,
 				014D2BF915ECD8DB008205BE /* search_button.png */,
 				014D2BFA15ECD8DB008205BE /* search_button@2x.png */,
@@ -326,6 +350,10 @@
 		01962C8015EB83CE009CAEBA /* Libs */ = {
 			isa = PBXGroup;
 			children = (
+				0135F96D161724B200ADAFC7 /* JASidePanelController.h */,
+				0135F96E161724B200ADAFC7 /* JASidePanelController.m */,
+				0135F97A161887B900ADAFC7 /* UIViewController+JASidePanel.h */,
+				0135F97B161887B900ADAFC7 /* UIViewController+JASidePanel.m */,
 				011B68F815EB8D0200057B6F /* libarchive */,
 				01962C7C15EB83B7009CAEBA /* AIUtilities.h */,
 				01962C7D15EB83B7009CAEBA /* AIUtilities.m */,
@@ -357,12 +385,18 @@
 				015AD14C16160CE800D7CF50 /* TravelBotFavoritesViewController.m */,
 				01AA8213160CAA620050EC07 /* TravelBotJourneyViewController.h */,
 				01AA8214160CAA620050EC07 /* TravelBotJourneyViewController.m */,
+				0135F973161883A300ADAFC7 /* TravelBotLeftPanelViewController.h */,
+				0135F974161883A300ADAFC7 /* TravelBotLeftPanelViewController.m */,
 				014D2BDB15ECC7F4008205BE /* TravelBotMainMenuViewController.h */,
 				014D2BDC15ECC7F4008205BE /* TravelBotMainMenuViewController.m */,
 				01AC82FF15ECE2DA0072992A /* TravelBotPlacesViewController.h */,
 				01AC830015ECE2DA0072992A /* TravelBotPlacesViewController.m */,
 				0160496F15ED0BA600579B45 /* TravelBotSearchViewController.h */,
 				0160497015ED0BA600579B45 /* TravelBotSearchViewController.m */,
+				0135F97016187E7E00ADAFC7 /* TravelBotSettingsViewController.h */,
+				0135F97116187E7E00ADAFC7 /* TravelBotSettingsViewController.m */,
+				0135F96516171D2B00ADAFC7 /* TravelBotSidePanelViewController.h */,
+				0135F96616171D2B00ADAFC7 /* TravelBotSidePanelViewController.m */,
 			);
 			name = ViewControllers;
 			sourceTree = "<group>";
@@ -376,6 +410,8 @@
 				0160497315ED119000579B45 /* AIDatabaseManager.m */,
 				01962BA715EABBC4009CAEBA /* AISocketManager.h */,
 				01962BA815EABBC4009CAEBA /* AISocketManager.m */,
+				0135F97D16188AC700ADAFC7 /* AIStoryBoardManager.h */,
+				0135F97E16188AC700ADAFC7 /* AIStoryBoardManager.m */,
 			);
 			name = Managers;
 			sourceTree = "<group>";
@@ -500,6 +536,8 @@
 				015AD14516160A3B00D7CF50 /* star@2x.png in Resources */,
 				015AD14916160B5B00D7CF50 /* gear.png in Resources */,
 				015AD14A16160B5B00D7CF50 /* gear@2x.png in Resources */,
+				0135F9781618853500ADAFC7 /* magnifying_glass.png in Resources */,
+				0135F9791618853500ADAFC7 /* magnifying_glass@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -571,6 +609,12 @@
 				01AA821C160CABF80050EC07 /* TravelBotJourneyHeader.m in Sources */,
 				01DBA78B1614F45C00B3DF55 /* AIConfigManager.m in Sources */,
 				015AD14D16160CE800D7CF50 /* TravelBotFavoritesViewController.m in Sources */,
+				0135F96716171D2B00ADAFC7 /* TravelBotSidePanelViewController.m in Sources */,
+				0135F96F161724B200ADAFC7 /* JASidePanelController.m in Sources */,
+				0135F97216187E7E00ADAFC7 /* TravelBotSettingsViewController.m in Sources */,
+				0135F975161883A300ADAFC7 /* TravelBotLeftPanelViewController.m in Sources */,
+				0135F97C161887B900ADAFC7 /* UIViewController+JASidePanel.m in Sources */,
+				0135F97F16188AC700ADAFC7 /* AIStoryBoardManager.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -681,6 +725,10 @@
 			buildSettings = {
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "TravelBot/TravelBot-Prefix.pch";
+				HEADER_SEARCH_PATHS = (
+					"$(SDKROOT)/usr/include/libxml2",
+					"${PODS_HEADERS_SEARCH_PATHS}",
+				);
 				INFOPLIST_FILE = "TravelBot/TravelBot-Info.plist";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -689,6 +737,7 @@
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				RUN_CLANG_STATIC_ANALYZER = YES;
+				SCAN_ALL_SOURCE_FILES_FOR_INCLUDES = NO;
 				VALID_ARCHS = "armv7s armv7";
 				WRAPPER_EXTENSION = app;
 			};
@@ -700,6 +749,10 @@
 			buildSettings = {
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "TravelBot/TravelBot-Prefix.pch";
+				HEADER_SEARCH_PATHS = (
+					"$(SDKROOT)/usr/include/libxml2",
+					"${PODS_HEADERS_SEARCH_PATHS}",
+				);
 				INFOPLIST_FILE = "TravelBot/TravelBot-Info.plist";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -708,6 +761,7 @@
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				RUN_CLANG_STATIC_ANALYZER = YES;
+				SCAN_ALL_SOURCE_FILES_FOR_INCLUDES = NO;
 				VALID_ARCHS = "armv7s armv7";
 				WRAPPER_EXTENSION = app;
 			};
@@ -778,6 +832,10 @@
 			buildSettings = {
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "TravelBot/TravelBot-Prefix.pch";
+				HEADER_SEARCH_PATHS = (
+					"$(SDKROOT)/usr/include/libxml2",
+					"${PODS_HEADERS_SEARCH_PATHS}",
+				);
 				INFOPLIST_FILE = "TravelBot/TravelBot-Info.plist";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -786,6 +844,7 @@
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				RUN_CLANG_STATIC_ANALYZER = YES;
+				SCAN_ALL_SOURCE_FILES_FOR_INCLUDES = NO;
 				VALID_ARCHS = "armv7s armv7";
 				WRAPPER_EXTENSION = app;
 			};
