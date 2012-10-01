@@ -53,19 +53,7 @@ static int ddLogLevel = LOG_LEVEL_VERBOSE;
     // Note that [NSMutableArray copy] returns an immutable version of the array.
     DDLogVerbose(@"TravelBotCountriesViewController:updateCountries entry.");
     AIConfigManager *configManager = [AIConfigManager sharedInstance];
-    NSArray *countryConfigs = [configManager getCountries];
-    NSMutableArray *countries = $marrnew;
-    for (NSDictionary *countryConfig in countryConfigs)
-    {
-        NSString *name = [countryConfig $for:@"Name"];
-        NSString *image = [countryConfig $for:@"Image"];
-        NSString *code = [countryConfig $for:@"Code"];
-        TravelBotCountry *country = [[TravelBotCountry alloc] initWithName:name
-                                                                     image:image
-                                                                      code:code];
-        [countries $push:country];
-    }
-    self.countries = [countries copy];
+    self.countries = [configManager getCountries];
 }
 
 - (void)viewDidLoad

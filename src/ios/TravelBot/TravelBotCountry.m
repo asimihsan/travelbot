@@ -37,6 +37,24 @@
     return self;
 }
 
+#pragma mark - NSCoding protocol
+- (void)encodeWithCoder:(NSCoder *)encoder
+{
+    [encoder encodeObject:self.name forKey:@"name"];
+    [encoder encodeObject:self.image forKey:@"image"];
+    [encoder encodeObject:self.code forKey:@"code"];
+}
+
+- (id)initWithCoder:(NSCoder *)decoder
+{
+    if (!(self = [super init]))
+        return nil;
+    self.name = [decoder decodeObjectForKey:@"name"];
+    self.image = [decoder decodeObjectForKey:@"image"];
+    self.code = [decoder decodeObjectForKey:@"code"];
+    return self;
+}
+
 - (BOOL)isEqual:(id)object
 {
     if (object == self)
@@ -45,10 +63,6 @@
         return NO;
     
     TravelBotCountry *other = (TravelBotCountry *)object;
-    if (!$eql(self.name, other.name))
-        return NO;
-    if (!$eql(self.image, other.image))
-        return NO;
     if (!$eql(self.code, other.code))
         return NO;
     
@@ -60,8 +74,6 @@
     // Reference: Effective Java 2nd edition.
     const NSUInteger prime = 31;
     NSUInteger result = 17;
-    result = prime * result + self.name.hash;
-    result = prime * result + self.image.hash;
     result = prime * result + self.code.hash;
     return result;
 }

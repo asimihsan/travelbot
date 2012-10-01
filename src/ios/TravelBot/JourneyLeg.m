@@ -139,6 +139,24 @@ EXIT_LABEL:
     self.mode_of_transport = mode_of_transport;
 }
 
+#pragma mark - NSCoding protocol
+- (void)encodeWithCoder:(NSCoder *)encoder
+{
+    [encoder encodeObject:self.departure forKey:@"departure"];
+    [encoder encodeObject:self.arrival forKey:@"arrival"];
+    [encoder encodeObject:self.mode_of_transport forKey:@"mode_of_transport"];
+}
+
+- (id)initWithCoder:(NSCoder *)decoder
+{
+    if (!(self = [super init]))
+        return nil;
+    self.departure = [decoder decodeObjectForKey:@"departure"];
+    self.arrival = [decoder decodeObjectForKey:@"arrival"];
+    self.mode_of_transport = [decoder decodeObjectForKey:@"mode_of_transport"];
+    return self;
+}
+
 #pragma mark - NSObject overrides.
 - (BOOL)isEqual:(id)object
 {

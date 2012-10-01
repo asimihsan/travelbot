@@ -7,6 +7,7 @@
 //
 
 #import "AIConfigManager.h"
+#import "TravelBotCountry.h"
 #import "ConciseKit.h"
 #import "CocoaLumberJack/DDLog.h"
 
@@ -35,7 +36,18 @@ static AIConfigManager *sharedInstance = nil;
 - (NSArray *)getCountries
 {
     NSArray *countries = [self.config $for:@"Countries"];
-    return [countries copy];
+    NSMutableArray *return_value = $marrnew;
+    for (NSDictionary *countryConfig in countries)
+    {
+        NSString *name = [countryConfig $for:@"Name"];
+        NSString *image = [countryConfig $for:@"Image"];
+        NSString *code = [countryConfig $for:@"Code"];
+        TravelBotCountry *country = [[TravelBotCountry alloc] initWithName:name
+                                                                     image:image
+                                                                      code:code];
+        [return_value $push:country];
+    }
+    return [NSArray arrayWithArray:return_value];
 }
 
 - (NSDictionary *)getCountryCodeToMethods

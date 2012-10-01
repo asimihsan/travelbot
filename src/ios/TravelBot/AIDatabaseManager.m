@@ -8,7 +8,11 @@
 
 #import "AIDatabaseManager.h"
 #import "AIUtilities.h"
+#import "AIConfigManager.h"
+#import "TravelBotPlace.h"
+#import "TravelBotSavedSearch.h"
 #import "FMDB/FMDatabase.h"
+#import "JSONKit/JSONKit.h"
 #import "ConciseKit/ConciseKit.h"
 #import "CocoaLumberJack/DDLog.h"
 #import "ConciseKit.h"
@@ -32,6 +36,36 @@ static NSString *AWS_LOCATIONS_DATABASE_S3_PATH = @"locations.sqlite.bz2";
 // Query caches.
 static int GET_PLACE_WITH_COUNTRY_CODE_CACHE_SIZE = 100;
 static NSMutableDictionary *getPlaceWithCountryCodeCache;
+
+// Favorites have their own database because we want an easy to update and
+// deploy way to update locations.
+static NSString *FAVORITES_DATABASE_NAME = @"favorites.sqlite";
+static NSString *FAVOURITES_CREATE_SAVED_SEARCH_STATEMENT = \
+    @"CREATE TABLE saved_search(" \
+     "from_place_name TEXT, " \
+     "from_country_code TEXT, " \
+     "to_place_name TEXT, " \
+     "to_country_code TEXT, " \
+     "search_datetime DATETIME, " \
+     "journeys BLOB);";
+static NSString *FAVOURITES_CREATE_FAVOURITE_SEARCHES_STATEMENT = \
+    @"CREATE TABLE favourite_search(" \
+     "saved_search_id INTEGER, " \
+     "FOREIGN KEY (saved_search_id) REFERENCES saved_search(rowid));";
+static NSString *FAVORITES_INSERT_SAVED_SEARCH_STATEMENT = \
+    @"INSERT INTO saved_search VALUES " \
+     " (:from_place_name, " \
+     "  :from_country_code, " \
+     "  :to_place_name, "\
+     "  :to_country_code, " \
+     "  :search_datetime, " \
+     "  :journeys);";
+static NSString *FAVOURITES_GET_NUMBER_OF_SAVED_SEARCHES_STATEMENT = \
+    @"SELECT COUNT(*) FROM saved_search;";
+static NSString *FAVOURITES_GET_SAVED_SEARCH_STATEMENT = \
+    @"SELECT from_place_name, from_country_code, to_place_name, to_country_code, search_datetime, journeys " \
+     "FROM saved_search " \
+     "ORDER BY search_datetime DESC LIMIT :limit OFFSET :offset;";
 // ----------------------------------------------------------------------------
 
 static AIDatabaseManager *sharedInstance = nil;
@@ -42,9 +76,13 @@ static AIDatabaseManager *sharedInstance = nil;
 @property (nonatomic, assign) dispatch_queue_t processingQueue;
 @property (nonatomic, assign) UIBackgroundTaskIdentifier processingTask;
 @property (nonatomic, strong) FMDatabase *locations_db;
+@property (nonatomic, strong) FMDatabase *favorites_db;
+@property (nonatomic, strong) NSSet *countriesConfig;
 
 - (void)initDatabaseManager;
 - (void)initListener;
+- (void)initLocationsDb;
+- (void)initFavoritesDb;
 - (void)startProcessingTask;
 - (void)stopProcessingTask;
 
@@ -71,6 +109,7 @@ static AIDatabaseManager *sharedInstance = nil;
 @synthesize processingQueue = _processingQueue;
 @synthesize processingTask = _processingTask;
 @synthesize locations_db = _locations_db;
+@synthesize favorites_db = _favorites_db;
 
 #pragma mark - Public API
 
@@ -169,11 +208,6 @@ static AIDatabaseManager *sharedInstance = nil;
                                  query:selectQuery
                              arguments:arguments];
         DDLogVerbose(@"AIDatabaseManager:getPlaceWithCountryCode. resultSet: %@", resultSet);
-        if (!resultSet)
-        {
-            DDLogError(@"AIDatabaseManager:getPlaceWithCountryCode. error. code: %d, message: %@",
-                       [self.locations_db lastErrorCode], [self.locations_db lastErrorMessage]);
-        }
         const NSInteger MAX = startIndex + GET_PLACE_WITH_COUNTRY_CODE_CACHE_SIZE;
         for (NSInteger i = startIndex; i < MAX; i++)
         {
@@ -258,11 +292,6 @@ static AIDatabaseManager *sharedInstance = nil;
                                           query:selectQuery
                                       arguments:arguments];
     DDLogVerbose(@"AIDatabaseManager:getNumberOfPlaces. resultSet: %@", resultSet);
-    if (!resultSet)
-    {
-        DDLogError(@"AIDatabaseManager:getNumberOfPlaces. error. code: %d, message: %@",
-                   [self.locations_db lastErrorCode], [self.locations_db lastErrorMessage]);
-    }
     if ([resultSet next])
     {
         DDLogVerbose(@"AIDatabaseManager:getNumberOfPlaces: there is a result.");
@@ -277,6 +306,112 @@ static AIDatabaseManager *sharedInstance = nil;
     [resultSet close];
     
     DDLogVerbose(@"AIDatabaseManager:getNumberOfPlaces returning: %@", return_value);
+    return return_value;
+}
+
+- (void)addSearchResultsToSavedSearches:(TravelBotPlace *)fromPlace
+                                toPlace:(TravelBotPlace *)toPlace
+                         searchDatetime:(NSDate *)searchDatetime
+                          searchResults:(NSArray *)searchResults
+{
+    [self startProcessingTask];
+    dispatch_async(self.processingQueue,
+    ^{
+        DDLogVerbose(@"AIDatabaseManager:addSearchResultsToSavedSearches entry. fromPlace: %@, toPlace: %@, searchDatetime: %@.",
+                     fromPlace, toPlace, searchDatetime);
+        NSString *searchDatetimeString =  $str(@"%f", [searchDatetime timeIntervalSince1970]);
+        NSData *journeysSerialized = [NSKeyedArchiver archivedDataWithRootObject:searchResults];
+        NSDictionary *arguments = $dict(fromPlace.name, @"from_place_name",
+                                        fromPlace.country.code, @"from_country_code",
+                                        toPlace.name, @"to_place_name",
+                                        toPlace.country.code, @"to_country_code",
+                                        searchDatetimeString, @"search_datetime",
+                                        journeysSerialized, @"journeys");
+        [self.favorites_db executeUpdate:FAVORITES_INSERT_SAVED_SEARCH_STATEMENT
+                 withParameterDictionary:arguments];
+        if ([self.favorites_db hadError])
+        {
+            DDLogError(@"AIDatabaseManager:addSearchResultsToSavedSearches. error. arguments: %@, error code: %d, error message: %@",
+                       arguments, [self.favorites_db lastErrorCode], [self.favorites_db lastErrorMessage]);
+        }
+        DDLogVerbose(@"AIDatabaseManager:addSearchResultsToSavedSearches exit.");
+        [self stopProcessingTask];
+    });
+}
+
+- (NSNumber *)getNumberOfSavedSearches
+{
+    DDLogVerbose(@"AIDatabaseManager:getNumberOfSavedSearches entry.");
+    
+    // -------------------------------------------------------------------------
+    //  Initialize output variable.
+    // -------------------------------------------------------------------------
+    NSNumber *return_value;
+    // -------------------------------------------------------------------------
+    
+    FMResultSet *resultSet = [self executeQuery:self.favorites_db
+                                          query:FAVOURITES_GET_NUMBER_OF_SAVED_SEARCHES_STATEMENT
+                                      arguments:nil];
+    DDLogVerbose(@"AIDatabaseManager:getNumberOfSavedSearches. resultSet: %@", resultSet);
+    if ([resultSet next])
+    {
+        DDLogVerbose(@"AIDatabaseManager:getNumberOfSavedSearches: there is a result.");
+        NSInteger result = [resultSet intForColumnIndex:0];
+        return_value = [[NSNumber alloc] initWithInt:result];
+    }
+    else
+    {
+        DDLogError(@"AIDatabaseManager:getNumberOfSavedSearches: there isn't a result.");
+        return_value = nil;
+    }
+    [resultSet close];
+    
+    DDLogVerbose(@"AIDatabaseManager:getNumberOfSavedSearches returning: %@", return_value);
+    return return_value;
+}
+
+- (TravelBotSavedSearch *)getSavedSearch:(NSInteger)index
+{
+    DDLogVerbose(@"AIDatabaseManager:getSavedSearch entry. index: %d", index);
+    
+    // -------------------------------------------------------------------------
+    //  Initialize output variables.
+    // -------------------------------------------------------------------------
+    TravelBotSavedSearch *return_value;
+    // -------------------------------------------------------------------------
+    
+    NSDictionary *arguments = $dict([NSNumber numberWithInteger:1], @"limit",
+                                    [NSNumber numberWithInteger:index], @"offset");
+    FMResultSet *resultSet = [self executeQuery:self.favorites_db
+                                          query:FAVOURITES_GET_SAVED_SEARCH_STATEMENT
+                                      arguments:arguments];
+    DDLogVerbose(@"AIDatabaseManager:getSavedSearch. resultSet: %@", resultSet);
+    while ([resultSet next])
+    {
+        DDLogVerbose(@"AIDatabaseManager:getSavedSearch: there is a result.");
+        NSString *fromPlaceName = [resultSet stringForColumnIndex:0];
+        NSString *fromCountryCode = [resultSet stringForColumnIndex:1];
+        NSString *toPlaceName = [resultSet stringForColumnIndex:2];
+        NSString *toCountryCode = [resultSet stringForColumnIndex:3];
+        NSDate *searchDatetime = [resultSet dateForColumnIndex:4];
+        NSData *journeysSerialized = [resultSet dataForColumnIndex:5];
+
+        TravelBotCountry *fromCountry = [self.countriesConfig member:fromCountryCode];
+        TravelBotPlace *fromPlace = [[TravelBotPlace alloc] initWithName:fromPlaceName
+                                                                 country:fromCountry];
+        TravelBotCountry *toCountry = [self.countriesConfig member:toCountryCode];
+        TravelBotPlace *toPlace = [[TravelBotPlace alloc] initWithName:toPlaceName
+                                                               country:toCountry];
+        NSArray *journeysDeserialized = [NSKeyedUnarchiver unarchiveObjectWithData:journeysSerialized];
+        return_value = [[TravelBotSavedSearch alloc] init];
+        return_value.fromPlace = fromPlace;
+        return_value.toPlace = toPlace;
+        return_value.searchDatetime = searchDatetime;
+        return_value.searchResults = journeysDeserialized;
+    }
+    [resultSet close];
+    
+    DDLogVerbose(@"AIDatabaseManager:getSavedSearch returning: %@", return_value);
     return return_value;
 }
 
@@ -306,10 +441,15 @@ static AIDatabaseManager *sharedInstance = nil;
         {
             DDLogVerbose(@"AIDatabaseManager:executeQuery: database is open.");
             if (arguments && arguments.count > 0)
-                resultSet = [self.locations_db executeQuery:query
-                                    withParameterDictionary:arguments];
+                resultSet = [database executeQuery:query
+                           withParameterDictionary:arguments];
             else
-                resultSet = [self.locations_db executeQuery:query];
+                resultSet = [database executeQuery:query];
+            if (!resultSet)
+            {
+                DDLogError(@"AIDatabaseManager:executeQuery. error. database: %@, query: %@, arguments: %@, error code: %d, error message: %@",
+                           database, query, arguments, [database lastErrorCode], [database lastErrorMessage]);
+            }
         }
         [self stopProcessingTask];
     });
@@ -323,7 +463,7 @@ static AIDatabaseManager *sharedInstance = nil;
     [self startProcessingTask];
     dispatch_sync(self.processingQueue,
     ^{
-        DDLogVerbose(@"AIDatabaseManager:executeUpdate entry. update: %@, arguments: %@", update, arguments);
+        DDLogVerbose(@"AIDatabaseManager:executeUpdate entry. database: %@, update: %@, arguments: %@", database, update, arguments);
         if (![self isOpened])
         {
             DDLogError(@"AIDatabaseManager:executeUpdate: database is not open");
@@ -331,7 +471,12 @@ static AIDatabaseManager *sharedInstance = nil;
         else
         {
             DDLogVerbose(@"AIDatabaseManager:executeUpdate: database is open.");
-            [self.locations_db executeUpdate:update withParameterDictionary:arguments];
+            [database executeUpdate:update withParameterDictionary:arguments];
+            if ([database lastError])
+            {
+                DDLogError(@"AIDatabaseManager:executeUpdate. error. database: %@, update: %@, arguments: %@, error code: %d, error message: %@",
+                           database, update, arguments, [database lastErrorCode], [database lastErrorMessage]);
+            }
         }
         [self stopProcessingTask];
     });
@@ -393,10 +538,19 @@ static AIDatabaseManager *sharedInstance = nil;
         ^{
             DDLogVerbose(@"application did receive memory notification");
             sqlite3_db_release_memory([self.locations_db sqliteHandle]);
+            sqlite3_db_release_memory([self.favorites_db sqliteHandle]);
             [self stopProcessingTask];
         });
     }
     DDLogVerbose(@"AIDatabaseManager:notification exit.");
+}
+
+- (void)initDatabaseManager
+{
+    self.processingQueue = dispatch_queue_create("com.ai.AIDatabaseManager.processingQueue", NULL);
+    
+    AIConfigManager *configManager = [AIConfigManager sharedInstance];
+    self.countriesConfig = [NSSet setWithArray:[configManager getCountries]];
 }
 
 #pragma mark - Singleton methods, lifecycle.
@@ -432,11 +586,6 @@ static AIDatabaseManager *sharedInstance = nil;
     return self;
 }
 
-- (void)initDatabaseManager
-{
-    self.processingQueue = dispatch_queue_create("com.ai.AIDatabaseManager.processingQueue", NULL);
-}
-
 - (void)dealloc
 {
     self.processingQueue = nil;
@@ -445,7 +594,8 @@ static AIDatabaseManager *sharedInstance = nil;
 
 - (BOOL)isOpened
 {
-    return (self.locations_db && self.locations_db.open);
+    return ((self.locations_db && self.locations_db.open) &&
+            (self.favorites_db && self.favorites_db.open));
 }
 
 - (void)open
@@ -454,9 +604,9 @@ static AIDatabaseManager *sharedInstance = nil;
     dispatch_async(self.processingQueue,
     ^{
         DDLogVerbose(@"AIDatabaseManager:open entry.");
-        NSString *dbCompressedPath = [[$ documentPath] stringByAppendingPathComponent:LOCATIONS_DATABASE_COMPRESSED_NAME];
-        NSString *dbPath = [[$ documentPath] stringByAppendingPathComponent:LOCATIONS_DATABASE_NAME];
-        NSString *dbBundlePath = [[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"locations.sqlite.bz2"];
+        NSString *locationsDbCompressedPath = [[$ documentPath] stringByAppendingPathComponent:LOCATIONS_DATABASE_COMPRESSED_NAME];
+        NSString *locationsDbPath = [[$ documentPath] stringByAppendingPathComponent:LOCATIONS_DATABASE_NAME];
+        NSString *locationsDbBundlePath = [[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"locations.sqlite.bz2"];
         
         // ---------------------------------------------------------------------
         //  Maybe download and decompress the compressed database, if it
@@ -465,41 +615,65 @@ static AIDatabaseManager *sharedInstance = nil;
         //  TODO some other logic will delete the file before we get here if
         //  e.g. the server tells us there's a new version available.
         // ---------------------------------------------------------------------
-        if (!([[NSFileManager defaultManager] fileExistsAtPath:dbCompressedPath isDirectory:NO]))
+        if (!([[NSFileManager defaultManager] fileExistsAtPath:locationsDbCompressedPath isDirectory:NO]))
         {
-            DDLogVerbose(@"AIDatabaseManager:open. Compressed database does not exist at dbCompressedPath: %@",
-                         dbCompressedPath);
+            DDLogVerbose(@"AIDatabaseManager:open. Locations compressed database does not exist at dbCompressedPath: %@",
+                         locationsDbCompressedPath);
             
             // -----------------------------------------------------------------
             // Copy compressed database from bundle resources.
             // -----------------------------------------------------------------
             NSError *error;
-            BOOL rc = [self copyDatabase:dbBundlePath
-                        dbCompressedPath:dbCompressedPath
-                                  dbPath:dbPath
+            BOOL rc = [self copyDatabase:locationsDbBundlePath
+                        dbCompressedPath:locationsDbCompressedPath
+                                  dbPath:locationsDbPath
                                    error:&error];
             if (!rc)
             {
-                DDLogError(@"Copying database from bundle path failed. error: %@",
+                DDLogError(@"Copying locations database from bundle path failed. error: %@",
                            [error localizedDescription]);
             }
             // -----------------------------------------------------------------
             
-        } // if compressed database doesn't already exist.
+        } // if locations compressed database doesn't already exist.
         // ---------------------------------------------------------------------
 
         // ---------------------------------------------------------------------
         //  Open the locations database.
         // ---------------------------------------------------------------------
-        DDLogVerbose(@"AIDatabaseManager:open: opening locations database at %@.", dbPath);
-        self.locations_db = [FMDatabase databaseWithPath:dbPath];
+        DDLogVerbose(@"AIDatabaseManager:open: opening locations database at %@.", locationsDbPath);
+        self.locations_db = [FMDatabase databaseWithPath:locationsDbPath];
         if (![self.locations_db open])
         {
             DDLogError(@"AIDatabaseManager:open: failed to open locations database.");
             self.locations_db = nil;
         }
+        if (self.locations_db)
+        {
+            DDLogVerbose(@"AIDatabase:open. initialize the locations database.");
+            [self initLocationsDb];
+        }
         getPlaceWithCountryCodeCache = [NSMutableDictionary dictionaryWithCapacity:GET_PLACE_WITH_COUNTRY_CODE_CACHE_SIZE];
         DDLogVerbose(@"AIDatabaseManager:open: locations database is open.");
+        // ---------------------------------------------------------------------
+
+        // ---------------------------------------------------------------------
+        //  Open the favorites database.
+        // ---------------------------------------------------------------------
+        NSString *favoritesDbPath = [[$ documentPath] stringByAppendingPathComponent:FAVORITES_DATABASE_NAME];
+        DDLogVerbose(@"AIDatabaseManager:open: opening favorites database at %@.", favoritesDbPath);
+        self.favorites_db = [FMDatabase databaseWithPath:favoritesDbPath];
+        if (![self.favorites_db open])
+        {
+            DDLogError(@"AIDatabaseManager:open: failed to open favorites database.");
+            self.favorites_db = nil;
+        }
+        if (self.favorites_db)
+        {
+            DDLogVerbose(@"AIDatabase:open. initializing the favorites database.");
+            [self initFavoritesDb];
+        }
+        DDLogVerbose(@"AIDatabaseManager:open: favorites database is open.");
         // ---------------------------------------------------------------------
         
         // ---------------------------------------------------------------------
@@ -532,11 +706,16 @@ static AIDatabaseManager *sharedInstance = nil;
             DDLogVerbose(@"AIDatabaseManager:close: Database is open, so close it.");
             if (![self.locations_db close])
             {
-                DDLogError(@"AIDatabaseManager:close: Failed to close database.");
+                DDLogError(@"AIDatabaseManager:close: Failed to close locations database.");
             }
             self.locations_db = nil;
             [getPlaceWithCountryCodeCache removeAllObjects];
             getPlaceWithCountryCodeCache = nil;
+            if (![self.favorites_db close])
+            {
+                DDLogError(@"AIDatabaseManager:close: Failed to close favorites database.");
+            }
+            self.favorites_db = nil;
         }
         [self stopProcessingTask];
    });
@@ -597,6 +776,52 @@ static AIDatabaseManager *sharedInstance = nil;
               outputFilepath:dbPath];
         return YES;
     } // if (request.error) for database download
+}
+
+// -----------------------------------------------------------------------------
+//  If they don't already exist set up the tables and indices required for
+//  the favorites database. This is already executed on the GCD processing
+//  queue as a background task.
+// -----------------------------------------------------------------------------
+- (void)initFavoritesDb
+{
+    DDLogVerbose(@"AIDatabaseManager:initFavoritesDb entry. self.favorites_db: %@", self.favorites_db);
+    assert(self.favorites_db);
+    NSArray *queries = $arr(@"PRAGMA foreign_keys = ON;",
+                            FAVOURITES_CREATE_SAVED_SEARCH_STATEMENT,
+                            FAVOURITES_CREATE_FAVOURITE_SEARCHES_STATEMENT);
+    for (NSString *query in queries)
+    {
+        DDLogVerbose(@"AIDatabaseManager:initFavoritesDb. executing query: %@", query);
+        [self.favorites_db executeUpdate:query];
+        if ([self.favorites_db hadError])
+        {
+            DDLogError(@"AIDatabaseManager:initFavoritesDb. error. query: %@, error code: %d, error message: %@",
+                       query, [self.favorites_db lastErrorCode], [self.favorites_db lastErrorMessage]);
+        }
+    }
+    DDLogVerbose(@"AIDatabaseManager:initFavoritesDb exit.");
+}
+// -----------------------------------------------------------------------------
+//  The locationsd database is ready to go, no CREATE or DROP tables needed.
+//  However we need to set pragma's if needed.
+// -----------------------------------------------------------------------------
+- (void)initLocationsDb
+{
+    DDLogVerbose(@"AIDatabaseManager:initLocationsDb entry. self.locations_db: %@", self.locations_db);
+    assert(self.locations_db);
+    NSArray *queries = $arr(@"PRAGMA foreign_keys = ON;");
+    for (NSString *query in queries)
+    {
+        DDLogVerbose(@"AIDatabaseManager:initLocationsDb. executing query: %@", query);
+        [self.locations_db executeUpdate:query];
+        if ([self.locations_db hadError])
+        {
+            DDLogError(@"AIDatabaseManager:initLocationsDb. error. query: %@, error code: %d, error message: %@",
+                       query, [self.locations_db lastErrorCode], [self.locations_db lastErrorMessage]);
+        }
+    }
+    DDLogVerbose(@"AIDatabaseManager:initLocationsDb exit.");
 }
 
 @end

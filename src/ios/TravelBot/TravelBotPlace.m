@@ -34,6 +34,23 @@
     return self;
 }
 
+#pragma mark - NSCoding protocol
+- (void)encodeWithCoder:(NSCoder *)encoder
+{
+    [encoder encodeObject:self.name forKey:@"name"];
+    [encoder encodeObject:self.country forKey:@"country"];
+}
+
+- (id)initWithCoder:(NSCoder *)decoder
+{
+    if (!(self = [super init]))
+        return nil;
+    self.name = [decoder decodeObjectForKey:@"name"];
+    self.country = [decoder decodeObjectForKey:@"country"];
+    return self;
+}
+
+
 - (BOOL)isEqual:(id)object
 {
     if (object == self)

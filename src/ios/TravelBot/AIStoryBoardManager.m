@@ -67,7 +67,7 @@ static AIStoryBoardManager *sharedInstance = nil;
                                           key:(NSString *)key
 {
     UIViewController *viewController = [self.viewControllerCache $for:key];
-    if (!viewController)
+    if (!viewController || ![viewController isViewLoaded])
     {
         viewController = [caller.storyboard instantiateViewControllerWithIdentifier:key];
         [self.viewControllerCache $obj:viewController for:key];

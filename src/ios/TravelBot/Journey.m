@@ -12,6 +12,7 @@
 #import "Location.h"
 
 #import "ConciseKit/ConciseKit.h"
+#import "JSONKit.h"
 #import "CocoaLumberJack/DDLog.h"
 
 // ----------------------------------------------------------------------------
@@ -23,6 +24,7 @@ static int ddLogLevel = LOG_LEVEL_INFO;
 @interface Journey ()
 
 @property (strong, nonatomic) NSArray *legs;
+@property (strong, nonatomic) NSDictionary *jsonDictionary;
 
 - (void)populateUsingJsonDictionary:(NSDictionary *)jsonDictionary;
 
@@ -146,6 +148,12 @@ static int ddLogLevel = LOG_LEVEL_INFO;
     return self;
 }
 
+- (void)dealloc
+{
+    [self setLegs:nil];
+    [self setJsonDictionary:nil];
+}
+
 + (BOOL)validateJsonDictionary:(NSDictionary *)jsonDictionary
 {
     DDLogVerbose(@"Journey:validateJsonDictionary entry.");
@@ -194,6 +202,7 @@ EXIT_LABEL:
 
 - (void)populateUsingJsonDictionary:(NSDictionary *)jsonDictionary
 {
+    self.jsonDictionary = jsonDictionary;
     NSDictionary *topLevelKey = [jsonDictionary $for:@"Journey"];
     NSArray *legsDictionaryArray = [topLevelKey $for:@"legs"];
     NSMutableArray *legsObjectArray = [[NSMutableArray alloc] initWithCapacity:legsDictionaryArray.count];
@@ -203,6 +212,20 @@ EXIT_LABEL:
         [legsObjectArray $push:journeyLeg];
     }];
     self.legs = [NSArray arrayWithArray:legsObjectArray];
+}
+
+#pragma mark - NSCoding protocol
+- (void)encodeWithCoder:(NSCoder *)encoder
+{
+    [encoder encodeObject:self.legs forKey:@"legs"];
+}
+
+- (id)initWithCoder:(NSCoder *)decoder
+{
+    if (!(self = [super init]))
+        return nil;
+    self.legs = [decoder decodeObjectForKey:@"legs"];
+    return self;
 }
 
 - (NSComparisonResult)compareByFirstDepartureTime:(Journey *)other

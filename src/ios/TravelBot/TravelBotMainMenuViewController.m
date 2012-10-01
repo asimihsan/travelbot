@@ -187,6 +187,10 @@ static int ddLogLevel = LOG_LEVEL_VERBOSE;
         controller.fromPlace = self.selectedFromPlace;
         controller.toPlace = self.selectedToPlace;
         controller.searchResults = nil;
+        
+        // !!AI eventually allow user-configurable datetime to search for.
+        NSDate *now = [NSDate date];
+        controller.searchDatetime = now;
     }
 }
 

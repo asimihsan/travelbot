@@ -9,6 +9,7 @@
 #import <Foundation/Foundation.h>
 
 @interface Location : NSObject
+<NSCoding>
 
 @property (copy, nonatomic) NSString *name;
 

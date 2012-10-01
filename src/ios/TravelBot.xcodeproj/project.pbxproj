@@ -66,6 +66,8 @@
 		01AC830515ECE5760072992A /* si.png in Resources */ = {isa = PBXBuildFile; fileRef = 01AC830415ECE5760072992A /* si.png */; };
 		01AC830C15ECE7B90072992A /* TravelBotCountryCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 01AC830B15ECE7B90072992A /* TravelBotCountryCell.m */; };
 		01C6A777160B67A2006B3E19 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 01C6A776160B67A1006B3E19 /* Default-568h@2x.png */; };
+		01C7764A161A491B00094BF8 /* TravelBotSavedSearch.m in Sources */ = {isa = PBXBuildFile; fileRef = 01C77649161A491B00094BF8 /* TravelBotSavedSearch.m */; };
+		01C7764E161A52CF00094BF8 /* TravelBotFavoriteCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 01C7764D161A52CF00094BF8 /* TravelBotFavoriteCell.m */; };
 		01DBA7871614F27200B3DF55 /* config.plist in Resources */ = {isa = PBXBuildFile; fileRef = 01DBA7861614F27200B3DF55 /* config.plist */; };
 		01DBA78B1614F45C00B3DF55 /* AIConfigManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 01DBA78A1614F45C00B3DF55 /* AIConfigManager.m */; };
 		01DBA78D1614FD1400B3DF55 /* hr.png in Resources */ = {isa = PBXBuildFile; fileRef = 01DBA78C1614FD1400B3DF55 /* hr.png */; };
@@ -178,6 +180,10 @@
 		01AC830A15ECE7B90072992A /* TravelBotCountryCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TravelBotCountryCell.h; sourceTree = "<group>"; };
 		01AC830B15ECE7B90072992A /* TravelBotCountryCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TravelBotCountryCell.m; sourceTree = "<group>"; };
 		01C6A776160B67A1006B3E19 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
+		01C77648161A491B00094BF8 /* TravelBotSavedSearch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TravelBotSavedSearch.h; sourceTree = "<group>"; };
+		01C77649161A491B00094BF8 /* TravelBotSavedSearch.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TravelBotSavedSearch.m; sourceTree = "<group>"; };
+		01C7764C161A52CF00094BF8 /* TravelBotFavoriteCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TravelBotFavoriteCell.h; sourceTree = "<group>"; };
+		01C7764D161A52CF00094BF8 /* TravelBotFavoriteCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TravelBotFavoriteCell.m; sourceTree = "<group>"; };
 		01DBA7861614F27200B3DF55 /* config.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = config.plist; sourceTree = "<group>"; };
 		01DBA7891614F45C00B3DF55 /* AIConfigManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AIConfigManager.h; sourceTree = "<group>"; };
 		01DBA78A1614F45C00B3DF55 /* AIConfigManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AIConfigManager.m; sourceTree = "<group>"; };
@@ -424,6 +430,8 @@
 				0160496C15ECEF8600579B45 /* TravelBotCountry.m */,
 				0160497515ED3F4600579B45 /* TravelBotPlace.h */,
 				0160497615ED3F4600579B45 /* TravelBotPlace.m */,
+				01C77648161A491B00094BF8 /* TravelBotSavedSearch.h */,
+				01C77649161A491B00094BF8 /* TravelBotSavedSearch.m */,
 			);
 			name = Models;
 			sourceTree = "<group>";
@@ -433,6 +441,8 @@
 			children = (
 				01AC830A15ECE7B90072992A /* TravelBotCountryCell.h */,
 				01AC830B15ECE7B90072992A /* TravelBotCountryCell.m */,
+				01C7764C161A52CF00094BF8 /* TravelBotFavoriteCell.h */,
+				01C7764D161A52CF00094BF8 /* TravelBotFavoriteCell.m */,
 				01AA821A160CABF80050EC07 /* TravelBotJourneyHeader.h */,
 				01AA821B160CABF80050EC07 /* TravelBotJourneyHeader.m */,
 				01AA8217160CAB6C0050EC07 /* TravelBotJourneyLegCell.h */,
@@ -615,6 +625,8 @@
 				0135F975161883A300ADAFC7 /* TravelBotLeftPanelViewController.m in Sources */,
 				0135F97C161887B900ADAFC7 /* UIViewController+JASidePanel.m in Sources */,
 				0135F97F16188AC700ADAFC7 /* AIStoryBoardManager.m in Sources */,
+				01C7764A161A491B00094BF8 /* TravelBotSavedSearch.m in Sources */,
+				01C7764E161A52CF00094BF8 /* TravelBotFavoriteCell.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

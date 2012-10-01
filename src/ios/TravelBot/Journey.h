@@ -11,6 +11,7 @@
 @class JourneyLeg;
 
 @interface Journey : NSObject
+<NSCoding>
 
 - (id)init:(NSDictionary *)jsonDictionary;
 + (BOOL)validateJsonDictionary:(NSDictionary *)jsonDictionary;

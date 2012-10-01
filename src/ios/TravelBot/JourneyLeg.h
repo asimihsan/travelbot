@@ -11,6 +11,7 @@
 @class JourneyLegPoint;
 
 @interface JourneyLeg : NSObject
+<NSCoding>
 
 @property (strong, nonatomic) JourneyLegPoint *departure;
 @property (strong, nonatomic) JourneyLegPoint *arrival;

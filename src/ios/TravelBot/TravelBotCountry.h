@@ -9,6 +9,7 @@
 #import <Foundation/Foundation.h>
 
 @interface TravelBotCountry : NSObject
+<NSCoding>
 
 @property (copy, nonatomic) NSString *name;
 @property (copy, nonatomic) NSString *image;

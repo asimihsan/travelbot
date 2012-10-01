@@ -16,6 +16,7 @@
 
 @property (strong, nonatomic) TravelBotPlace *fromPlace;
 @property (strong, nonatomic) TravelBotPlace *toPlace;
+@property (strong, atomic) NSDate *searchDatetime;
 @property (weak, nonatomic) id <TravelBotSearchViewControllerDelegate> delegate;
 @property (strong, nonatomic) NSMutableArray *searchResults;
 

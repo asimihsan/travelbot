@@ -113,6 +113,23 @@ EXIT_LABEL:
     self.location = location;
 }
 
+#pragma mark - NSCoding protocol
+- (void)encodeWithCoder:(NSCoder *)encoder
+{
+    [encoder encodeObject:self.datetime forKey:@"datetime"];
+    [encoder encodeObject:self.location forKey:@"location"];
+}
+
+- (id)initWithCoder:(NSCoder *)decoder
+{
+    if (!(self = [super init]))
+        return nil;
+    self.datetime = [decoder decodeObjectForKey:@"datetime"];
+    self.location = [decoder decodeObjectForKey:@"location"];
+    return self;
+}
+
+
 - (BOOL)isEqual:(id)object
 {
     if (object == self)

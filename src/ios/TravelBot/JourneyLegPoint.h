@@ -11,6 +11,7 @@
 @class Location;
 
 @interface JourneyLegPoint : NSObject
+<NSCoding>
 
 @property (strong, nonatomic) Location *location;
 @property (strong, nonatomic) NSDate *datetime;

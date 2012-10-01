@@ -11,6 +11,8 @@
 static NSString *NOTIFICATION_DATABASE_OPENED = @"AIDatabaseManager:notificationDatabaseOpened";
 
 @class FMResultSet;
+@class TravelBotPlace;
+@class TravelBotSavedSearch;
 
 @interface AIDatabaseManager : NSObject
 
@@ -25,5 +27,12 @@ static NSString *NOTIFICATION_DATABASE_OPENED = @"AIDatabaseManager:notification
 - (NSString *)getPlaceWithCountryCode:(NSString *)countryCode
                                search:(NSString *)search
                                 index:(NSInteger)index;
+
+- (void)addSearchResultsToSavedSearches:(TravelBotPlace *)fromPlace
+                                toPlace:(TravelBotPlace *)toPlace
+                         searchDatetime:(NSDate *)searchDatetime
+                          searchResults:(NSArray *)searchResults;
+- (NSNumber *)getNumberOfSavedSearches;
+- (TravelBotSavedSearch *)getSavedSearch:(NSInteger)index;
 
 @end

@@ -8,6 +8,9 @@
 
 #import <UIKit/UIKit.h>
 
-@interface TravelBotFavoritesViewController : UITableViewController
+@interface TravelBotFavoritesViewController : UIViewController
+<UITableViewDelegate, UITableViewDataSource>
+
+@property (weak, nonatomic) IBOutlet UITableView *tableView;
 
 @end

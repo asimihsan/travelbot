@@ -81,6 +81,20 @@ EXIT_LABEL:
     self.name = name;
 }
 
+#pragma mark - NSCoding protocol
+- (void)encodeWithCoder:(NSCoder *)encoder
+{
+    [encoder encodeObject:self.name forKey:@"name"];
+}
+
+- (id)initWithCoder:(NSCoder *)decoder
+{
+    if (!(self = [super init]))
+        return nil;
+    self.name = [decoder decodeObjectForKey:@"name"];
+    return self;
+}
+
 - (BOOL)isEqual:(id)object
 {
     if (object == self)

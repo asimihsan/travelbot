@@ -7,6 +7,16 @@
 //
 
 #import "TravelBotFavoritesViewController.h"
+#import "TravelBotFavoriteCell.h"
+#import "TravelBotSavedSearch.h"
+#import "AIDatabaseManager.h"
+#import "ConciseKit/ConciseKit.h"
+#import "CocoaLumberJack/DDLog.h"
+
+// ----------------------------------------------------------------------------
+//  Static variables or preprocessor defines.
+// ----------------------------------------------------------------------------
+static int ddLogLevel = LOG_LEVEL_VERBOSE;
 
 @interface TravelBotFavoritesViewController ()
 
@@ -14,14 +24,11 @@
 
 @implementation TravelBotFavoritesViewController
 
-- (id)initWithStyle:(UITableViewStyle)style
+#pragma mark - View lifecycle
+- (void)viewWillAppear:(BOOL)animated
 {
-    self = [super initWithStyle:style];
-    if (!self)
-    {
-        return nil;
-    }
-    return self;
+    [self.tableView reloadData];
+    [super viewWillAppear:animated];
 }
 
 #pragma mark - Table view data source
@@ -33,15 +40,28 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return 0;
+    DDLogVerbose(@"TravelBotFavoritesViewController:numberOfRowsInSection entry. section: %d", section);
+    AIDatabaseManager *databaseManager = [AIDatabaseManager sharedInstance];
+    NSNumber *return_value = [databaseManager getNumberOfSavedSearches];
+    DDLogVerbose(@"TravelBotFavoritesViewController:numberOfRowsInSection returning %@", return_value);
+    return return_value.integerValue;
+}
+
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    return 88.0;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    static NSString *CellIdentifier = @"Cell";
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
+    DDLogVerbose(@"TravelBotFavoritesViewController:cellForRowAtIndexPath entry. indexPath: %@", indexPath);
+    static NSString *CellIdentifier = @"FavouriteCell";
+    TravelBotFavoriteCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
     
-    // Configure the cell...
+    AIDatabaseManager *databaseManager = [AIDatabaseManager sharedInstance];
+    TravelBotSavedSearch *savedSearch = [databaseManager getSavedSearch:indexPath.row];
+    DDLogVerbose(@"TravelBotFavoritesViewController:cellForRowAtIndexPath. savedSearch: %@", savedSearch);
+    cell.savedSearch = savedSearch;
     
     return cell;
 }
@@ -98,4 +118,8 @@
      */
 }
 
+- (void)viewDidUnload {
+    [self setTableView:nil];
+    [super viewDidUnload];
+}
 @end

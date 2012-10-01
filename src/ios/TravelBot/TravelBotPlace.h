@@ -10,6 +10,7 @@
 #import "TravelBotCountry.h"
 
 @interface TravelBotPlace : NSObject
+<NSCoding>
 
 @property (copy, nonatomic) NSString *name;
 @property (assign, nonatomic) TravelBotCountry *country;

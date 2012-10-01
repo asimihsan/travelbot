@@ -11,6 +11,7 @@
 #import "TravelBotPlace.h"
 #import "AISocketManager.h"
 #import "AIConfigManager.h"
+#import "AIDatabaseManager.h"
 #import "TravelBotSearchCell.h"
 #import "TravelBotJourneyViewController.h"
 #import "AIUtilities.h"
@@ -36,6 +37,7 @@ static int ddLogLevel = LOG_LEVEL_VERBOSE;
 
 - (void)startSearch;
 - (void)stopSearch;
+- (void)addSearchResultsToSavedSearches;
 - (void)showSearchSpinner;
 - (void)dismissSearchSpinner;
 - (void)onRequestCompletion:(NSNotification *)notification;
@@ -197,12 +199,24 @@ static int ddLogLevel = LOG_LEVEL_VERBOSE;
         if (![self isSearching])
         {
             DDLogVerbose(@"TravelBotSearchViewController:onRequestCompletion. Not searching any more.");
+            [self addSearchResultsToSavedSearches];
             [self stopSearch];
         }
     });
     // -------------------------------------------------------------------------
 
     DDLogVerbose(@"TravelBotSearchViewController:onRequestCompletion exit.");
+}
+
+- (void)addSearchResultsToSavedSearches
+{
+    DDLogVerbose(@"TravelBotSearchViewController:addSearchResultsToSavedSearches entry.");
+    AIDatabaseManager *databaseManager = [AIDatabaseManager sharedInstance];
+    [databaseManager addSearchResultsToSavedSearches:self.fromPlace
+                                             toPlace:self.toPlace
+                                      searchDatetime:self.searchDatetime
+                                       searchResults:self.searchResults];
+    DDLogVerbose(@"TravelBotSearchViewController:addSearchResultsToSavedSearches exit.");
 }
 
 #pragma mark - Table view delegate and segues.
