@@ -12,7 +12,7 @@ apsw==3.7.14-r1
 argparse==1.2.1
 billiard==2.7.3.12
 boto==2.5.2
-celery==3.0.6
+celery==5.2.2
 decorator==3.3.3
 django-adminplus==0.1.7
 django-appconf==0.5
